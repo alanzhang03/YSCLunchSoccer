@@ -1,6 +1,6 @@
 import styles from "./Card.module.scss";
 
-export default function Card({ sessionData }) {
+export default function Card({ sessionData, children }) {
   const date = sessionData.date;
   const weekday = sessionData.weekday;
   const time = sessionData.time;
@@ -18,6 +18,8 @@ export default function Card({ sessionData }) {
         <div className={styles.date}>{date}</div>
         <div className={styles.time}>{time}</div>
       </div>
+
+      {children && <div className={styles.actions}>{children}</div>}
     </div>
   );
 }

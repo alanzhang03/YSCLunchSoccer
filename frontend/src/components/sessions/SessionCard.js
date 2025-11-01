@@ -49,10 +49,9 @@ const SessionCard = ({ sessionData }) => {
   }
 
   return (
-    <>
-      <Card sessionData={updatedSessionData}></Card>
-      <AttendanceButton onSend={handleChildAttendanceData}></AttendanceButton>
-    </>
+    <Card sessionData={updatedSessionData}>
+      <AttendanceButton onSend={handleChildAttendanceData} />
+    </Card>
   );
 };
 export default SessionCard;
