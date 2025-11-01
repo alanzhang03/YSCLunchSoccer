@@ -4,9 +4,6 @@ export function getUpcomingSessions(count = 8) {
   const today = new Date();
   const copy = new Date(today);
 
-  console.log(today);
-  console.log(copy);
-
   //   const dayOfWeek = today.getDay();
   //   const day = today.getDate();
   //   const month = today.getMonth() + 1;
@@ -16,9 +13,9 @@ export function getUpcomingSessions(count = 8) {
     const day_of_week = copy.getDay();
     if (day_of_week == 1 || day_of_week == 5) {
       sessions.push({
-        id: sessions.length,
+        id: Date.now() + sessions.length,
         date: formatDate(copy),
-        weekday: copy.getDay(),
+        weekday: day_of_week === 1 ? "Monday" : "Friday",
         time: "11:45 AM - 1:05 PM EST",
         available: "0/100",
       });
