@@ -5,7 +5,7 @@ import styles from "./SessionCard.module.scss";
 import Card from "../ui/Card";
 import AttendanceButton from "./AttendanceButton";
 
-const SessionCard = () => {
+const SessionCard = ({ sessionData }) => {
   const [attendanceFromChild, setAttendanceFromChild] = useState(null);
   const [currentAttendance, setCurrentAttendance] = useState(0);
   const [previousSelection, setPreviousSelection] = useState(null);
@@ -30,11 +30,18 @@ const SessionCard = () => {
     setPreviousSelection(attendanceFromChild);
   }, [attendanceFromChild, previousSelection]);
 
-  const testingSessionData = {
+  const displaySessionData = sessionData || {
     date: "1/28/2004",
     weekday: "Friday",
     time: "11:30 am - 1:05 pm EST",
     available: `${currentAttendance}/100`,
+  };
+
+  const updatedSessionData = {
+    ...displaySessionData,
+    available: sessionData
+      ? `${currentAttendance}/100`
+      : displaySessionData.available,
   };
 
   function handleChildAttendanceData(data) {
@@ -43,9 +50,7 @@ const SessionCard = () => {
 
   return (
     <>
-      <Card sessionData={testingSessionData}></Card>
-      <h1>Hi Testing</h1>
-      <h1>{attendanceFromChild}</h1>
+      <Card sessionData={updatedSessionData}></Card>
       <AttendanceButton onSend={handleChildAttendanceData}></AttendanceButton>
     </>
   );
