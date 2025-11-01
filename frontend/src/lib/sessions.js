@@ -37,5 +37,3 @@ function formatDate(date) {
     day: "numeric",
   });
 }
-
-getUpcomingSessions();
