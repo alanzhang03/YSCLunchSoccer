@@ -4,7 +4,7 @@ import SessionCard from "./SessionCard";
 import { getUpcomingSessions } from "@/lib/sessions";
 
 const SessionList = ({ passedData }) => {
-  const data = getUpcomingSessions(5);
+  const data = getUpcomingSessions(8);
 
   return (
     <div className={styles.sessionList}>
