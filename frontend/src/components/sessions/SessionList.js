@@ -8,7 +8,6 @@ const SessionList = ({ passedData }) => {
 
   return (
     <div className={styles.sessionList}>
-      <h1>Session list </h1>
       {data.map((session) => (
         <SessionCard key={session.id} sessionData={session} />
       ))}

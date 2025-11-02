@@ -42,6 +42,8 @@ const SessionCard = ({ sessionData }) => {
     available: sessionData
       ? `${currentAttendance}/100`
       : displaySessionData.available,
+    today: sessionData?.today,
+    tomorrow: sessionData?.tomorrow,
   };
 
   function handleChildAttendanceData(data) {
