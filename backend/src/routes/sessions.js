@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
 router.post("/:id/attend", async (req, res) => {
   try {
     const sessionId = req.params.id;
-    const { status } = req.body; // Get status from request body
+    const { status } = req.body;
 
     if (!["yes", "no", "maybe"].includes(status)) {
       return res
