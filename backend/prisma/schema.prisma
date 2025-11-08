@@ -13,20 +13,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
-}
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  attendances Attendance[]
 }
 
+model Session {
+  id        String   @id @default(uuid())
+  date      DateTime @db.Date
+  dayOfWeek String
+  startTime String
+  endTime   String
+  timezone  String   @default("EST")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  attendances Attendance[]
 
+  @@index([date])
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  sessionId String
+  userId    String?
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id])
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+  @@index([userId])
+}
