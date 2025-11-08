@@ -13,31 +13,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Session {
-  id    String  @id @default(uuid())
-  date  DateTime   @db.Date
-  dayOfWeek   String
-  startTime   String
-  endTime   String
-  timezone    String  @default("EST")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
 
   attendances Attendance[]
 }
 
-model Attendance {
-  id    String  @id @default(uuid())
-  sessionId   String
-  userId    String?
-  status    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  
-  @@unique([sessionId, userId])
+model Session {
+  id        String   @id @default(uuid())
+  date      DateTime @db.Date
+  dayOfWeek String
+  startTime String
+  endTime   String
+  timezone  String   @default("EST")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attendances Attendance[]
+
+  @@index([date])
 }
 
+model Attendance {
+  id        String   @id @default(uuid())
+  sessionId String
+  userId    String?
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id])
 
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+  @@index([userId])
+}
