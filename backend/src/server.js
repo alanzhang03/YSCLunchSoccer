@@ -1,12 +1,23 @@
+// Step 1: Import everything you need
 import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import sessionsRouter from "./routes/sessions.js";
+
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 5001;
+
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.json({ message: "Backend is running!" });
 });
 
-app.listen(port, () => {
-  console.log(`example app listening on port ${port}`);
+app.use("/api/sessions", sessionsRouter);
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
