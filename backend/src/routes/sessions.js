@@ -28,25 +28,40 @@ router.post("/:id/attend", async (req, res) => {
         .json({ error: "Status must be yes, no, or maybe" });
     }
 
-    const attendance = await prisma.attendance.upsert({
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    const existingAttendance = await prisma.attendance.findFirst({
       where: {
-        sessionId_userId: {
-          sessionId: sessionId,
-          userId: null,
-        },
-      },
-      update: {
-        status: status,
-      },
-      create: {
         sessionId: sessionId,
         userId: null,
-        status: status,
       },
     });
 
+    let attendance;
+    if (existingAttendance) {
+      attendance = await prisma.attendance.update({
+        where: { id: existingAttendance.id },
+        data: { status: status },
+      });
+    } else {
+      attendance = await prisma.attendance.create({
+        data: {
+          sessionId: sessionId,
+          userId: null,
+          status: status,
+        },
+      });
+    }
+
     res.json({ success: true, attendance });
   } catch (error) {
+    console.error("Error in attend route:", error);
     res.status(500).json({ error: error.message });
   }
 });

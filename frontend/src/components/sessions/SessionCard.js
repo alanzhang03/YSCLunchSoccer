@@ -4,56 +4,108 @@ import { useState, useEffect } from "react";
 import styles from "./SessionCard.module.scss";
 import Card from "../ui/Card";
 import AttendanceButton from "./AttendanceButton";
+import { attendSession } from "@/lib/api";
 
-const SessionCard = ({ sessionData }) => {
-  const [attendanceFromChild, setAttendanceFromChild] = useState(null);
-  const [currentAttendance, setCurrentAttendance] = useState(0);
-  const [previousSelection, setPreviousSelection] = useState(null);
+const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
+  const [currentStatus, setCurrentStatus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [yesCount, setYesCount] = useState(0);
 
   useEffect(() => {
-    if (attendanceFromChild === null) return;
+    if (sessionData?.attendances) {
+      const count = sessionData.attendances.filter(
+        (a) => a.status === "yes"
+      ).length;
+      setYesCount(count);
+    }
+  }, [sessionData]);
 
-    if (previousSelection === attendanceFromChild) return;
+  const transformSessionData = (session) => {
+    if (!session) return null;
 
-    if (previousSelection === "yes" && attendanceFromChild === "no") {
-      setCurrentAttendance((prev) => prev - 1);
-    } else if (previousSelection === "no" && attendanceFromChild === "yes") {
-      setCurrentAttendance((prev) => prev + 1);
-    } else if (previousSelection === null && attendanceFromChild === "yes") {
-      setCurrentAttendance((prev) => prev + 1);
-    } else if (previousSelection === "yes" && attendanceFromChild === "maybe") {
-      setCurrentAttendance((prev) => prev - 1);
-    } else if (previousSelection === "maybe" && attendanceFromChild === "yes") {
-      setCurrentAttendance((prev) => prev + 1);
+    const sessionDate = new Date(session.date);
+    const formattedDate = sessionDate.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const sessionDateOnly = new Date(
+      sessionDate.getFullYear(),
+      sessionDate.getMonth(),
+      sessionDate.getDate()
+    );
+
+    const isToday = sessionDateOnly.getTime() === today.getTime();
+    const isTomorrow = sessionDateOnly.getTime() === tomorrow.getTime();
+
+    return {
+      date: formattedDate,
+      weekday: session.dayOfWeek,
+      time: time,
+      available: `${yesCount}/100`,
+      today: isToday,
+      tomorrow: isTomorrow,
+    };
+  };
+
+  const transformedData = transformSessionData(sessionData);
+
+  const handleAttendance = async (status) => {
+    if (!sessionData || isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    const previousStatus = currentStatus;
+    setCurrentStatus(status);
+
+    if (status === "yes" && previousStatus !== "yes") {
+      setYesCount((prev) => prev + 1);
+    } else if (previousStatus === "yes" && status !== "yes") {
+      setYesCount((prev) => Math.max(0, prev - 1));
     }
 
-    setPreviousSelection(attendanceFromChild);
-  }, [attendanceFromChild, previousSelection]);
+    try {
+      await attendSession(sessionData.id, status);
 
-  const displaySessionData = sessionData || {
-    date: "1/28/2004",
-    weekday: "Friday",
-    time: "11:30 am - 1:05 pm EST",
-    available: `${currentAttendance}/100`,
+      if (onAttendanceUpdate) {
+        onAttendanceUpdate();
+      }
+    } catch (error) {
+      console.error("Failed to RSVP:", error);
+      setCurrentStatus(previousStatus);
+      if (status === "yes" && previousStatus !== "yes") {
+        setYesCount((prev) => Math.max(0, prev - 1));
+      } else if (previousStatus === "yes" && status !== "yes") {
+        setYesCount((prev) => prev + 1);
+      }
+      alert("Failed to save your RSVP. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const updatedSessionData = {
-    ...displaySessionData,
-    available: sessionData
-      ? `${currentAttendance}/100`
-      : displaySessionData.available,
-    today: sessionData?.today,
-    tomorrow: sessionData?.tomorrow,
-  };
-
-  function handleChildAttendanceData(data) {
-    setAttendanceFromChild(data);
+  if (!transformedData) {
+    return <div>Loading session...</div>;
   }
 
   return (
-    <Card sessionData={updatedSessionData}>
-      <AttendanceButton onSend={handleChildAttendanceData} />
+    <Card sessionData={transformedData}>
+      <AttendanceButton
+        onSend={handleAttendance}
+        currentStatus={currentStatus}
+        disabled={isSubmitting}
+      />
     </Card>
   );
 };
+
 export default SessionCard;
