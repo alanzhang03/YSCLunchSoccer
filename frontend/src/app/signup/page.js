@@ -3,15 +3,13 @@ import React, { useState } from "react";
 import styles from "./signup.module.scss";
 import { signup } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-const page = () => {
-  const [phoneNum, setPhoneNum] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-
-  const handleName = () => {
-    console.log("hi");
-  };
+const Page = () => {
+  const [phoneNum, setPhoneNum] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handlePhoneNum = (e) => {
     setPhoneNum(e.target.value);
@@ -23,13 +21,21 @@ const page = () => {
     setName(e.target.value);
   };
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("testing");
-    // call signup api function
-    await signup(phoneNum, email, name, password);
-    console.log("signup successful");
-    router.push("/");
+    setError("");
+    try {
+      await signup(phoneNum, email, name, password);
+      console.log("signup successful");
+      router.push("/login");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Signup failed");
+    }
   };
 
   return (
@@ -45,6 +51,14 @@ const page = () => {
                 onChange={handleNameChange}
                 required
                 placeholder="Name"
+              />
+              <label>Email</label>
+              <input
+                value={email}
+                type="email"
+                onChange={handleEmailChange}
+                required
+                placeholder="Email"
               />
               <label>Phone Number</label>
               <input
@@ -63,6 +77,8 @@ const page = () => {
               />
             </div>
 
+            {error && <p className={styles.error}>{error}</p>}
+
             <button type="submit" className={styles.button}>
               Submit
             </button>
@@ -73,4 +89,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

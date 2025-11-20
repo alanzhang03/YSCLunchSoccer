@@ -1,21 +1,28 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./login.module.scss";
 import { login } from "@/lib/auth";
 
-const page = () => {
-  const [phoneNum, setPhoneNum] = useState('');
-  const [password, setPassword] = useState('');
+const Page = () => {
+  const [phoneNum, setPhoneNum] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(
-      `Submitted ${phoneNum} as phone Number and ${password} as password!`
-    );
-    await login(phoneNum, password);
-    console.log("login successful");
-    router.push("/");
+    setError("");
+
+    try {
+      await login(phoneNum, password);
+      console.log("login successful");
+      router.push("/");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Login failed");
+    }
   };
 
   const handlePhoneNum = (e) => {
@@ -48,6 +55,8 @@ const page = () => {
               />
             </div>
 
+            {error && <p className={styles.error}>{error}</p>}
+
             <button type="submit" className={styles.button}>
               Submit
             </button>
@@ -58,4 +67,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
