@@ -1,13 +1,13 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./signup.module.scss";
-
+import { signup } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 const page = () => {
-  const [phoneNum, setPhoneNum] = useState("ex. 123-456-7890");
-  const [password, setPassword] = useState("Password");
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [phoneNum, setPhoneNum] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
 
   const handleName = () => {
     console.log("hi");
@@ -27,6 +27,9 @@ const page = () => {
     e.preventDefault();
     console.log("testing");
     // call signup api function
+    await signup(phoneNum, email, name, password);
+    console.log("signup successful");
+    router.push("/");
   };
 
   return (
@@ -36,24 +39,27 @@ const page = () => {
           <h1 className={styles.title}>Sign Up</h1>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formGroup}>
-              <label>First Name</label>
+              <label>Name</label>
               <input
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={handleNameChange}
                 required
+                placeholder="Name"
               />
               <label>Phone Number</label>
               <input
                 value={phoneNum}
-                onChange={(e) => setPhoneNum(e.target.value)}
+                onChange={handlePhoneNum}
                 required
+                placeholder="ex. 123-456-7890"
               />
               <label>Password</label>
               <input
                 value={password}
                 type="password"
-                onChange={(e) => setPhoneNum(e.target.value)}
+                onChange={handlePassword}
                 required
+                placeholder="Password"
               />
             </div>
 
