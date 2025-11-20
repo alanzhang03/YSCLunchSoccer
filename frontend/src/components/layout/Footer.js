@@ -1,9 +1,21 @@
-import React from 'react'
+import React from "react";
+import styles from "./Footer.module.scss";
 
 const Footer = () => {
-  return (
-    <div>Footer</div>
-  )
-}
+  const currentYear = new Date().getFullYear();
 
-export default Footer
+  return (
+    <footer className={styles.footer}>
+      <div className={styles.inner}>
+        <p className={styles.copy}>
+          © {currentYear} YSC Lunch Soccer. All rights reserved.
+        </p>
+        <div className={styles.meta}>
+          <span>Built for lunchtime pickup.</span>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
