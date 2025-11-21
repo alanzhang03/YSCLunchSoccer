@@ -3,6 +3,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.attendance.deleteMany({});
+  await prisma.session.deleteMany({});
+  console.log("🗑️  Cleared existing sessions and attendances");
+
   const sessions = [];
   const now = new Date();
   let currentDate = new Date(now);
@@ -27,7 +31,7 @@ async function main() {
     await prisma.session.create({ data: sessionData });
   }
 
-  console.log(`✅ Created ${sessions.length} sessions!`);
+  console.log(`✅ Created ${sessions.length} sessions for Monday and Friday!`);
 }
 
 main()
