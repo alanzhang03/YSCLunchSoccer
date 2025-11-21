@@ -111,9 +111,11 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     try {
       await attendSession(sessionData.id, status);
 
-      if (onAttendanceUpdate) {
-        onAttendanceUpdate();
-      }
+      setTimeout(() => {
+        if (onAttendanceUpdate) {
+          onAttendanceUpdate();
+        }
+      }, 100);
     } catch (error) {
       console.error("Failed to RSVP:", error);
       setOptimisticStatus(null);
@@ -147,6 +149,30 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
 
   const statusMessage = getStatusMessage();
 
+  const getAttendanceList = () => {
+    if (!sessionData?.attendances || sessionData.attendances.length === 0) {
+      return null;
+    }
+
+    const yesAttendances = sessionData.attendances.filter(
+      (a) => a.status === "yes"
+    );
+    const noAttendances = sessionData.attendances.filter(
+      (a) => a.status === "no"
+    );
+    const maybeAttendances = sessionData.attendances.filter(
+      (a) => a.status === "maybe"
+    );
+
+    return {
+      yes: yesAttendances,
+      no: noAttendances,
+      maybe: maybeAttendances,
+    };
+  };
+
+  const attendanceList = getAttendanceList();
+
   return (
     <Card sessionData={transformedData}>
       {statusMessage && (
@@ -154,6 +180,76 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
           <span className={styles.statusText}>{statusMessage}</span>
         </div>
       )}
+
+      {attendanceList && (
+        <div className={styles.attendanceList}>
+          <h3 className={styles.attendanceListTitle}>
+            Attendees ({sessionData.attendances.length})
+          </h3>
+
+          {attendanceList.yes.length > 0 && (
+            <div className={styles.attendanceGroup}>
+              <div className={styles.attendanceGroupHeader}>
+                <span className={styles.statusBadgeYes}>
+                  Yes ({attendanceList.yes.length})
+                </span>
+              </div>
+              <div className={styles.attendanceNames}>
+                {attendanceList.yes.map((attendance) => (
+                  <div key={attendance.id} className={styles.attendanceItem}>
+                    {attendance.user
+                      ? attendance.user.name
+                      : `User ${attendance.userId || "Unknown"}`}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {attendanceList.maybe.length > 0 && (
+            <div className={styles.attendanceGroup}>
+              <div className={styles.attendanceGroupHeader}>
+                <span className={styles.statusBadgeMaybe}>
+                  Maybe ({attendanceList.maybe.length})
+                </span>
+              </div>
+              <div className={styles.attendanceNames}>
+                {attendanceList.maybe.map((attendance) => (
+                  <div key={attendance.id} className={styles.attendanceItem}>
+                    {attendance.user
+                      ? attendance.user.name
+                      : `User ${attendance.userId || "Unknown"}`}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {attendanceList.no.length > 0 && (
+            <div className={styles.attendanceGroup}>
+              <div className={styles.attendanceGroupHeader}>
+                <span className={styles.statusBadgeNo}>
+                  Can't Make It ({attendanceList.no.length})
+                </span>
+              </div>
+              <div className={styles.attendanceNames}>
+                {attendanceList.no.map((attendance) => (
+                  <div key={attendance.id} className={styles.attendanceItem}>
+                    {attendance.user
+                      ? attendance.user.name
+                      : `User ${attendance.userId || "Unknown"}`}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {sessionData.attendances.length === 0 && (
+            <div className={styles.noAttendances}>No RSVPs yet</div>
+          )}
+        </div>
+      )}
+
       <AttendanceButton
         onSend={handleAttendance}
         currentStatus={currentStatus}

@@ -9,7 +9,22 @@ router.get("/", async (req, res) => {
     const sessions = await prisma.session.findMany({
       orderBy: { date: "asc" },
       include: {
-        attendances: true,
+        attendances: {
+          where: {
+            userId: {
+              not: null,
+            },
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
     res.json(sessions);
@@ -46,18 +61,43 @@ router.post("/:id/attend", authenticateUser, async (req, res) => {
       return res.status(404).json({ error: "User not found in database" });
     }
 
-    const existingAttendance = await prisma.attendance.findFirst({
+    let existingAttendance = await prisma.attendance.findFirst({
       where: {
         sessionId: sessionId,
         userId: dbUser.id,
       },
     });
 
+    if (!existingAttendance) {
+      const nullUserIdAttendance = await prisma.attendance.findFirst({
+        where: {
+          sessionId: sessionId,
+          userId: null,
+        },
+      });
+
+      if (nullUserIdAttendance) {
+        existingAttendance = nullUserIdAttendance;
+      }
+    }
+
     let attendance;
     if (existingAttendance) {
       attendance = await prisma.attendance.update({
         where: { id: existingAttendance.id },
-        data: { status: status },
+        data: {
+          status: status,
+          userId: dbUser.id,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
       });
     } else {
       attendance = await prisma.attendance.create({
@@ -65,6 +105,15 @@ router.post("/:id/attend", authenticateUser, async (req, res) => {
           sessionId: sessionId,
           userId: dbUser.id,
           status: status,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
         },
       });
     }

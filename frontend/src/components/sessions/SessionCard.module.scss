@@ -31,3 +31,83 @@
     text-decoration: underline;
   }
 }
+
+.attendanceList {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.attendanceListTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.attendanceGroup {
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.attendanceGroupHeader {
+  margin-bottom: 0.5rem;
+}
+
+.statusBadgeYes {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: #10b981;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.statusBadgeMaybe {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: #f59e0b;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.statusBadgeNo {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: #ef4444;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.attendanceNames {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 0.5rem;
+}
+
+.attendanceItem {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  padding: 0.25rem 0;
+}
+
+.noAttendances {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem;
+}
