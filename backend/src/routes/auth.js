@@ -60,7 +60,6 @@ router.post("/signup", async (req, res) => {
       });
 
     if (authError) {
-      console.error("Supabase auth error:", authError);
       return res
         .status(400)
         .json({ error: authError.message || "Failed to create user" });
@@ -89,7 +88,6 @@ router.post("/signup", async (req, res) => {
       });
 
     if (signInError || !signInData.session) {
-      console.error("Failed to create session:", signInError);
       return res.status(201).json({ user });
     }
 
@@ -101,7 +99,6 @@ router.post("/signup", async (req, res) => {
 
     return res.status(201).json({ user });
   } catch (error) {
-    console.error("Error in signup:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -178,7 +175,6 @@ router.post("/login", async (req, res) => {
 
     return res.json({ message: "Login successful", user: safeUser });
   } catch (error) {
-    console.error("Error in login:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -217,7 +213,6 @@ router.get("/me", async (req, res) => {
 
     return res.json({ user });
   } catch (error) {
-    console.error("Error in /me:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -234,7 +229,6 @@ router.post("/logout", async (req, res) => {
 
     return res.json({ message: "Logout successful" });
   } catch (error) {
-    console.error("Error in logout:", error);
     clearAuthCookies(res);
     return res.json({ message: "Logout successful" });
   }

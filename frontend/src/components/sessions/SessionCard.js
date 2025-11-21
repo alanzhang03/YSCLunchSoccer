@@ -117,7 +117,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
         }
       }, 100);
     } catch (error) {
-      console.error("Failed to RSVP:", error);
       setOptimisticStatus(null);
       setCurrentStatus(previousStatus);
       if (status === "yes" && previousStatus !== "yes") {

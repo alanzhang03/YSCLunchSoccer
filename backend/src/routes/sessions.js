@@ -120,7 +120,6 @@ router.post("/:id/attend", authenticateUser, async (req, res) => {
 
     res.json({ success: true, attendance });
   } catch (error) {
-    console.error("Error in attend route:", error);
     res.status(500).json({ error: error.message });
   }
 });

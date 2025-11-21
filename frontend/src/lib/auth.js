@@ -26,7 +26,6 @@ export async function signup(phoneNum, email, name, password) {
 
     return data;
   } catch (error) {
-    console.error("Error signing up:", error);
     throw error;
   }
 }
@@ -46,7 +45,6 @@ export async function login(phoneNum, password) {
 
     return data;
   } catch (error) {
-    console.error("Error logging in:", error);
     throw error;
   }
 }
@@ -64,7 +62,6 @@ export async function getCurrentUser() {
 
     return response.json();
   } catch (error) {
-    console.error("Error getting current user:", error);
     return null;
   }
 }
@@ -81,7 +78,6 @@ export async function logout() {
 
     return response.json();
   } catch (error) {
-    console.error("Error logging out:", error);
     throw error;
   }
 }

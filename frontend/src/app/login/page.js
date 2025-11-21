@@ -20,10 +20,8 @@ const Page = () => {
 
     try {
       await login(phoneNum, password);
-      console.log("login successful");
       router.push("/");
     } catch (err) {
-      console.error(err);
       setError(err.message || "Login failed");
     } finally {
       setLoading(false);

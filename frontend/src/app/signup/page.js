@@ -34,10 +34,8 @@ const Page = () => {
     setLoading(true);
     try {
       await signup(phoneNum, email, name, password);
-      console.log("signup successful");
       router.push("/");
     } catch (err) {
-      console.error(err);
       setError(err.message || "Signup failed");
     } finally {
       setLoading(false);

@@ -20,7 +20,6 @@ export async function authenticateUser(req, res, next) {
     req.user = user;
     next();
   } catch (error) {
-    console.error("Auth middleware error:", error);
     return res.status(401).json({ error: "Authentication failed" });
   }
 }
