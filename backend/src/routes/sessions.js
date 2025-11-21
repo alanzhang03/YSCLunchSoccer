@@ -1,5 +1,6 @@
 import { Router } from "express";
 import prisma from "../db/client.js";
+import { authenticateUser } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -17,10 +18,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/:id/attend", async (req, res) => {
+router.post("/:id/attend", authenticateUser, async (req, res) => {
   try {
     const sessionId = req.params.id;
     const { status } = req.body;
+    const supabaseUser = req.user;
 
     if (!["yes", "no", "maybe"].includes(status)) {
       return res
@@ -36,10 +38,18 @@ router.post("/:id/attend", async (req, res) => {
       return res.status(404).json({ error: "Session not found" });
     }
 
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: "User not found in database" });
+    }
+
     const existingAttendance = await prisma.attendance.findFirst({
       where: {
         sessionId: sessionId,
-        userId: null,
+        userId: dbUser.id,
       },
     });
 
@@ -53,7 +63,7 @@ router.post("/:id/attend", async (req, res) => {
       attendance = await prisma.attendance.create({
         data: {
           sessionId: sessionId,
-          userId: null,
+          userId: dbUser.id,
           status: status,
         },
       });

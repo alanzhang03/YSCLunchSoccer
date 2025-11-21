@@ -28,7 +28,7 @@ const Navbar = () => {
           <Link href="/" className={styles.link}>
             Home
           </Link>
-          <Link href="/" className={styles.link}>
+          <Link href="/sessions" className={styles.link}>
             Sessions
           </Link>
         </nav>

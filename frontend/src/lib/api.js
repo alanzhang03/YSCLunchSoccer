@@ -9,19 +9,18 @@ export async function getSessions() {
 }
 
 export async function attendSession(sessionId, status) {
-  const response = await fetch(
-    `${API_BASE_URL}/api/sessions/${sessionId}/attend`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status }),
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/attend`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
 
   if (!response.ok) {
-    throw new Error("Failed to RSVP");
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Failed to RSVP");
   }
 
   return response.json();
@@ -29,7 +28,7 @@ export async function attendSession(sessionId, status) {
 
 export async function getSessionAttendances(sessionId) {
   const response = await fetch(
-    `${API_BASE_URL}/api/sessions/${sessionId}/attendances`
+    `${API_BASE_URL}/sessions/${sessionId}/attendances`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch attendances");
