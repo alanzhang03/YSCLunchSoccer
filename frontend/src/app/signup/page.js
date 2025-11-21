@@ -1,15 +1,18 @@
 "use client";
 import React, { useState } from "react";
 import styles from "./signup.module.scss";
-import { signup } from "@/lib/auth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { signup } = useAuth();
 
   const handlePhoneNum = (e) => {
     setPhoneNum(e.target.value);
@@ -28,13 +31,16 @@ const Page = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
       await signup(phoneNum, email, name, password);
       console.log("signup successful");
-      router.push("/login");
+      router.push("/");
     } catch (err) {
       console.error(err);
       setError(err.message || "Signup failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,8 +85,8 @@ const Page = () => {
 
             {error && <p className={styles.error}>{error}</p>}
 
-            <button type="submit" className={styles.button}>
-              Submit
+            <button type="submit" className={styles.button} disabled={loading}>
+              {loading ? "Signing up..." : "Submit"}
             </button>
           </form>
         </div>

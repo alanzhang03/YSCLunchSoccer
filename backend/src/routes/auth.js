@@ -1,8 +1,32 @@
 import { Router } from "express";
 import prisma from "../db/client.js";
 import bcrypt from "bcrypt";
+import { supabaseAdmin } from "../lib/supabase.js";
 
 const router = Router();
+
+function setAuthCookies(res, accessToken, refreshToken) {
+  res.cookie("sb_access_token", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 1000,
+    path: "/",
+  });
+
+  res.cookie("sb_refresh_token", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  });
+}
+
+function clearAuthCookies(res) {
+  res.clearCookie("sb_access_token");
+  res.clearCookie("sb_refresh_token");
+}
 
 router.post("/signup", async (req, res) => {
   try {
@@ -24,14 +48,30 @@ router.post("/signup", async (req, res) => {
         .json({ error: "User with this email or phone already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { data: authData, error: authError } =
+      await supabaseAdmin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: {
+          name,
+          phone: phoneNum,
+        },
+      });
+
+    if (authError) {
+      console.error("Supabase auth error:", authError);
+      return res
+        .status(400)
+        .json({ error: authError.message || "Failed to create user" });
+    }
 
     const user = await prisma.user.create({
       data: {
+        supabaseUserId: authData.user.id,
         email,
         phone: phoneNum,
         name,
-        password: hashedPassword,
       },
       select: {
         id: true,
@@ -41,6 +81,23 @@ router.post("/signup", async (req, res) => {
         createdAt: true,
       },
     });
+
+    const { data: signInData, error: signInError } =
+      await supabaseAdmin.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+    if (signInError || !signInData.session) {
+      console.error("Failed to create session:", signInError);
+      return res.status(201).json({ user });
+    }
+
+    setAuthCookies(
+      res,
+      signInData.session.access_token,
+      signInData.session.refresh_token
+    );
 
     return res.status(201).json({ user });
   } catch (error) {
@@ -64,15 +121,52 @@ router.post("/login", async (req, res) => {
     });
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid phone number or password" });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
       return res
         .status(401)
         .json({ error: "Invalid phone number or password" });
     }
+
+    let signInData = null;
+    let signInError = null;
+
+    try {
+      const result = await supabaseAdmin.auth.signInWithPassword({
+        email: user.email,
+        password,
+      });
+      signInData = result.data;
+      signInError = result.error;
+    } catch (err) {
+      signInError = err;
+    }
+
+    if (signInError || !signInData?.session) {
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user.password || ""
+      );
+
+      if (!isPasswordValid) {
+        return res
+          .status(401)
+          .json({ error: "Invalid phone number or password" });
+      }
+
+      const safeUser = {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        name: user.name,
+        createdAt: user.createdAt,
+      };
+      return res.json({ message: "Login successful", user: safeUser });
+    }
+
+    setAuthCookies(
+      res,
+      signInData.session.access_token,
+      signInData.session.refresh_token
+    );
 
     const safeUser = {
       id: user.id,
@@ -89,8 +183,61 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/logout", async (_req, res) => {
-  return res.json({ message: "Logout successful" });
+router.get("/me", async (req, res) => {
+  try {
+    const token = req.cookies?.sb_access_token;
+
+    if (!token) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const {
+      data: { user: supabaseUser },
+      error,
+    } = await supabaseAdmin.auth.getUser(token);
+
+    if (error || !supabaseUser) {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        name: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({ user });
+  } catch (error) {
+    console.error("Error in /me:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/logout", async (req, res) => {
+  try {
+    const token = req.cookies?.sb_access_token;
+
+    if (token) {
+      await supabaseAdmin.auth.signOut(token);
+    }
+
+    clearAuthCookies(res);
+
+    return res.json({ message: "Logout successful" });
+  } catch (error) {
+    console.error("Error in logout:", error);
+    clearAuthCookies(res);
+    return res.json({ message: "Logout successful" });
+  }
 });
 
 export default router;

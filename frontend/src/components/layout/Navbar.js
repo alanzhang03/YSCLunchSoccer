@@ -1,8 +1,21 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./Navbar.module.scss";
 
 const Navbar = () => {
+  const { user, loading, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <header className={styles.navbar}>
       <div className={styles.inner}>
@@ -21,12 +34,25 @@ const Navbar = () => {
         </nav>
 
         <div className={styles.authLinks}>
-          <Link href="/login" className={styles.loginLink}>
-            Log In
-          </Link>
-          <Link href="/signup" className={styles.signupButton}>
-            Sign Up
-          </Link>
+          {loading ? (
+            <span className={styles.loading}>Loading...</span>
+          ) : user ? (
+            <>
+              <span className={styles.userName}>Welcome, {user.name}!</span>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className={styles.loginLink}>
+                Log In
+              </Link>
+              <Link href="/signup" className={styles.signupButton}>
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
@@ -34,5 +60,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-

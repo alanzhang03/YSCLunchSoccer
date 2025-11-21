@@ -1,7 +1,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 export async function getSessions() {
-  const response = await fetch(`${API_BASE_URL}/api/sessions`);
+  const response = await fetch(`${API_BASE_URL}/sessions`);
   if (!response.ok) {
     throw new Error("Failed to fetch sessions");
   }

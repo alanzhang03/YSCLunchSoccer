@@ -2,18 +2,21 @@
 import React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./login.module.scss";
-import { login } from "@/lib/auth";
 
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       await login(phoneNum, password);
@@ -22,6 +25,8 @@ const Page = () => {
     } catch (err) {
       console.error(err);
       setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,8 +62,8 @@ const Page = () => {
 
             {error && <p className={styles.error}>{error}</p>}
 
-            <button type="submit" className={styles.button}>
-              Submit
+            <button type="submit" className={styles.button} disabled={loading}>
+              {loading ? "Logging in..." : "Submit"}
             </button>
           </form>
         </div>
