@@ -147,4 +147,39 @@ router.get("/:id/attendances", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const sessionId = req.params.id;
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      include: {
+        attendances: {
+          where: {
+            userId: {
+              not: null,
+            },
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    res.json(session);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

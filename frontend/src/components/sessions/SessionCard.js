@@ -6,9 +6,12 @@ import styles from "./SessionCard.module.scss";
 import Card from "../ui/Card";
 import AttendanceButton from "./AttendanceButton";
 import { attendSession } from "@/lib/api";
+import Link from "next/link";
+// import { useRouter } from "next/router";
 
 const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
   const { user } = useAuth();
+  // const router = useRouter();
   const [currentStatus, setCurrentStatus] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [yesCount, setYesCount] = useState(0);
@@ -84,7 +87,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
       date: formattedDate,
       weekday: weekday,
       time: time,
-      available: `${yesCount}/100`,
+      available: `${yesCount}/50`,
       today: isToday,
       tomorrow: isTomorrow,
     };
@@ -173,7 +176,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
   const attendanceList = getAttendanceList();
 
   return (
-    <Card sessionData={transformedData}>
+    <Card sessionData={transformedData} sessionId={sessionData.id}>
       {statusMessage && (
         <div className={styles.statusIndicator}>
           <span className={styles.statusText}>{statusMessage}</span>

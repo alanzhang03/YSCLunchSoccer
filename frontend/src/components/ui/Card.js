@@ -1,6 +1,7 @@
 import styles from "./Card.module.scss";
+import Link from "next/link";
 
-export default function Card({ sessionData, children }) {
+export default function Card({ sessionData, children, sessionId }) {
   const date = sessionData.date;
   const weekday = sessionData.weekday;
   const time = sessionData.time;
@@ -13,6 +14,11 @@ export default function Card({ sessionData, children }) {
       <div className={styles.cardAvailContainer}>
         <div className={styles.titleContainer}>
           <h1 className={styles.title}>Lunch Soccer</h1>
+          {sessionId && (
+            <Link href={`/sessions/${sessionId}`} className={styles.moreInfo}>
+              More info
+            </Link>
+          )}
           {(today || tomorrow) && (
             <span
               className={`${styles.dateLabel} ${

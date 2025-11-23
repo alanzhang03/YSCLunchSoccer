@@ -32,6 +32,21 @@ export async function attendSession(sessionId, status) {
   return response.json();
 }
 
+export async function getSessionById(sessionId) {
+  const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}`, {
+    method: "GET",
+    cache: "no-store",
+    headers: {
+      "Cache-Control": "no-cache",
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Failed to fetch session");
+  }
+  return response.json();
+}
+
 export async function getSessionAttendances(sessionId) {
   const response = await fetch(
     `${API_BASE_URL}/sessions/${sessionId}/attendances`
