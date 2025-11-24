@@ -7,10 +7,13 @@ const router = Router();
 
 function setAuthCookies(res, accessToken, refreshToken) {
   const isProduction = process.env.NODE_ENV === "production";
+  const isCrossOrigin =
+    isProduction && process.env.FRONTEND_URL?.includes("vercel");
+
   const cookieOptions = {
     httpOnly: true,
-    secure: isProduction, 
-    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
+    sameSite: isCrossOrigin ? "none" : isProduction ? "lax" : "lax",
     maxAge: 60 * 60 * 1000,
     path: "/",
   };
@@ -19,19 +22,21 @@ function setAuthCookies(res, accessToken, refreshToken) {
 
   res.cookie("sb_refresh_token", refreshToken, {
     ...cookieOptions,
-    maxAge: 7 * 24 * 60 * 60 * 1000, 
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 }
 
 function clearAuthCookies(res) {
   const isProduction = process.env.NODE_ENV === "production";
+  const isCrossOrigin =
+    isProduction && process.env.FRONTEND_URL?.includes("vercel");
   const cookieOptions = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    sameSite: isCrossOrigin ? "none" : isProduction ? "lax" : "lax",
     path: "/",
   };
-  
+
   res.clearCookie("sb_access_token", cookieOptions);
   res.clearCookie("sb_refresh_token", cookieOptions);
 }
@@ -107,7 +112,12 @@ router.post("/signup", async (req, res) => {
 
     return res.status(201).json({ user });
   } catch (error) {
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Signup error:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      message:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 });
 
@@ -183,7 +193,12 @@ router.post("/login", async (req, res) => {
 
     return res.json({ message: "Login successful", user: safeUser });
   } catch (error) {
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Login error:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      message:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 });
 
