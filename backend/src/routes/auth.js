@@ -7,19 +7,32 @@ const router = Router();
 
 function setAuthCookies(res, accessToken, refreshToken) {
   const isProduction = process.env.NODE_ENV === "production";
+  const frontendUrl = (process.env.FRONTEND_URL || "").trim();
   const isCrossOrigin =
-    isProduction && process.env.FRONTEND_URL?.includes("vercel");
+    isProduction && frontendUrl.toLowerCase().includes("vercel");
 
-  const sameSiteValue = isCrossOrigin ? "none" : "lax";
-  const secureValue = isCrossOrigin ? true : isProduction;
-
+  // When sameSite is "none", secure MUST be true (required by cookie spec)
+  // Build cookie options based on environment
   const cookieOptions = {
     httpOnly: true,
-    secure: secureValue,
-    sameSite: sameSiteValue,
     maxAge: 60 * 60 * 1000,
     path: "/",
   };
+
+  if (isCrossOrigin) {
+    // Cross-origin: need sameSite="none" and secure=true
+    cookieOptions.secure = true;
+    cookieOptions.sameSite = "none";
+  } else {
+    // Same-origin: can use lax and secure based on environment
+    cookieOptions.secure = Boolean(isProduction);
+    cookieOptions.sameSite = "lax";
+  }
+
+  // Ensure sameSite is a valid string (cookie library requirement)
+  if (typeof cookieOptions.sameSite !== "string") {
+    cookieOptions.sameSite = String(cookieOptions.sameSite);
+  }
 
   res.cookie("sb_access_token", accessToken, cookieOptions);
 
@@ -31,18 +44,31 @@ function setAuthCookies(res, accessToken, refreshToken) {
 
 function clearAuthCookies(res) {
   const isProduction = process.env.NODE_ENV === "production";
+  const frontendUrl = (process.env.FRONTEND_URL || "").trim();
   const isCrossOrigin =
-    isProduction && process.env.FRONTEND_URL?.includes("vercel");
+    isProduction && frontendUrl.toLowerCase().includes("vercel");
 
-  const sameSiteValue = isCrossOrigin ? "none" : "lax";
-  const secureValue = isCrossOrigin ? true : isProduction;
-
+  // When sameSite is "none", secure MUST be true (required by cookie spec)
+  // Build cookie options based on environment
   const cookieOptions = {
     httpOnly: true,
-    secure: secureValue,
-    sameSite: sameSiteValue,
     path: "/",
   };
+
+  if (isCrossOrigin) {
+    // Cross-origin: need sameSite="none" and secure=true
+    cookieOptions.secure = true;
+    cookieOptions.sameSite = "none";
+  } else {
+    // Same-origin: can use lax and secure based on environment
+    cookieOptions.secure = Boolean(isProduction);
+    cookieOptions.sameSite = "lax";
+  }
+
+  // Ensure sameSite is a valid string (cookie library requirement)
+  if (typeof cookieOptions.sameSite !== "string") {
+    cookieOptions.sameSite = String(cookieOptions.sameSite);
+  }
 
   res.clearCookie("sb_access_token", cookieOptions);
   res.clearCookie("sb_refresh_token", cookieOptions);
@@ -184,11 +210,21 @@ router.post("/login", async (req, res) => {
       return res.json({ message: "Login successful", user: safeUser });
     }
 
-    setAuthCookies(
-      res,
-      signInData.session.access_token,
-      signInData.session.refresh_token
-    );
+    try {
+      setAuthCookies(
+        res,
+        signInData.session.access_token,
+        signInData.session.refresh_token
+      );
+    } catch (cookieError) {
+      console.error("Cookie setting error:", cookieError);
+      console.error("Environment:", {
+        NODE_ENV: process.env.NODE_ENV,
+        FRONTEND_URL: process.env.FRONTEND_URL,
+        isProduction: process.env.NODE_ENV === "production",
+      });
+      // Continue without cookies - user will need to re-authenticate
+    }
 
     const safeUser = {
       id: user.id,
