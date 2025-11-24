@@ -394,13 +394,42 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
   }
 
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .welcomeMessage {
+    font-size: 1.125rem;
+    padding: 0.875rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .ctaSection {
+    margin: 2.5rem 0;
+  }
+
+  .ctaButton {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
   .infoSection {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    margin-top: 3rem;
   }
 
   .infoCard {
     padding: 2rem;
+
+    h2 {
+      font-size: 1.625rem;
+      padding-left: 1.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
   }
 
   .authButtons {
@@ -415,5 +444,73 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
   .loginButton {
     width: 100%;
     padding: 1rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 2rem 0.75rem;
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: 0.9375rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .welcomeMessage {
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .ctaSection {
+    margin: 2rem 0;
+  }
+
+  .ctaButton {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9375rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .infoSection {
+    margin-top: 2.5rem;
+    gap: 1.25rem;
+  }
+
+  .infoCard {
+    padding: 1.5rem;
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      padding-left: 1.25rem;
+
+      &::before {
+        height: 20px;
+      }
+    }
+
+    p {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+    }
+  }
+
+  .authButtons {
+    max-width: 100%;
+    gap: 0.75rem;
+  }
+
+  .signupButton,
+  .loginButton {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9375rem;
   }
 }
