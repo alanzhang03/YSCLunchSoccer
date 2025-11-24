@@ -11,8 +11,6 @@ function setAuthCookies(res, accessToken, refreshToken) {
   const isCrossOrigin =
     isProduction && frontendUrl.toLowerCase().includes("vercel");
 
-  // When sameSite is "none", secure MUST be true (required by cookie spec)
-  // Build cookie options based on environment
   const cookieOptions = {
     httpOnly: true,
     maxAge: 60 * 60 * 1000,
@@ -20,16 +18,13 @@ function setAuthCookies(res, accessToken, refreshToken) {
   };
 
   if (isCrossOrigin) {
-    // Cross-origin: need sameSite="none" and secure=true
     cookieOptions.secure = true;
     cookieOptions.sameSite = "none";
   } else {
-    // Same-origin: can use lax and secure based on environment
     cookieOptions.secure = Boolean(isProduction);
     cookieOptions.sameSite = "lax";
   }
 
-  // Ensure sameSite is a valid string (cookie library requirement)
   if (typeof cookieOptions.sameSite !== "string") {
     cookieOptions.sameSite = String(cookieOptions.sameSite);
   }
@@ -48,24 +43,19 @@ function clearAuthCookies(res) {
   const isCrossOrigin =
     isProduction && frontendUrl.toLowerCase().includes("vercel");
 
-  // When sameSite is "none", secure MUST be true (required by cookie spec)
-  // Build cookie options based on environment
   const cookieOptions = {
     httpOnly: true,
     path: "/",
   };
 
   if (isCrossOrigin) {
-    // Cross-origin: need sameSite="none" and secure=true
     cookieOptions.secure = true;
     cookieOptions.sameSite = "none";
   } else {
-    // Same-origin: can use lax and secure based on environment
     cookieOptions.secure = Boolean(isProduction);
     cookieOptions.sameSite = "lax";
   }
 
-  // Ensure sameSite is a valid string (cookie library requirement)
   if (typeof cookieOptions.sameSite !== "string") {
     cookieOptions.sameSite = String(cookieOptions.sameSite);
   }
