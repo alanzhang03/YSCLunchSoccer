@@ -13,17 +13,13 @@ const PORT = process.env.PORT || 5001;
 const allowedOrigins = [
   process.env.FRONTEND_URL || "http://localhost:3000",
   /^https:\/\/.*\.vercel\.app$/,
-  // Add your production domain when you set it up
   process.env.PRODUCTION_URL,
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      
-      // Check if origin matches any allowed origin
       const isAllowed = allowedOrigins.some((allowedOrigin) => {
         if (typeof allowedOrigin === "string") {
           return origin === allowedOrigin;
