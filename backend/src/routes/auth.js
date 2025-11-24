@@ -15,19 +15,9 @@ function setAuthCookies(res, accessToken, refreshToken) {
     httpOnly: true,
     maxAge: 60 * 60 * 1000,
     path: "/",
+    secure: isCrossOrigin ? true : isProduction,
+    sameSite: isCrossOrigin ? "none" : "lax",
   };
-
-  if (isCrossOrigin) {
-    cookieOptions.secure = true;
-    cookieOptions.sameSite = "none";
-  } else {
-    cookieOptions.secure = Boolean(isProduction);
-    cookieOptions.sameSite = "lax";
-  }
-
-  if (typeof cookieOptions.sameSite !== "string") {
-    cookieOptions.sameSite = String(cookieOptions.sameSite);
-  }
 
   res.cookie("sb_access_token", accessToken, cookieOptions);
 
@@ -46,19 +36,9 @@ function clearAuthCookies(res) {
   const cookieOptions = {
     httpOnly: true,
     path: "/",
+    secure: isCrossOrigin ? true : isProduction,
+    sameSite: isCrossOrigin ? "none" : "lax",
   };
-
-  if (isCrossOrigin) {
-    cookieOptions.secure = true;
-    cookieOptions.sameSite = "none";
-  } else {
-    cookieOptions.secure = Boolean(isProduction);
-    cookieOptions.sameSite = "lax";
-  }
-
-  if (typeof cookieOptions.sameSite !== "string") {
-    cookieOptions.sameSite = String(cookieOptions.sameSite);
-  }
 
   res.clearCookie("sb_access_token", cookieOptions);
   res.clearCookie("sb_refresh_token", cookieOptions);
@@ -213,7 +193,6 @@ router.post("/login", async (req, res) => {
         FRONTEND_URL: process.env.FRONTEND_URL,
         isProduction: process.env.NODE_ENV === "production",
       });
-      // Continue without cookies - user will need to re-authenticate
     }
 
     const safeUser = {
