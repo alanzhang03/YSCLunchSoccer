@@ -10,18 +10,12 @@ function setAuthCookies(res, accessToken, refreshToken) {
   const isCrossOrigin =
     isProduction && process.env.FRONTEND_URL?.includes("vercel");
 
-  let sameSiteValue = "lax"; 
-  if (isCrossOrigin) {
-    sameSiteValue = "none"; 
-  } else if (isProduction) {
-    sameSiteValue = "lax"; 
-  } else {
-    sameSiteValue = "lax"; 
-  }
+  const sameSiteValue = isCrossOrigin ? "none" : "lax";
+  const secureValue = isCrossOrigin ? true : isProduction;
 
   const cookieOptions = {
     httpOnly: true,
-    secure: isProduction,
+    secure: secureValue,
     sameSite: sameSiteValue,
     maxAge: 60 * 60 * 1000,
     path: "/",
@@ -40,18 +34,12 @@ function clearAuthCookies(res) {
   const isCrossOrigin =
     isProduction && process.env.FRONTEND_URL?.includes("vercel");
 
-  let sameSiteValue = "lax";
-  if (isCrossOrigin) {
-    sameSiteValue = "none"; 
-  } else if (isProduction) {
-    sameSiteValue = "lax"; 
-  } else {
-    sameSiteValue = "lax"; 
-  }
+  const sameSiteValue = isCrossOrigin ? "none" : "lax";
+  const secureValue = isCrossOrigin ? true : isProduction;
 
   const cookieOptions = {
     httpOnly: true,
-    secure: isProduction,
+    secure: secureValue,
     sameSite: sameSiteValue,
     path: "/",
   };
