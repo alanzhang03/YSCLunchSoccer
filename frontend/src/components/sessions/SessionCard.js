@@ -16,6 +16,11 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [yesCount, setYesCount] = useState(0);
   const [optimisticStatus, setOptimisticStatus] = useState(null);
+  const [expandedSections, setExpandedSections] = useState({
+    yes: false,
+    maybe: false,
+    no: false,
+  });
 
   useEffect(() => {
     if (sessionData?.attendances) {
@@ -173,7 +178,99 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     };
   };
 
-  const attendanceList = getAttendanceList();
+  const USE_DUMMY_DATA = true;
+
+  const generateDummyAttendances = () => {
+    const dummyUsers = [
+      { id: 1, name: "Alan Zhang" },
+      { id: 2, name: "Sarah Johnson" },
+      { id: 3, name: "Michael Chen" },
+      { id: 4, name: "Emily Rodriguez" },
+      { id: 5, name: "David Kim" },
+      { id: 6, name: "Jessica Martinez" },
+      { id: 7, name: "Ryan Thompson" },
+      { id: 8, name: "Amanda Lee" },
+      { id: 9, name: "Chris Wilson" },
+      { id: 10, name: "Lisa Anderson" },
+      { id: 11, name: "James Brown" },
+      { id: 12, name: "Maria Garcia" },
+      { id: 13, name: "Robert Taylor" },
+      { id: 14, name: "Jennifer White" },
+      { id: 15, name: "Daniel Moore" },
+      { id: 16, name: "Nicole Davis" },
+      { id: 17, name: "Kevin Miller" },
+      { id: 18, name: "Rachel Adams" },
+    ];
+
+    const dummyYes = dummyUsers.slice(0, 10).map((user, index) => ({
+      id: `dummy-yes-${index + 1}`,
+      userId: user.id,
+      user: user,
+      status: "yes",
+    }));
+
+    const dummyMaybe = dummyUsers.slice(8, 14).map((user, index) => ({
+      id: `dummy-maybe-${index + 1}`,
+      userId: user.id,
+      user: user,
+      status: "maybe",
+    }));
+
+    const dummyNo = dummyUsers.slice(12, 18).map((user, index) => ({
+      id: `dummy-no-${index + 1}`,
+      userId: user.id,
+      user: user,
+      status: "no",
+    }));
+
+    return {
+      yes: dummyYes,
+      maybe: dummyMaybe,
+      no: dummyNo,
+    };
+  };
+
+  const attendanceList = USE_DUMMY_DATA
+    ? generateDummyAttendances()
+    : getAttendanceList();
+
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
+  const renderAttendanceList = (attendances, section) => {
+    if (!attendances || attendances.length === 0) return null;
+
+    const shouldTruncate = attendances.length > 3;
+    const isExpanded = expandedSections[section];
+    const displayCount = shouldTruncate && !isExpanded ? 3 : attendances.length;
+    const displayedAttendances = attendances.slice(0, displayCount);
+    const remainingCount = attendances.length - 5;
+
+    return (
+      <>
+        {displayedAttendances.map((attendance) => (
+          <div key={attendance.id} className={styles.attendanceItem}>
+            {attendance.user
+              ? attendance.user.name
+              : `User ${attendance.userId || "Unknown"}`}
+          </div>
+        ))}
+        {shouldTruncate && (
+          <button
+            className={styles.viewMoreButton}
+            onClick={() => toggleSection(section)}
+            type="button"
+          >
+            {isExpanded ? `View Less` : `View More (${remainingCount} more)`}
+          </button>
+        )}
+      </>
+    );
+  };
 
   return (
     <Card sessionData={transformedData} sessionId={sessionData.id}>
@@ -186,7 +283,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
       {attendanceList && (
         <div className={styles.attendanceList}>
           <h3 className={styles.attendanceListTitle}>
-            Attendees ({sessionData.attendances.length})
+            Attendees (
+            {USE_DUMMY_DATA
+              ? attendanceList.yes.length +
+                attendanceList.maybe.length +
+                attendanceList.no.length
+              : sessionData.attendances?.length || 0}
+            )
           </h3>
 
           {attendanceList.yes.length > 0 && (
@@ -197,13 +300,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
                 </span>
               </div>
               <div className={styles.attendanceNames}>
-                {attendanceList.yes.map((attendance) => (
-                  <div key={attendance.id} className={styles.attendanceItem}>
-                    {attendance.user
-                      ? attendance.user.name
-                      : `User ${attendance.userId || "Unknown"}`}
-                  </div>
-                ))}
+                {renderAttendanceList(attendanceList.yes, "yes")}
               </div>
             </div>
           )}
@@ -216,13 +313,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
                 </span>
               </div>
               <div className={styles.attendanceNames}>
-                {attendanceList.maybe.map((attendance) => (
-                  <div key={attendance.id} className={styles.attendanceItem}>
-                    {attendance.user
-                      ? attendance.user.name
-                      : `User ${attendance.userId || "Unknown"}`}
-                  </div>
-                ))}
+                {renderAttendanceList(attendanceList.maybe, "maybe")}
               </div>
             </div>
           )}
@@ -235,18 +326,12 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
                 </span>
               </div>
               <div className={styles.attendanceNames}>
-                {attendanceList.no.map((attendance) => (
-                  <div key={attendance.id} className={styles.attendanceItem}>
-                    {attendance.user
-                      ? attendance.user.name
-                      : `User ${attendance.userId || "Unknown"}`}
-                  </div>
-                ))}
+                {renderAttendanceList(attendanceList.no, "no")}
               </div>
             </div>
           )}
 
-          {sessionData.attendances.length === 0 && (
+          {!USE_DUMMY_DATA && sessionData.attendances?.length === 0 && (
             <div className={styles.noAttendances}>No RSVPs yet</div>
           )}
         </div>
