@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  // clear existing data for fresh seed
   await prisma.attendance.deleteMany({});
   await prisma.session.deleteMany({});
   console.log("🗑️  Cleared existing sessions and attendances");
@@ -15,13 +16,32 @@ async function main() {
     const dayOfWeek = currentDate.getDay();
 
     if (dayOfWeek === 1 || dayOfWeek === 5) {
-      sessions.push({
-        date: new Date(currentDate),
-        dayOfWeek: dayOfWeek === 1 ? "Monday" : "Friday",
-        startTime: "11:45 AM",
-        endTime: "1:05 PM",
-        timezone: "EST",
+      const existing = await prisma.session.findFirst({
+        where: {
+          date: {
+            gte: new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth(),
+              currentDate.getDate()
+            ),
+            lt: new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth(),
+              currentDate.getDate() + 1
+            ),
+          },
+        },
       });
+
+      if (!existing) {
+        sessions.push({
+          date: new Date(currentDate),
+          dayOfWeek: dayOfWeek === 1 ? "Monday" : "Friday",
+          startTime: "11:45 AM",
+          endTime: "1:05 PM",
+          timezone: "EST",
+        });
+      }
     }
 
     currentDate.setDate(currentDate.getDate() + 1);

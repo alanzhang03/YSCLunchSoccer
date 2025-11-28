@@ -2,8 +2,10 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cron from "node-cron";
 import sessionsRouter from "./routes/sessions.js";
 import authRouter from "./routes/auth.js";
+import { sessionGenerator } from "./utils/sessionGenerator.js";
 
 dotenv.config();
 
@@ -50,6 +52,16 @@ app.get("/", (req, res) => {
 app.use("/api/sessions", sessionsRouter);
 app.use("/api/auth", authRouter);
 
+sessionGenerator().catch((error) => {
+  console.log(error);
+});
+
+cron.schedule("0 0 * * 5", async () => {
+  console.log("🔄 Running scheduled session generation...");
+  await sessionGenerator();
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log("📅 Session generation scheduled for every Friday at midnight");
 });
