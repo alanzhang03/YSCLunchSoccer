@@ -178,7 +178,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     };
   };
 
-  const USE_DUMMY_DATA = true;
+  const USE_DUMMY_DATA = false;
 
   const generateDummyAttendances = () => {
     const dummyUsers = [

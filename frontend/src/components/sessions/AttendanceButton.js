@@ -31,7 +31,7 @@ const AttendanceButton = ({ onSend, currentStatus: propStatus, disabled }) => {
         disabled={disabled}
       >
         <span className={styles.icon}>✅</span>
-        <span className={styles.text}>Yes, I'm in!</span>
+        <span className={styles.text}>Yes</span>
       </button>
       <button
         className={`${styles.button} ${styles.buttonNo} ${
@@ -41,7 +41,7 @@ const AttendanceButton = ({ onSend, currentStatus: propStatus, disabled }) => {
         disabled={disabled}
       >
         <span className={styles.icon}>❌</span>
-        <span className={styles.text}>Can't make it</span>
+        <span className={styles.text}>No</span>
       </button>
       <button
         className={`${styles.button} ${styles.buttonMaybe} ${
