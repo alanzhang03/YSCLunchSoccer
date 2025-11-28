@@ -1,4 +1,5 @@
 .sessionList {
+  overflow-x: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
@@ -7,6 +8,28 @@
   margin: 0 auto;
   padding: 0 1rem;
   box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+    }
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: #667eea #f1f1f1;
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
