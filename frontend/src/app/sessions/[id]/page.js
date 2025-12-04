@@ -142,6 +142,17 @@ export default function SessionDetailPage() {
             onAttendanceUpdate={handleAttendanceUpdate}
           />
         </motion.div>
+        <motion.div
+          variants={contentVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.5 }}
+        >
+          <div className={styles.chatSection}>
+            <h3 className={styles.chatTitle}>Chat Section</h3>
+            
+          </div>
+        </motion.div>
       </main>
     </motion.div>
   );

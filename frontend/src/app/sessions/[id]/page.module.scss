@@ -69,6 +69,24 @@
   }
 }
 
+.chatSection {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 5vh;
+  //to be deleted
+  height: 50vh;
+
+  .chatTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: black;
+    margin: 0;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
 @media (max-width: 768px) {
   .page {
     padding: 1.5rem 1rem;
@@ -144,4 +162,3 @@
     }
   }
 }
-
