@@ -128,7 +128,7 @@ export default function SessionDetailPage() {
           <a href="/sessions" className={styles.backLink}>
             ← Back to Sessions
           </a>
-          <h1 className={styles.title}>Session Details</h1>
+        <h1 className={styles.title}>Session Details</h1>
         </motion.div>
 
         <motion.div

@@ -56,3 +56,4 @@ export async function getSessionAttendances(sessionId) {
   }
   return response.json();
 }
+

@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  supabaseUserId String?  @unique 
-  email         String   @unique
-  phone         String   @unique
-  name          String
-  password      String?  
-  createdAt     DateTime @default(now())
+  id             String   @id @default(uuid())
+  supabaseUserId String?  @unique
+  email          String   @unique
+  phone          String   @unique
+  name           String
+  password       String?
+  createdAt      DateTime @default(now())
 
   attendances Attendance[]
+  messages    Message[]
 }
 
 model Session {
@@ -36,6 +37,7 @@ model Session {
   updatedAt DateTime @updatedAt
 
   attendances Attendance[]
+  messages    Message[]
 
   @@index([date])
 }
@@ -52,6 +54,20 @@ model Attendance {
   user    User?   @relation(fields: [userId], references: [id])
 
   @@unique([sessionId, userId])
+  @@index([sessionId])
+  @@index([userId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  sessionId String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
   @@index([sessionId])
   @@index([userId])
 }
