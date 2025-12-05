@@ -57,3 +57,40 @@ export async function getSessionAttendances(sessionId) {
   return response.json();
 }
 
+export async function getMessages(sessionId) {
+  const response = await fetch(`${API_BASE_URL}/messages/${sessionId}`, {
+    method: "GET",
+    cache: "no-store",
+    headers: {
+      "Cache-Control": "no-cache",
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Failed to fetch messages");
+  }
+
+  return response.json();
+}
+
+export async function sendMessage(sessionId, content) {
+  const response = await fetch(`${API_BASE_URL}/messages`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: sessionId,
+      content: content,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Failed to send message");
+  }
+
+  return response.json();
+}

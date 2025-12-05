@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cron from "node-cron";
 import sessionsRouter from "./routes/sessions.js";
 import authRouter from "./routes/auth.js";
+import messagesRouter from "./routes/messages.js";
 import { sessionGenerator } from "./utils/sessionGenerator.js";
 
 dotenv.config();
@@ -51,6 +52,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/sessions", sessionsRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/messages", messagesRouter);
 
 sessionGenerator().catch((error) => {
   console.log(error);
