@@ -3,7 +3,12 @@ import React from "react";
 import { useState, useEffect } from "react";
 import styles from "./AttendanceButton.module.scss";
 
-const AttendanceButton = ({ onSend, currentStatus: propStatus, disabled }) => {
+const AttendanceButton = ({
+  onSend,
+  currentStatus: propStatus,
+  disabled,
+  yesDisabled,
+}) => {
   const [currentStatus, setCurrentStatus] = useState(propStatus || null);
 
   useEffect(() => {
@@ -14,6 +19,7 @@ const AttendanceButton = ({ onSend, currentStatus: propStatus, disabled }) => {
 
   const handleClick = (status) => {
     if (disabled) return;
+    if (status === "yes" && yesDisabled) return;
 
     setCurrentStatus(status);
     if (onSend) {
@@ -28,7 +34,7 @@ const AttendanceButton = ({ onSend, currentStatus: propStatus, disabled }) => {
           currentStatus === "yes" ? styles.active : ""
         }`}
         onClick={() => handleClick("yes")}
-        disabled={disabled}
+        disabled={disabled || yesDisabled}
       >
         <span className={styles.icon}>✅</span>
         <span className={styles.text}>Yes</span>
