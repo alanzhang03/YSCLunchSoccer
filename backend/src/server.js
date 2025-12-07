@@ -54,13 +54,23 @@ app.use("/api/sessions", sessionsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messagesRouter);
 
-sessionGenerator().catch((error) => {
-  console.log(error);
-});
+setTimeout(async () => {
+  try {
+    await sessionGenerator();
+  } catch (error) {
+    console.error(
+      "⚠️  Initial session generation failed. Will retry on next scheduled run."
+    );
+  }
+}, 2000); 
 
 cron.schedule("0 0 * * 5", async () => {
   console.log("🔄 Running scheduled session generation...");
-  await sessionGenerator();
+  try {
+    await sessionGenerator();
+  } catch (error) {
+    console.error("❌ Scheduled session generation failed:", error.message);
+  }
 });
 
 app.listen(PORT, () => {

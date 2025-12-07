@@ -1,7 +1,39 @@
 import prisma from "../db/client.js";
 
+async function verifyDatabaseConnection() {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function waitForDatabaseConnection(maxRetries = 5, delayMs = 2000) {
+  for (let i = 0; i < maxRetries; i++) {
+    const isConnected = await verifyDatabaseConnection();
+    if (isConnected) {
+      return true;
+    }
+    if (i < maxRetries - 1) {
+      console.log(
+        `⏳ Waiting for database connection... (attempt ${i + 1}/${maxRetries})`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+  return false;
+}
+
 export async function sessionGenerator() {
   try {
+    const isConnected = await waitForDatabaseConnection();
+    if (!isConnected) {
+      throw new Error(
+        "❌ Cannot connect to database. Please check your database connection and try again."
+      );
+    }
+
     const today = new Date();
     const formattedDate = new Date(
       today.getFullYear(),
@@ -78,6 +110,22 @@ export async function sessionGenerator() {
       }`
     );
   } catch (error) {
-    console.log("Error with fetching", error);
+    if (error.message?.includes("database")) {
+      console.error("❌ Database connection error:", error.message);
+    } else if (error.code === "P1001") {
+      console.error(
+        "❌ Cannot reach database server. Please check:",
+        "\n  1. Your database server is running",
+        "\n  2. Your DATABASE_URL environment variable is correct",
+        "\n  3. Your network connection is stable",
+        "\n  4. Your database credentials are valid"
+      );
+    } else {
+      console.error("❌ Error in session generation:", error.message || error);
+      if (error.stack) {
+        console.error("Stack trace:", error.stack);
+      }
+    }
+    throw error;
   }
 }
