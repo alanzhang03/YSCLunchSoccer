@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { getSessionById } from "@/lib/api";
 import SessionCard from "@/components/sessions/SessionCard";
 import SessionChat from "@/components/sessions/SessionChat";
+import TeamDisplay from "@/components/sessions/TeamDisplay";
 import styles from "./page.module.scss";
 
 const pageVariants = {
@@ -142,6 +143,14 @@ export default function SessionDetailPage() {
             sessionData={session}
             onAttendanceUpdate={handleAttendanceUpdate}
           />
+        </motion.div>
+        <motion.div
+          variants={contentVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.2 }}
+        >
+          <TeamDisplay />
         </motion.div>
         <motion.div
           variants={contentVariants}
