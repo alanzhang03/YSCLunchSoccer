@@ -31,9 +31,13 @@
 
 .formGroup {
   margin-bottom: 1.5rem;
+  .skill {
+    width: 25%;
+  }
 
   label {
     display: block;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
     font-weight: 600;

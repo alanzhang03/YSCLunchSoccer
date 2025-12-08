@@ -20,6 +20,7 @@ model User {
   phone          String   @unique
   name           String
   password       String?
+  skill          Int      @default(5)
   createdAt      DateTime @default(now())
 
   attendances Attendance[]

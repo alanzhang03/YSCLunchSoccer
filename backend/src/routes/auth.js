@@ -46,10 +46,21 @@ function clearAuthCookies(res) {
 
 router.post("/signup", async (req, res) => {
   try {
-    const { phoneNum, email, name, password } = req.body;
+    const { phoneNum, email, name, password, skill } = req.body;
 
     if (!phoneNum || !email || !name || !password) {
       return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const skillNumber =
+      skill !== undefined && skill !== null && skill !== ""
+        ? parseInt(skill, 10)
+        : 5;
+
+    if (isNaN(skillNumber) || skillNumber < 1 || skillNumber > 10) {
+      return res
+        .status(400)
+        .json({ error: "Skill level must be a number between 1 and 10" });
     }
 
     const existingUser = await prisma.user.findFirst({
@@ -62,6 +73,16 @@ router.post("/signup", async (req, res) => {
       return res
         .status(409)
         .json({ error: "User with this email or phone already exists" });
+    }
+
+    const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+    const orphanedAuthUser = authUsers?.users?.find((u) => u.email === email);
+
+    if (orphanedAuthUser) {
+      console.log(
+        `Found orphaned Supabase Auth user for ${email}, deleting...`
+      );
+      await supabaseAdmin.auth.admin.deleteUser(orphanedAuthUser.id);
     }
 
     const { data: authData, error: authError } =
@@ -87,12 +108,14 @@ router.post("/signup", async (req, res) => {
         email,
         phone: phoneNum,
         name,
+        skill: skillNumber,
       },
       select: {
         id: true,
         email: true,
         phone: true,
         name: true,
+        skill: true,
         createdAt: true,
       },
     });
@@ -175,6 +198,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         phone: user.phone,
         name: user.name,
+        skill: user.skill,
         createdAt: user.createdAt,
       };
       return res.json({ message: "Login successful", user: safeUser });
@@ -200,6 +224,7 @@ router.post("/login", async (req, res) => {
       email: user.email,
       phone: user.phone,
       name: user.name,
+      skill: user.skill,
       createdAt: user.createdAt,
     };
 
@@ -238,6 +263,7 @@ router.get("/me", async (req, res) => {
         email: true,
         phone: true,
         name: true,
+        skill: true,
         createdAt: true,
       },
     });
