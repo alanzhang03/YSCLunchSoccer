@@ -7,7 +7,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: 600px;
+  height: auto;
 }
 
 .chatHeader {
@@ -213,7 +213,6 @@
   .chatSection {
     margin-top: 1.5rem;
     border-radius: 12px;
-    max-height: 500px;
   }
 
   .chatHeader {
@@ -263,7 +262,6 @@
   .chatSection {
     margin-top: 1.25rem;
     border-radius: 10px;
-    max-height: 450px;
   }
 
   .chatHeader {
@@ -308,7 +306,6 @@
   .chatSection {
     margin-top: 1rem;
     border-radius: 8px;
-    max-height: 400px;
   }
 
   .chatHeader {

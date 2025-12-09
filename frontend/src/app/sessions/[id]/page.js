@@ -150,7 +150,7 @@ export default function SessionDetailPage() {
           animate="visible"
           transition={{ delay: 0.2 }}
         >
-          <TeamDisplay />
+          <TeamDisplay sessionId={sessionId} />
         </motion.div>
         <motion.div
           variants={contentVariants}

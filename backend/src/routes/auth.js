@@ -116,6 +116,7 @@ router.post("/signup", async (req, res) => {
         phone: true,
         name: true,
         skill: true,
+        isAdmin: true,
         createdAt: true,
       },
     });
@@ -199,6 +200,7 @@ router.post("/login", async (req, res) => {
         phone: user.phone,
         name: user.name,
         skill: user.skill,
+        isAdmin: user.isAdmin,
         createdAt: user.createdAt,
       };
       return res.json({ message: "Login successful", user: safeUser });
@@ -264,6 +266,7 @@ router.get("/me", async (req, res) => {
         phone: true,
         name: true,
         skill: true,
+        isAdmin: true,
         createdAt: true,
       },
     });
