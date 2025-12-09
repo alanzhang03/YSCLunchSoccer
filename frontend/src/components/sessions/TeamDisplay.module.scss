@@ -4,184 +4,183 @@
   margin-top: 2rem;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 
-.title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #1e40af;
-  margin: 0;
-}
+    .title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1e40af;
+      margin: 0;
+    }
 
-.randomizeButton {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    .randomizeButton {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
   }
 
-  &:active {
-    transform: translateY(0);
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
+    font-size: 1.1rem;
   }
-}
 
-.loading {
-  text-align: center;
-  padding: 3rem;
-  color: #6b7280;
-  font-size: 1.1rem;
-}
-
-.emptyState {
-  text-align: center;
-  padding: 3rem;
-  color: #6b7280;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px dashed #d1d5db;
-}
-
-.teamsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.teamCard {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    border-color: #cbd5e1;
-  }
-}
-
-.teamHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.teamTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-}
-
-.teamCount {
-  background: #dbeafe;
-  color: #1e40af;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.playerList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem 0;
-}
-
-.playerItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  transition: all 0.15s ease;
-
-  &:hover {
+  .emptyState {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
     background: #f9fafb;
-    border-color: #cbd5e1;
-    transform: translateX(4px);
+    border-radius: 8px;
+    border: 1px dashed #d1d5db;
   }
 
-  &:last-child {
-    margin-bottom: 0;
+  .teamsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+
+    .teamCard {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
+      }
+
+      .teamHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e2e8f0;
+
+        .teamTitle {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #1e293b;
+          margin: 0;
+        }
+
+        .teamCount {
+          background: #dbeafe;
+          color: #1e40af;
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+      }
+
+      .playerList {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem 0;
+
+        .playerItem {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem;
+          margin-bottom: 0.5rem;
+          background: white;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+          transition: all 0.15s ease;
+
+          &:hover {
+            background: #f9fafb;
+            border-color: #cbd5e1;
+            transform: translateX(4px);
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .playerName {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.95rem;
+          }
+
+          .playerSkill {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: center;
+          }
+        }
+      }
+
+      .teamStats {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #64748b;
+        font-weight: 600;
+      }
+    }
   }
 }
 
-.playerName {
-  font-weight: 600;
-  color: #1f2937;
-  font-size: 0.95rem;
-}
-
-.playerSkill {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  color: #92400e;
-  padding: 0.25rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  min-width: 60px;
-  text-align: center;
-}
-
-.teamStats {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #64748b;
-  font-weight: 600;
-}
-
-// Responsive design
 @media (max-width: 768px) {
   .displayTeamsContainer {
     padding: 1.5rem;
     margin-top: 1rem;
-  }
 
-  .header {
-    flex-direction: column;
-    align-items: stretch;
-  }
+    .header {
+      flex-direction: column;
+      align-items: stretch;
 
-  .title {
-    font-size: 1.5rem;
-  }
+      .title {
+        font-size: 1.5rem;
+      }
 
-  .randomizeButton {
-    width: 100%;
-  }
+      .randomizeButton {
+        width: 100%;
+      }
+    }
 
-  .teamsGrid {
-    grid-template-columns: 1fr;
+    .teamsGrid {
+      grid-template-columns: 1fr;
+    }
   }
 }

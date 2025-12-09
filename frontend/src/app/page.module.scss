@@ -14,56 +14,352 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
   flex: 1;
   display: flex;
   min-height: 100vh;
-}
 
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  background: $primary-gradient;
-  background-attachment: fixed;
-  padding: 5rem 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  position: relative;
-  overflow: hidden;
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background: $primary-gradient;
+    background-attachment: fixed;
+    padding: 5rem 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        circle at 20% 50%,
-        rgba(255, 255, 255, 0.1) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        circle at 80% 80%,
-        rgba(255, 255, 255, 0.1) 0%,
-        transparent 50%
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(
+          circle at 20% 50%,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          circle at 80% 80%,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 50%
+        );
+      pointer-events: none;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 70%
       );
-    pointer-events: none;
-  }
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 20s ease-in-out infinite;
+    }
 
-  &::after {
-    content: "";
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.05) 0%,
-      transparent 70%
-    );
-    border-radius: 50%;
-    pointer-events: none;
-    animation: float 20s ease-in-out infinite;
+    .hero {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+
+      .title {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: $white;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        line-height: 1.1;
+        position: relative;
+        display: inline-block;
+
+        &::after {
+          content: "⚽";
+          position: absolute;
+          right: -50px;
+          top: 0;
+          font-size: 0.6em;
+          opacity: 0.8;
+          animation: bounce 2s ease-in-out infinite;
+        }
+      }
+
+      .subtitle {
+        font-size: clamp(1.1rem, 2vw, 1.5rem);
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 1.5rem;
+        font-weight: 400;
+        line-height: 1.7;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .welcomeMessage {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.95);
+        margin-top: 2rem;
+        font-weight: 500;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        display: inline-block;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+        strong {
+          color: $white;
+          font-weight: 700;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      .authButtons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+
+        .signupButton,
+        .loginButton {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.875rem 2rem;
+          text-decoration: none;
+          border-radius: 12px;
+          font-size: 1rem;
+          font-weight: 600;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: $shadow-md;
+          letter-spacing: 0.01em;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .signupButton {
+          background: linear-gradient(135deg, $white 0%, #f8f9fa 100%);
+          color: $primary-color;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+
+          &:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25),
+              0 0 0 3px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+          }
+        }
+
+        .loginButton {
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          color: $white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25),
+              0 0 0 3px rgba(255, 255, 255, 0.2);
+          }
+        }
+      }
+    }
+
+    .ctaSection {
+      margin: 3.5rem 0;
+      position: relative;
+      z-index: 1;
+
+      .ctaButton {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.25rem 3rem;
+        background: linear-gradient(135deg, $white 0%, #f8f9fa 100%);
+        color: $primary-color;
+        text-decoration: none;
+        border-radius: 16px;
+        font-size: 1.125rem;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: $shadow-md, 0 0 0 0 rgba(255, 255, 255, 0.3);
+        letter-spacing: 0.01em;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+          );
+          transition: left 0.5s;
+        }
+
+        span {
+          position: relative;
+          z-index: 1;
+        }
+
+        &::after {
+          content: "→";
+          font-size: 1.2em;
+          transition: transform 0.3s ease;
+          position: relative;
+          z-index: 1;
+        }
+
+        &:hover {
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25),
+            0 0 0 4px rgba(255, 255, 255, 0.3);
+
+          &::before {
+            left: 100%;
+          }
+
+          &::after {
+            transform: translateX(5px);
+          }
+        }
+      }
+    }
+
+    .infoSection {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+      width: 100%;
+      margin-top: 5rem;
+      position: relative;
+      z-index: 1;
+
+      .infoCard {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2.75rem;
+        border-radius: 24px;
+        box-shadow: $shadow-lg, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 5px;
+          background: $primary-gradient;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.4s ease;
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 200px;
+          height: 200px;
+          background: radial-gradient(
+            circle,
+            rgba(102, 126, 234, 0.1) 0%,
+            transparent 70%
+          );
+          border-radius: 50%;
+          transition: transform 0.4s ease;
+        }
+
+        &:hover {
+          box-shadow: $shadow-xl, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+
+          &::before {
+            transform: scaleX(1);
+          }
+
+          &::after {
+            transform: translate(20px, 20px);
+          }
+        }
+
+        h2 {
+          font-size: 1.875rem;
+          margin-bottom: 1.5rem;
+          color: $text-dark;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          position: relative;
+          padding-left: 2rem;
+
+          &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: $primary-gradient;
+            border-radius: 2px;
+          }
+        }
+
+        p {
+          color: $text-medium;
+          line-height: 1.8;
+          font-size: 1.05rem;
+
+          .link {
+            color: $primary-color;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 2px;
+            position: relative;
+
+            &::after {
+              content: "";
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 0;
+              height: 2px;
+              background: $secondary-color;
+              transition: width 0.3s ease;
+            }
+
+            &:hover {
+              color: $secondary-color;
+
+              &::after {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -77,34 +373,6 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
   }
 }
 
-.hero {
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.title {
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  color: $white;
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-  line-height: 1.1;
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: "⚽";
-    position: absolute;
-    right: -50px;
-    top: 0;
-    font-size: 0.6em;
-    opacity: 0.8;
-    animation: bounce 2s ease-in-out infinite;
-  }
-}
-
 @keyframes bounce {
   0%,
   100% {
@@ -115,402 +383,142 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
   }
 }
 
-.subtitle {
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  color: rgba(255, 255, 255, 0.95);
-  margin-bottom: 1.5rem;
-  font-weight: 400;
-  line-height: 1.7;
-  max-width: 650px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.welcomeMessage {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.95);
-  margin-top: 2rem;
-  font-weight: 500;
-  padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 50px;
-  display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-
-  strong {
-    color: $white;
-    font-weight: 700;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.authButtons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}
-
-.signupButton,
-.loginButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.875rem 2rem;
-  text-decoration: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: $shadow-md;
-  letter-spacing: 0.01em;
-  position: relative;
-  overflow: hidden;
-}
-
-.signupButton {
-  background: linear-gradient(135deg, $white 0%, #f8f9fa 100%);
-  color: $primary-color;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-
-  &:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25),
-      0 0 0 3px rgba(255, 255, 255, 0.3);
-    background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
-  }
-}
-
-.loginButton {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  color: $white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25),
-      0 0 0 3px rgba(255, 255, 255, 0.2);
-  }
-}
-
-.ctaSection {
-  margin: 3.5rem 0;
-  position: relative;
-  z-index: 1;
-}
-
-.ctaButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem 3rem;
-  background: linear-gradient(135deg, $white 0%, #f8f9fa 100%);
-  color: $primary-color;
-  text-decoration: none;
-  border-radius: 16px;
-  font-size: 1.125rem;
-  font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: $shadow-md, 0 0 0 0 rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.01em;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.4),
-      transparent
-    );
-    transition: left 0.5s;
-  }
-
-  span {
-    position: relative;
-    z-index: 1;
-  }
-
-  &::after {
-    content: "→";
-    font-size: 1.2em;
-    transition: transform 0.3s ease;
-    position: relative;
-    z-index: 1;
-  }
-
-  &:hover {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25),
-      0 0 0 4px rgba(255, 255, 255, 0.3);
-
-    &::before {
-      left: 100%;
-    }
-
-    &::after {
-      transform: translateX(5px);
-    }
-  }
-}
-
-.infoSection {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2.5rem;
-  width: 100%;
-  margin-top: 5rem;
-  position: relative;
-  z-index: 1;
-}
-
-.infoCard {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 2.75rem;
-  border-radius: 24px;
-  box-shadow: $shadow-lg, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: $primary-gradient;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(
-      circle,
-      rgba(102, 126, 234, 0.1) 0%,
-      transparent 70%
-    );
-    border-radius: 50%;
-    transition: transform 0.4s ease;
-  }
-
-  &:hover {
-    box-shadow: $shadow-xl, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
-
-    &::before {
-      transform: scaleX(1);
-    }
-
-    &::after {
-      transform: translate(20px, 20px);
-    }
-  }
-
-  h2 {
-    font-size: 1.875rem;
-    margin-bottom: 1.5rem;
-    color: $text-dark;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    position: relative;
-    padding-left: 2rem;
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 24px;
-      background: $primary-gradient;
-      border-radius: 2px;
-    }
-  }
-
-  p {
-    color: $text-medium;
-    line-height: 1.8;
-    font-size: 1.05rem;
-  }
-}
-
-.link {
-  color: $primary-color;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border-bottom: 2px solid transparent;
-  padding-bottom: 2px;
-  position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: $secondary-color;
-    transition: width 0.3s ease;
-  }
-
-  &:hover {
-    color: $secondary-color;
-
-    &::after {
-      width: 100%;
-    }
-  }
-}
-
 @media (max-width: 768px) {
-  .main {
-    padding: 3rem 1rem;
-  }
+  .page {
+    .main {
+      padding: 3rem 1rem;
 
-  .title {
-    &::after {
-      display: none;
+      .hero {
+        .title {
+          &::after {
+            display: none;
+          }
+        }
+
+        .subtitle {
+          font-size: 1rem;
+        }
+
+        .welcomeMessage {
+          font-size: 1.125rem;
+          padding: 0.875rem 1.5rem;
+          margin-top: 1.5rem;
+        }
+
+        .authButtons {
+          flex-direction: column;
+          width: 100%;
+          max-width: 300px;
+          margin-left: auto;
+          margin-right: auto;
+
+          .signupButton,
+          .loginButton {
+            width: 100%;
+            padding: 1rem 2rem;
+          }
+        }
+      }
+
+      .ctaSection {
+        margin: 2.5rem 0;
+
+        .ctaButton {
+          padding: 1rem 2rem;
+          font-size: 1rem;
+        }
+      }
+
+      .infoSection {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 3rem;
+
+        .infoCard {
+          padding: 2rem;
+
+          h2 {
+            font-size: 1.625rem;
+            padding-left: 1.5rem;
+          }
+
+          p {
+            font-size: 1rem;
+          }
+        }
+      }
     }
-  }
-
-  .subtitle {
-    font-size: 1rem;
-  }
-
-  .welcomeMessage {
-    font-size: 1.125rem;
-    padding: 0.875rem 1.5rem;
-    margin-top: 1.5rem;
-  }
-
-  .ctaSection {
-    margin: 2.5rem 0;
-  }
-
-  .ctaButton {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-
-  .infoSection {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
-  .infoCard {
-    padding: 2rem;
-
-    h2 {
-      font-size: 1.625rem;
-      padding-left: 1.5rem;
-    }
-
-    p {
-      font-size: 1rem;
-    }
-  }
-
-  .authButtons {
-    flex-direction: column;
-    width: 100%;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .signupButton,
-  .loginButton {
-    width: 100%;
-    padding: 1rem 2rem;
   }
 }
 
 @media (max-width: 480px) {
-  .main {
-    padding: 2rem 0.75rem;
-  }
+  .page {
+    .main {
+      padding: 2rem 0.75rem;
 
-  .title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
+      .hero {
+        .title {
+          font-size: 2rem;
+          margin-bottom: 1rem;
+        }
 
-  .subtitle {
-    font-size: 0.9375rem;
-    margin-bottom: 1.25rem;
-  }
+        .subtitle {
+          font-size: 0.9375rem;
+          margin-bottom: 1.25rem;
+        }
 
-  .welcomeMessage {
-    font-size: 1rem;
-    padding: 0.75rem 1.25rem;
-    margin-top: 1.25rem;
-  }
+        .welcomeMessage {
+          font-size: 1rem;
+          padding: 0.75rem 1.25rem;
+          margin-top: 1.25rem;
+        }
 
-  .ctaSection {
-    margin: 2rem 0;
-  }
+        .authButtons {
+          max-width: 100%;
+          gap: 0.75rem;
 
-  .ctaButton {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.9375rem;
-    width: 100%;
-    max-width: 100%;
-  }
+          .signupButton,
+          .loginButton {
+            padding: 0.875rem 1.5rem;
+            font-size: 0.9375rem;
+          }
+        }
+      }
 
-  .infoSection {
-    margin-top: 2.5rem;
-    gap: 1.25rem;
-  }
+      .ctaSection {
+        margin: 2rem 0;
 
-  .infoCard {
-    padding: 1.5rem;
+        .ctaButton {
+          padding: 0.875rem 1.5rem;
+          font-size: 0.9375rem;
+          width: 100%;
+          max-width: 100%;
+        }
+      }
 
-    h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1.25rem;
-      padding-left: 1.25rem;
+      .infoSection {
+        margin-top: 2.5rem;
+        gap: 1.25rem;
 
-      &::before {
-        height: 20px;
+        .infoCard {
+          padding: 1.5rem;
+
+          h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+            padding-left: 1.25rem;
+
+            &::before {
+              height: 20px;
+            }
+          }
+
+          p {
+            font-size: 0.9375rem;
+            line-height: 1.7;
+          }
+        }
       }
     }
-
-    p {
-      font-size: 0.9375rem;
-      line-height: 1.7;
-    }
-  }
-
-  .authButtons {
-    max-width: 100%;
-    gap: 0.75rem;
-  }
-
-  .signupButton,
-  .loginButton {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.9375rem;
   }
 }

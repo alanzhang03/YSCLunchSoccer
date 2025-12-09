@@ -42,7 +42,6 @@ const cardVariants = {
 
 export default function Home() {
   const { user, loading } = useAuth();
-  console.log(user);
 
   return (
     <div className={styles.page}>
