@@ -14,56 +14,62 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
   flex: 1;
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  background: $primary-gradient;
+  background-attachment: fixed;
+  background-size: cover;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 50%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: fixed;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 20s ease-in-out infinite;
+    z-index: 0;
+  }
 
   .main {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    background: $primary-gradient;
-    background-attachment: fixed;
     padding: 5rem 1.5rem;
     max-width: 1400px;
     margin: 0 auto;
     position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(
-          circle at 20% 50%,
-          rgba(255, 255, 255, 0.1) 0%,
-          transparent 50%
-        ),
-        radial-gradient(
-          circle at 80% 80%,
-          rgba(255, 255, 255, 0.1) 0%,
-          transparent 50%
-        );
-      pointer-events: none;
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.05) 0%,
-        transparent 70%
-      );
-      border-radius: 50%;
-      pointer-events: none;
-      animation: float 20s ease-in-out infinite;
-    }
+    z-index: 1;
+    flex: 1;
 
     .hero {
       text-align: center;

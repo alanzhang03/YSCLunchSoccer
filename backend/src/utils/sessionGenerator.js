@@ -70,7 +70,7 @@ export async function sessionGenerator() {
     let currentDate = new Date(startDate);
     let sessionsCreated = 0;
 
-    while (currSessions.length + sessionsCreated < 8) {
+    while (currSessions.length + sessionsCreated < 6) {
       const dayOfWeek = currentDate.getDay();
 
       if (dayOfWeek === 1 || dayOfWeek === 5) {
