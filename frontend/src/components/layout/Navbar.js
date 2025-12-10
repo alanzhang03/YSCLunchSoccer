@@ -18,7 +18,7 @@ const Navbar = () => {
     <header className={styles.navbar}>
       <div className={styles.inner}>
         <Link href="/" className={styles.brand}>
-          <span className={styles.logoCircle}>YS</span>
+          <span className={styles.logoCircle}>YSC</span>
           <span className={styles.brandText}>YSC Lunch Soccer</span>
         </Link>
 

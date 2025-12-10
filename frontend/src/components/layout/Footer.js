@@ -10,7 +10,7 @@ const Footer = () => {
       <div className={styles.inner}>
         <div className={styles.brandSection}>
           <Link href="/" className={styles.brand}>
-            <span className={styles.logoCircle}>YS</span>
+            <span className={styles.logoCircle}>YSC</span>
             <span className={styles.brandText}>YSC Lunch Soccer</span>
           </Link>
           <p className={styles.tagline}>
