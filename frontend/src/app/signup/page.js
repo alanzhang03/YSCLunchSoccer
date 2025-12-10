@@ -9,6 +9,7 @@ const Page = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [skill, setSkill] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -27,13 +28,20 @@ const Page = () => {
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
+  const handleSkillChange = (e) => {
+    const value = e.target.value;
+
+    if (value === "" || (parseInt(value) >= 1 && parseInt(value) <= 10)) {
+      setSkill(value);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      await signup(phoneNum, email, name, password);
+      await signup(phoneNum, email, name, password, skill);
       router.push("/");
     } catch (err) {
       setError(err.message || "Signup failed");
@@ -79,6 +87,20 @@ const Page = () => {
                 required
                 placeholder="Password"
               />
+              <label>
+                What would you say your soccer skill level is? (1-10)
+              </label>
+              <input
+                value={skill}
+                onChange={handleSkillChange}
+                type="number"
+                id="rating"
+                name="rating"
+                min="1"
+                max="10"
+                required
+                className={styles.skill}
+              ></input>
             </div>
 
             {error && <p className={styles.error}>{error}</p>}

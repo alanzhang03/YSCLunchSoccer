@@ -2,33 +2,35 @@
   margin-top: 3rem;
   border-top: 1px solid rgba(15, 23, 42, 0.06);
   background: #f9fafb;
-}
 
-.inner {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 1rem 1.5rem 1.75rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.85rem;
-  color: #6b7280;
-}
+  .inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: #6b7280;
 
-.copy {
-  margin: 0;
-}
+    .copy {
+      margin: 0;
+    }
 
-.meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
 }
 
 @media (max-width: 768px) {
-  .inner {
-    padding-inline: 1rem;
+  .footer {
+    .inner {
+      padding-inline: 1rem;
+    }
   }
 }
