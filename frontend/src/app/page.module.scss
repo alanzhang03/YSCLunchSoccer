@@ -13,7 +13,6 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
 .page {
   flex: 1;
   display: flex;
-  min-height: 100vh;
   width: 100%;
   background: $primary-gradient;
   background-attachment: fixed;
