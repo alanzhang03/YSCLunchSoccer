@@ -1,4 +1,6 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+const USE_PROXY =
+  typeof window !== "undefined" && window.location.hostname !== "localhost";
 
 const fetchWithCredentials = (url, options = {}) => {
   return fetch(url, {
@@ -13,7 +15,10 @@ const fetchWithCredentials = (url, options = {}) => {
 
 export async function signup(phoneNum, email, name, password, skill) {
   try {
-    const response = await fetchWithCredentials(`${API_BASE_URL}/auth/signup`, {
+    const url = USE_PROXY
+      ? "/api/auth/signup"
+      : `${API_BASE_URL}/api/auth/signup`;
+    const response = await fetchWithCredentials(url, {
       method: "POST",
       body: JSON.stringify({ phoneNum, email, name, password, skill }),
     });
@@ -32,7 +37,10 @@ export async function signup(phoneNum, email, name, password, skill) {
 
 export async function login(phoneNum, password) {
   try {
-    const response = await fetchWithCredentials(`${API_BASE_URL}/auth/login`, {
+    const url = USE_PROXY
+      ? "/api/auth/login"
+      : `${API_BASE_URL}/api/auth/login`;
+    const response = await fetchWithCredentials(url, {
       method: "POST",
       body: JSON.stringify({ phoneNum, password }),
     });
@@ -51,7 +59,8 @@ export async function login(phoneNum, password) {
 
 export async function getCurrentUser() {
   try {
-    const response = await fetchWithCredentials(`${API_BASE_URL}/auth/me`);
+    const url = USE_PROXY ? "/api/auth/me" : `${API_BASE_URL}/api/auth/me`;
+    const response = await fetchWithCredentials(url);
 
     if (!response.ok) {
       if (response.status === 401) {
@@ -68,7 +77,10 @@ export async function getCurrentUser() {
 
 export async function logout() {
   try {
-    const response = await fetchWithCredentials(`${API_BASE_URL}/auth/logout`, {
+    const url = USE_PROXY
+      ? "/api/auth/logout"
+      : `${API_BASE_URL}/api/auth/logout`;
+    const response = await fetchWithCredentials(url, {
       method: "POST",
     });
 

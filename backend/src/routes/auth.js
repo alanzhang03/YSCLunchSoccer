@@ -5,19 +5,28 @@ import { supabaseAdmin } from "../lib/supabase.js";
 
 const router = Router();
 
-function setAuthCookies(res, accessToken, refreshToken) {
+function setAuthCookies(res, req, accessToken, refreshToken) {
   const isProduction = process.env.NODE_ENV === "production";
   const frontendUrl = (process.env.FRONTEND_URL || "").trim();
-  const isCrossOrigin =
-    isProduction &&
-    (frontendUrl.startsWith("https://") || !frontendUrl.includes("localhost"));
+  const isProxied = req.headers["x-proxy-request"] === "true";
+
+  let isCrossOrigin = false;
+
+  if (isProxied) {
+    isCrossOrigin = false;
+  } else {
+    isCrossOrigin =
+      isProduction &&
+      (frontendUrl.startsWith("https://") ||
+        !frontendUrl.includes("localhost"));
+  }
 
   const cookieOptions = {
     httpOnly: true,
     maxAge: 60 * 60 * 1000,
     path: "/",
-    secure: isCrossOrigin ? true : isProduction,
-    sameSite: isCrossOrigin ? "none" : "lax",
+    secure: isProxied ? true : isCrossOrigin ? true : isProduction,
+    sameSite: isProxied ? "lax" : isCrossOrigin ? "none" : "lax",
   };
 
   if (cookieOptions.sameSite === "none") {
@@ -143,6 +152,7 @@ router.post("/signup", async (req, res) => {
 
     setAuthCookies(
       res,
+      req,
       signInData.session.access_token,
       signInData.session.refresh_token
     );
@@ -219,6 +229,7 @@ router.post("/login", async (req, res) => {
     try {
       setAuthCookies(
         res,
+        req,
         signInData.session.access_token,
         signInData.session.refresh_token
       );
@@ -256,6 +267,12 @@ router.get("/me", async (req, res) => {
     const token = req.cookies?.sb_access_token;
 
     if (!token) {
+      console.log("No token found. Cookies received:", req.cookies);
+      console.log("Request headers:", {
+        cookie: req.headers.cookie,
+        origin: req.headers.origin,
+        referer: req.headers.referer,
+      });
       return res.status(401).json({ error: "Not authenticated" });
     }
 
