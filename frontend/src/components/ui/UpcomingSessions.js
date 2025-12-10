@@ -124,6 +124,9 @@ const UpcomingSessions = () => {
                 <div className={styles.sessionContent}>
                   <div className={styles.sessionHeader}>
                     <span className={styles.weekday}>{weekday}</span>
+                    <span className={styles.clickMoreInfo}>
+                      (Click for more info)
+                    </span>
                     {getStatusBadge(session.attendances)}
                   </div>
                   <div className={styles.sessionDate}>{formattedDate}</div>

@@ -116,7 +116,7 @@ export default function Home() {
             whileTap={{ scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
-            <span>View Upcoming Sessions</span>
+            <span>View Sessions</span>
           </motion.a>
         </motion.div>
 
