@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { useAuth } from "@/contexts/AuthContext";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import styles from "./page.module.scss";
+import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import styles from './page.module.scss';
+import UpcomingSessions from '@/components/ui/UpcomingSessions';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -82,7 +83,7 @@ export default function Home() {
                 className={styles.signupButton}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               >
                 Sign Up
               </motion.a>
@@ -91,13 +92,15 @@ export default function Home() {
                 className={styles.loginButton}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               >
                 Log In
               </motion.a>
             </motion.div>
           )}
         </motion.div>
+
+        <UpcomingSessions />
 
         <motion.div
           className={styles.ctaSection}
@@ -111,7 +114,7 @@ export default function Home() {
             className={styles.ctaButton}
             whileHover={{ scale: 1.05, y: -3 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             <span>View Upcoming Sessions</span>
           </motion.a>
@@ -127,7 +130,7 @@ export default function Home() {
             className={styles.infoCard}
             variants={cardVariants}
             whileHover={{ y: -6, scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
             <h2>How it works</h2>
             <p>
@@ -139,27 +142,27 @@ export default function Home() {
             className={styles.infoCard}
             variants={cardVariants}
             whileHover={{ y: -6, scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
             <h2>Get started</h2>
             <p>
               {user ? (
                 <>
-                  You're all set! Head over to the{" "}
+                  You're all set! Head over to the{' '}
                   <Link href="/sessions" className={styles.link}>
                     Sessions
-                  </Link>{" "}
+                  </Link>{' '}
                   page to see upcoming games.
                 </>
               ) : (
                 <>
                   <Link href="/signup" className={styles.link}>
                     Sign up
-                  </Link>{" "}
-                  or{" "}
+                  </Link>{' '}
+                  or{' '}
                   <Link href="/login" className={styles.link}>
                     log in
-                  </Link>{" "}
+                  </Link>{' '}
                   to start RSVPing to sessions.
                 </>
               )}

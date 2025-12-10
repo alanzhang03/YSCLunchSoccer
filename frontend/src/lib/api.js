@@ -15,6 +15,21 @@ export async function getSessions() {
   return response.json();
 }
 
+export async function getSessionsByUser() {
+  const response = await fetch(`${API_BASE_URL}/sessions/sessionsByUser`, {
+    method: "GET",
+    credentials: "include",
+    cache: "no-store",
+    headers: {
+      "Cache-Control": "no-cache",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch sessions");
+  }
+  return response.json();
+}
+
 export async function attendSession(sessionId, status) {
   const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/attend`, {
     method: "POST",

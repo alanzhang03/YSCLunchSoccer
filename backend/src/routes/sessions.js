@@ -33,6 +33,56 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/sessionsByUser", authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: "User not found in database" });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const sessions = await prisma.session.findMany({
+      where: {
+        date: {
+          gte: today,
+        },
+        attendances: {
+          some: {
+            userId: dbUser.id,
+          },
+        },
+      },
+      orderBy: { date: "asc" },
+      include: {
+        attendances: {
+          where: {
+            userId: dbUser.id,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    res.json(sessions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post("/:id/attend", authenticateUser, async (req, res) => {
   try {
     const sessionId = req.params.id;

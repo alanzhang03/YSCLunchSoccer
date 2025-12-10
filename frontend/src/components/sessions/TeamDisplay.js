@@ -1,10 +1,10 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import styles from "./TeamDisplay.module.scss";
-import { useAuth } from "@/contexts/AuthContext";
-import { getSessionAttendances } from "@/lib/api";
-import { DUMMY_ATTENDEES } from "@/lib/constants";
-import { randomizeTeams } from "@/lib/teamRandomizer";
+'use client';
+import React, { useState, useEffect } from 'react';
+import styles from './TeamDisplay.module.scss';
+import { useAuth } from '@/contexts/AuthContext';
+import { getSessionAttendances } from '@/lib/api';
+import { DUMMY_ATTENDEES } from '@/lib/constants';
+import { randomizeTeams } from '@/lib/teamRandomizer';
 const TeamDisplay = ({ sessionId }) => {
   const { user } = useAuth();
   const [attendes, setAttendes] = useState(null);
@@ -13,7 +13,7 @@ const TeamDisplay = ({ sessionId }) => {
   const [teamsArray, setTeamsArray] = useState([]);
 
   const isAdmin = user?.isAdmin || false;
-  const teamColors = ["Black", "White", "Red", "Blue"];
+  const teamColors = ['Black', 'White', 'Red', 'Blue'];
 
   // const attendancesArray = getSessionAttendances(sessionId);
 
@@ -25,8 +25,8 @@ const TeamDisplay = ({ sessionId }) => {
         setAttendes(result.attendances);
         setError(null);
       } catch (err) {
-        console.error("Failed to fetch attendances:", err);
-        setError(err.message || "Failed to fetch attendances");
+        console.error('Failed to fetch attendances:', err);
+        setError(err.message || 'Failed to fetch attendances');
       } finally {
         setLoading(false);
       }
@@ -42,7 +42,7 @@ const TeamDisplay = ({ sessionId }) => {
     : DUMMY_ATTENDEES;
 
   const yesAttendances = allAttendances?.filter(
-    (attendes) => attendes.status === "yes"
+    (attendes) => attendes.status === 'yes'
   );
 
   const calculateTeams = () => {
