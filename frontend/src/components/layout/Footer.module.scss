@@ -27,7 +27,7 @@
     margin: 0 auto;
     padding: 3rem 1.5rem 2rem;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1.5fr;
     gap: 3rem;
     position: relative;
     z-index: 1;
@@ -86,6 +86,7 @@
     .linksSection {
       display: flex;
       justify-content: flex-end;
+      gap: 3rem;
 
       .linksGroup {
         .linksTitle {
@@ -110,6 +111,14 @@
             position: relative;
             padding-left: 0;
             width: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            .icon {
+              font-size: 1rem;
+              transition: all 0.2s ease;
+            }
 
             &::before {
               content: "";
@@ -130,8 +139,24 @@
               padding-left: 1rem;
               transform: translateX(4px);
 
+              .icon {
+                transform: scale(1.1);
+              }
+
               &::before {
                 opacity: 1;
+              }
+            }
+
+            @media (hover: none) {
+              &:hover {
+                padding-left: 0;
+                transform: none;
+              }
+
+              &:active {
+                color: #667eea;
+                opacity: 0.8;
               }
             }
           }
@@ -176,17 +201,46 @@
   .footer {
     .inner {
       grid-template-columns: 1fr;
-      gap: 2rem;
-      padding: 2.5rem 1.5rem 1.5rem;
+      gap: 2.5rem;
+      padding: 2.5rem 1.5rem 1.75rem;
 
       .brandSection {
+        text-align: center;
+        align-items: center;
+
+        .brand {
+          justify-content: center;
+        }
+
         .tagline {
           max-width: 100%;
+          text-align: center;
         }
       }
 
       .linksSection {
-        justify-content: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 2.5rem;
+        width: 100%;
+
+        .linksGroup {
+          min-width: 140px;
+          text-align: center;
+
+          .linksTitle {
+            margin-bottom: 1rem;
+          }
+
+          .links {
+            align-items: center;
+
+            .link {
+              justify-content: center;
+              width: 100%;
+            }
+          }
+        }
       }
     }
 
@@ -194,7 +248,7 @@
       .bottomInner {
         flex-direction: column;
         text-align: center;
-        padding: 1rem 1.5rem;
+        padding: 1.25rem 1.5rem;
         gap: 0.75rem;
       }
     }
@@ -204,12 +258,15 @@
 @media (max-width: 480px) {
   .footer {
     .inner {
-      padding: 2rem 1rem 1.25rem;
-      gap: 1.5rem;
+      padding: 2rem 1.25rem 1.5rem;
+      gap: 2rem;
 
       .brandSection {
+        gap: 0.875rem;
+
         .brand {
           font-size: 1.125rem;
+          gap: 0.625rem;
 
           .logoCircle {
             width: 36px;
@@ -220,21 +277,107 @@
 
         .tagline {
           font-size: 0.875rem;
+          line-height: 1.5;
         }
       }
 
       .linksSection {
+        flex-direction: column;
+        gap: 2rem;
+        width: 100%;
+
         .linksGroup {
+          width: 100%;
+          min-width: unset;
+
           .linksTitle {
             font-size: 0.8125rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
+          }
+
+          .links {
+            gap: 0.75rem;
+            align-items: center;
+
+            .link {
+              font-size: 0.875rem;
+              padding: 0.5rem 0;
+              min-height: 44px;
+              justify-content: center;
+              width: 100%;
+              max-width: 200px;
+              touch-action: manipulation;
+
+              .icon {
+                font-size: 1.125rem;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .bottom {
+      .bottomInner {
+        padding: 1rem 1.25rem;
+        gap: 0.625rem;
+        font-size: 0.75rem;
+
+        .copy {
+          line-height: 1.5;
+        }
+
+        .meta {
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .footer {
+    .inner {
+      padding: 1.75rem 1rem 1.25rem;
+      gap: 1.75rem;
+
+      .brandSection {
+        .brand {
+          font-size: 1rem;
+          flex-wrap: wrap;
+          justify-content: center;
+
+          .logoCircle {
+            width: 32px;
+            height: 32px;
+            font-size: 0.75rem;
+          }
+        }
+
+        .tagline {
+          font-size: 0.8125rem;
+        }
+      }
+
+      .linksSection {
+        gap: 1.5rem;
+
+        .linksGroup {
+          .linksTitle {
+            font-size: 0.75rem;
+            margin-bottom: 0.875rem;
           }
 
           .links {
             gap: 0.625rem;
 
             .link {
-              font-size: 0.875rem;
+              font-size: 0.8125rem;
+              max-width: 100%;
+
+              .icon {
+                font-size: 1rem;
+              }
             }
           }
         }
@@ -244,7 +387,7 @@
     .bottom {
       .bottomInner {
         padding: 0.875rem 1rem;
-        font-size: 0.75rem;
+        font-size: 0.6875rem;
       }
     }
   }

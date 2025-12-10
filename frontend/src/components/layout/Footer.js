@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { FaFacebook, FaInstagram } from "react-icons/fa";
 import styles from "./Footer.module.scss";
 
 const Footer = () => {
@@ -28,6 +29,37 @@ const Footer = () => {
               <Link href="/sessions" className={styles.link}>
                 Sessions
               </Link>
+            </nav>
+          </div>
+          <div className={styles.linksGroup}>
+            <h3 className={styles.linksTitle}>Connect</h3>
+            <nav className={styles.links}>
+              <a
+                href="https://www.yscsports.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.link}
+              >
+                YSC Sports
+              </a>
+              <a
+                href="https://www.facebook.com/yscsports"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.link}
+              >
+                <FaFacebook className={styles.icon} />
+                Facebook
+              </a>
+              <a
+                href="https://www.instagram.com/yscsports/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.link}
+              >
+                <FaInstagram className={styles.icon} />
+                Instagram
+              </a>
             </nav>
           </div>
         </div>
