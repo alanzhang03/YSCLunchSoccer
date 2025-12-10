@@ -13,6 +13,7 @@ const TeamDisplay = ({ sessionId }) => {
   const [teamsArray, setTeamsArray] = useState([]);
 
   const isAdmin = user?.isAdmin || false;
+  const teamColors = ["Black", "White", "Red", "Blue"];
 
   // const attendancesArray = getSessionAttendances(sessionId);
 
@@ -93,7 +94,9 @@ const TeamDisplay = ({ sessionId }) => {
           {teamsArray.map((team, teamIndex) => (
             <div key={teamIndex} className={styles.teamCard}>
               <div className={styles.teamHeader}>
-                <h3 className={styles.teamTitle}>Team {teamIndex + 1}</h3>
+                <h3 className={styles.teamTitle}>
+                  Team {teamIndex + 1} ({teamColors[teamIndex]})
+                </h3>
                 <span className={styles.teamCount}>{team.length} players</span>
               </div>
               <ul className={styles.playerList}>
