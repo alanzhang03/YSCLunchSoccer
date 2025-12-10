@@ -20,6 +20,8 @@ model User {
   phone          String   @unique
   name           String
   password       String?
+  skill          Int      @default(5)
+  isAdmin        Boolean  @default(false)
   createdAt      DateTime @default(now())
 
   attendances Attendance[]
