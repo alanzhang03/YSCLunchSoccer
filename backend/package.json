@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "build": "echo 'No build step required'",
     "postinstall": "prisma generate",
     "auth:list": "node src/utils/authCleanup.js list",
     "auth:find": "node src/utils/authCleanup.js find",
