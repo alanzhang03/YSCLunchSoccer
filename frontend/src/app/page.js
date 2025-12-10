@@ -56,7 +56,7 @@ export default function Home() {
             Welcome to YSC Lunch Soccer!
           </motion.h1>
           <motion.p className={styles.subtitle} variants={itemVariants}>
-            Join your colleagues for lunchtime soccer sessions
+            Join your friends for lunchtime soccer sessions
           </motion.p>
           {!loading && user && (
             <motion.p

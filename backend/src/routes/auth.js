@@ -9,7 +9,8 @@ function setAuthCookies(res, accessToken, refreshToken) {
   const isProduction = process.env.NODE_ENV === "production";
   const frontendUrl = (process.env.FRONTEND_URL || "").trim();
   const isCrossOrigin =
-    isProduction && frontendUrl.toLowerCase().includes("vercel");
+    isProduction &&
+    (frontendUrl.startsWith("https://") || !frontendUrl.includes("localhost"));
 
   const cookieOptions = {
     httpOnly: true,
@@ -31,7 +32,8 @@ function clearAuthCookies(res) {
   const isProduction = process.env.NODE_ENV === "production";
   const frontendUrl = (process.env.FRONTEND_URL || "").trim();
   const isCrossOrigin =
-    isProduction && frontendUrl.toLowerCase().includes("vercel");
+    isProduction &&
+    (frontendUrl.startsWith("https://") || !frontendUrl.includes("localhost"));
 
   const cookieOptions = {
     httpOnly: true,
