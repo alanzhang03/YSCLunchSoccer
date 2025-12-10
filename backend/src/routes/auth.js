@@ -20,6 +20,10 @@ function setAuthCookies(res, accessToken, refreshToken) {
     sameSite: isCrossOrigin ? "none" : "lax",
   };
 
+  if (cookieOptions.sameSite === "none" && !cookieOptions.secure) {
+    cookieOptions.secure = true;
+  }
+
   res.cookie("sb_access_token", accessToken, cookieOptions);
 
   res.cookie("sb_refresh_token", refreshToken, {
@@ -41,6 +45,10 @@ function clearAuthCookies(res) {
     secure: isCrossOrigin ? true : isProduction,
     sameSite: isCrossOrigin ? "none" : "lax",
   };
+
+  if (cookieOptions.sameSite === "none" && !cookieOptions.secure) {
+    cookieOptions.secure = true;
+  }
 
   res.clearCookie("sb_access_token", cookieOptions);
   res.clearCookie("sb_refresh_token", cookieOptions);
@@ -279,7 +287,12 @@ router.get("/me", async (req, res) => {
 
     return res.json({ user });
   } catch (error) {
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Error in /auth/me:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      message:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 });
 
