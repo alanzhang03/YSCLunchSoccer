@@ -20,7 +20,7 @@ function setAuthCookies(res, accessToken, refreshToken) {
     sameSite: isCrossOrigin ? "none" : "lax",
   };
 
-  if (cookieOptions.sameSite === "none" && !cookieOptions.secure) {
+  if (cookieOptions.sameSite === "none") {
     cookieOptions.secure = true;
   }
 
@@ -46,7 +46,7 @@ function clearAuthCookies(res) {
     sameSite: isCrossOrigin ? "none" : "lax",
   };
 
-  if (cookieOptions.sameSite === "none" && !cookieOptions.secure) {
+  if (cookieOptions.sameSite === "none") {
     cookieOptions.secure = true;
   }
 

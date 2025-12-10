@@ -40,6 +40,8 @@ app.use(
       }
     },
     credentials: true,
+    exposedHeaders: ["Set-Cookie"],
+    optionsSuccessStatus: 200,
   })
 );
 
@@ -62,7 +64,7 @@ setTimeout(async () => {
       "⚠️  Initial session generation failed. Will retry on next scheduled run."
     );
   }
-}, 2000); 
+}, 2000);
 
 cron.schedule("0 0 * * 5", async () => {
   console.log("🔄 Running scheduled session generation...");
