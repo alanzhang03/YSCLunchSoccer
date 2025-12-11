@@ -6,7 +6,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 1vh 1rem;
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
@@ -34,22 +34,18 @@
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
-    padding: 0 0.75rem;
   }
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
     gap: 1rem;
-    padding: 0 0.5rem;
   }
 
   @media (max-width: 480px) {
     gap: 0.875rem;
-    padding: 0 0.25rem;
   }
 
   @media (max-width: 421px) {
     gap: 0.5rem;
-    padding: 0 0.125rem;
   }
 }

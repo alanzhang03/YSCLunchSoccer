@@ -21,7 +21,7 @@
     z-index: 1;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
@@ -76,7 +76,7 @@
         position: relative;
 
         &::after {
-          content: "";
+          content: '';
           position: absolute;
           top: 50%;
           left: 50%;
