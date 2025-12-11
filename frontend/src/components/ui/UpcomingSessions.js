@@ -93,7 +93,7 @@ const UpcomingSessions = () => {
         <h2>Your Upcoming Sessions</h2>
         <p className={styles.empty}>
           You haven't RSVP'd to any upcoming sessions yet.{' '}
-          <Link href="/sessions" className={styles.link}>
+          <Link href='/sessions' className={styles.link}>
             Browse sessions
           </Link>
         </p>

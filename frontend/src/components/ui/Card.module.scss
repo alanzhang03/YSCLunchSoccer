@@ -1,20 +1,43 @@
 .card {
-  background: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
   width: 100%;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
+  margin-top: 2vh;
   min-width: 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
 
   &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+      0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    transform: translateY(-4px);
+
+    &::before {
+      transform: scaleX(1);
+    }
   }
   .cardAvailContainer {
     display: flex;
@@ -23,7 +46,8 @@
     align-items: flex-start;
     margin-bottom: 1.25rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #f3f4f6;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    position: relative;
 
     .titleContainer {
       display: flex;
@@ -33,10 +57,44 @@
 
     .title {
       font-size: 1.25rem;
-      font-weight: 600;
-      color: #111827;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin: 0;
       letter-spacing: -0.025em;
+    }
+
+    .moreInfo {
+      font-size: 0.875rem;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      width: fit-content;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+      }
+
+      &:hover {
+        color: #764ba2;
+
+        &::after {
+          width: 100%;
+        }
+      }
     }
 
     .dateLabel {
@@ -53,24 +111,30 @@
     .today {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
-      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
     .tomorrow {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
     .availBubble {
       font-size: 0.875rem;
       font-weight: 600;
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border-radius: 20px;
       padding: 0.375rem 0.875rem;
-      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
       white-space: nowrap;
       min-width: fit-content;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+      }
     }
   }
   .details {
@@ -79,19 +143,19 @@
     gap: 0.75rem;
     .weekday {
       font-weight: 600;
-      color: #111827;
+      color: #1e293b;
       font-size: 1rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
     .date {
       font-weight: 500;
-      color: #374151;
+      color: #475569;
       font-size: 1rem;
     }
 
     .time {
-      color: #6b7280;
+      color: #64748b;
       font-size: 0.875rem;
       display: flex;
       align-items: center;
@@ -107,7 +171,7 @@
   .actions {
     margin-top: auto;
     padding-top: 1.5rem;
-    border-top: 2px solid #f3f4f6;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
   }
 }
 
@@ -181,7 +245,7 @@
 @media (max-width: 421px) {
   .card {
     padding: 0.625rem;
-    border-radius: 8px;
+    border-radius: 12px;
   }
 
   .cardAvailContainer {
