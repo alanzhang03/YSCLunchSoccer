@@ -1,5 +1,5 @@
 .footer {
-  border-top: 1px solid rgba(102, 126, 234, 0.15);
+  border-top: 1px solid rgba(31, 115, 183, 0.15);
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   margin-top: auto;
   position: relative;
@@ -8,7 +8,7 @@
   z-index: 10;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -17,7 +17,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(102, 126, 234, 0.3),
+      rgba(31, 115, 183, 0.3),
       transparent
     );
   }
@@ -58,16 +58,16 @@
           justify-content: center;
           width: 40px;
           height: 40px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
           color: white;
           border-radius: 50%;
           font-weight: 800;
           font-size: 0.875rem;
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+          box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
         }
 
         .brandText {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -121,21 +121,21 @@
             }
 
             &::before {
-              content: "";
+              content: '';
               position: absolute;
               left: -0.5rem;
               top: 50%;
               transform: translateY(-50%);
               width: 4px;
               height: 4px;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
               border-radius: 50%;
               opacity: 0;
               transition: opacity 0.2s ease;
             }
 
             &:hover {
-              color: #667eea;
+              color: #1f73b7;
               padding-left: 1rem;
               transform: translateX(4px);
 
@@ -155,7 +155,7 @@
               }
 
               &:active {
-                color: #667eea;
+                color: #1f73b7;
                 opacity: 0.8;
               }
             }

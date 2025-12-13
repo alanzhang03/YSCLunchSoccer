@@ -1,26 +1,40 @@
-// Variables
-$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-$primary-color: #667eea;
-$secondary-color: #764ba2;
+// Variables - YSC Sports Color Palette
+$ysc-primary-blue: #1f73b7;
+$ysc-dark-blue: #0f4c75;
+$ysc-medium-blue: #3282b8;
+$ysc-light-blue: #a3dafc;
+$ysc-very-light-blue: #e3f2fd;
+$primary-gradient: linear-gradient(
+  135deg,
+  $ysc-primary-blue 0%,
+  $ysc-medium-blue 100%
+);
+$primary-color: $ysc-primary-blue;
+$secondary-color: $ysc-medium-blue;
 $text-dark: #1a202c;
 $text-medium: #4a5568;
 $white: #ffffff;
-$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-$shadow-md: 0 4px 14px rgba(0, 0, 0, 0.15);
-$shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
-$shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
+$shadow-sm: 0 2px 8px rgba(31, 115, 183, 0.1);
+$shadow-md: 0 4px 14px rgba(31, 115, 183, 0.15);
+$shadow-lg: 0 8px 32px rgba(31, 115, 183, 0.1);
+$shadow-xl: 0 12px 40px rgba(31, 115, 183, 0.15);
 
 .page {
   flex: 1;
   display: flex;
   width: 100%;
-  background: $primary-gradient;
+  background: linear-gradient(
+    135deg,
+    $ysc-dark-blue 0%,
+    $ysc-primary-blue 50%,
+    $ysc-medium-blue 100%
+  );
   background-attachment: fixed;
   background-size: cover;
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: fixed;
     top: 0;
     left: 0;
@@ -41,7 +55,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
   }
 
   &::after {
-    content: "";
+    content: '';
     position: fixed;
     top: -50%;
     right: -10%;
@@ -87,7 +101,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         display: inline-block;
 
         &::after {
-          content: "⚽";
+          content: '⚽';
           position: absolute;
           right: -50px;
           top: 0;
@@ -154,14 +168,22 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .signupButton {
-          background: linear-gradient(135deg, $white 0%, #f8f9fa 100%);
-          color: $primary-color;
+          background: linear-gradient(
+            135deg,
+            $white 0%,
+            $ysc-very-light-blue 100%
+          );
+          color: $ysc-primary-blue;
           border: 1px solid rgba(255, 255, 255, 0.3);
 
           &:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25),
-              0 0 0 3px rgba(255, 255, 255, 0.3);
-            background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+            box-shadow: 0 8px 25px rgba(31, 115, 183, 0.25),
+              0 0 0 3px rgba(163, 218, 252, 0.3);
+            background: linear-gradient(
+              135deg,
+              #ffffff 0%,
+              $ysc-light-blue 100%
+            );
           }
         }
 
@@ -190,8 +212,12 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         align-items: center;
         gap: 0.75rem;
         padding: 1.25rem 3rem;
-        background: linear-gradient(135deg, $white 0%, #f8f9fa 100%);
-        color: $primary-color;
+        background: linear-gradient(
+          135deg,
+          $white 0%,
+          $ysc-very-light-blue 100%
+        );
+        color: $ysc-primary-blue;
         text-decoration: none;
         border-radius: 16px;
         font-size: 1.125rem;
@@ -203,7 +229,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         overflow: hidden;
 
         &::before {
-          content: "";
+          content: '';
           position: absolute;
           top: 0;
           left: -100%;
@@ -224,7 +250,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         &::after {
-          content: "→";
+          content: '→';
           font-size: 1.2em;
           transition: transform 0.3s ease;
           position: relative;
@@ -232,8 +258,8 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         &:hover {
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25),
-            0 0 0 4px rgba(255, 255, 255, 0.3);
+          box-shadow: 0 10px 30px rgba(31, 115, 183, 0.25),
+            0 0 0 4px rgba(163, 218, 252, 0.3);
 
           &::before {
             left: 100%;
@@ -267,7 +293,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         overflow: hidden;
 
         &::before {
-          content: "";
+          content: '';
           position: absolute;
           top: 0;
           left: 0;
@@ -280,7 +306,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         &::after {
-          content: "";
+          content: '';
           position: absolute;
           top: -50%;
           right: -50%;
@@ -288,7 +314,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
           height: 200px;
           background: radial-gradient(
             circle,
-            rgba(102, 126, 234, 0.1) 0%,
+            rgba(31, 115, 183, 0.1) 0%,
             transparent 70%
           );
           border-radius: 50%;
@@ -317,7 +343,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
           padding-left: 2rem;
 
           &::before {
-            content: "";
+            content: '';
             position: absolute;
             left: 0;
             top: 50%;
@@ -335,7 +361,7 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
           font-size: 1.05rem;
 
           .link {
-            color: $primary-color;
+            color: $ysc-primary-blue;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -344,18 +370,18 @@ $shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
             position: relative;
 
             &::after {
-              content: "";
+              content: '';
               position: absolute;
               bottom: 0;
               left: 0;
               width: 0;
               height: 2px;
-              background: $secondary-color;
+              background: $ysc-medium-blue;
               transition: width 0.3s ease;
             }
 
             &:hover {
-              color: $secondary-color;
+              color: $ysc-medium-blue;
 
               &::after {
                 width: 100%;

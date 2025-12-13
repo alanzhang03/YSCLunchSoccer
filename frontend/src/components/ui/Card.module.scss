@@ -23,7 +23,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #1f73b7 0%, #3282b8 100%);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.4s ease;
@@ -67,7 +67,7 @@
 
     .moreInfo {
       font-size: 0.875rem;
-      color: #667eea;
+      color: #1f73b7;
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
@@ -83,12 +83,12 @@
         left: 0;
         width: 0;
         height: 2px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(90deg, #1f73b7 0%, #3282b8 100%);
         transition: width 0.3s ease;
       }
 
       &:hover {
-        color: #764ba2;
+        color: #3282b8;
 
         &::after {
           width: 100%;
@@ -114,25 +114,25 @@
     }
 
     .tomorrow {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
     }
     .availBubble {
       font-size: 0.875rem;
       font-weight: 600;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       color: white;
       border-radius: 20px;
       padding: 0.375rem 0.875rem;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
       white-space: nowrap;
       min-width: fit-content;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
 
       &:hover {
         transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 16px rgba(31, 115, 183, 0.4);
       }
     }
   }

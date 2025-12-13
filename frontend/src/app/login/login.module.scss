@@ -49,8 +49,8 @@
 
           &:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 200, 0.1);
+            border-color: #1f73b7;
+            box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.1);
           }
 
           &:disabled {
@@ -68,7 +68,7 @@
       .button {
         width: 100%;
         padding: 0.875rem;
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
         color: white;
         border: none;
         border-radius: 8px;
@@ -79,9 +79,9 @@
         margin-top: 0.5rem;
 
         &:hover:not(:disabled) {
-          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+          background: linear-gradient(135deg, #3282b8 0%, #1f73b7 100%);
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
         }
 
         &:active:not(:disabled) {
@@ -113,13 +113,13 @@
       color: #6b7280;
 
       a {
-        color: #3b82f6;
+        color: #1f73b7;
         text-decoration: none;
         font-weight: 600;
         transition: color 0.2s;
 
         &:hover {
-          color: #2563eb;
+          color: #3282b8;
           text-decoration: underline;
         }
       }
