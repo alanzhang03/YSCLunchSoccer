@@ -9,7 +9,9 @@
     "postinstall": "prisma generate",
     "auth:list": "node src/utils/authCleanup.js list",
     "auth:find": "node src/utils/authCleanup.js find",
-    "auth:delete": "node src/utils/authCleanup.js delete"
+    "auth:delete": "node src/utils/authCleanup.js delete",
+    "load-test": "node load-test-signup.js",
+    "cleanup-test-users": "node cleanup-test-users.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.1.0",
