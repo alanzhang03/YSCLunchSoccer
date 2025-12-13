@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
-import styles from "./Navbar.module.scss";
+import React from 'react';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import styles from './Navbar.module.scss';
 
 const Navbar = () => {
   const { user, loading, logout } = useAuth();
@@ -17,16 +17,16 @@ const Navbar = () => {
   return (
     <header className={styles.navbar}>
       <div className={styles.inner}>
-        <Link href="/" className={styles.brand}>
+        <Link href='/' className={styles.brand}>
           <span className={styles.logoCircle}>YSC</span>
           <span className={styles.brandText}>YSC Lunch Soccer</span>
         </Link>
 
-        <nav className={styles.navLinks} aria-label="Main navigation">
-          <Link href="/" className={styles.link}>
+        <nav className={styles.navLinks} aria-label='Main navigation'>
+          <Link href='/' className={styles.link}>
             Home
           </Link>
-          <Link href="/sessions" className={styles.link}>
+          <Link href='/sessions' className={styles.link}>
             Sessions
           </Link>
         </nav>
@@ -43,10 +43,10 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link href="/login" className={styles.loginLink}>
+              <Link href='/login' className={styles.loginLink}>
                 Log In
               </Link>
-              <Link href="/signup" className={styles.signupButton}>
+              <Link href='/signup' className={styles.signupButton}>
                 Sign Up
               </Link>
             </>
