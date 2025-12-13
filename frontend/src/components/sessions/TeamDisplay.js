@@ -11,11 +11,24 @@ const TeamDisplay = ({ sessionId }) => {
   const [loading, setLoading] = useState(true);
   const [eror, setError] = useState(null);
   const [teamsArray, setTeamsArray] = useState([]);
+  const [numOfTeams, setNumOfTeams] = useState();
+  const [customNumTeams, setCustomNumTeams] = useState(null);
 
   const isAdmin = user?.isAdmin || false;
-  const teamColors = ['Black', 'White', 'Red', 'Blue'];
+  const teamColors = ['Black', 'White', 'Red', 'Blue', 'Yellow'];
 
   // const attendancesArray = getSessionAttendances(sessionId);
+
+  function handleNumOfTeamChange(e) {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 2 && value <= 5) {
+      setCustomNumTeams(value);
+      setNumOfTeams(value);
+    } else if (e.target.value === '') {
+      setCustomNumTeams(null);
+      setNumOfTeams(undefined);
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,12 +63,20 @@ const TeamDisplay = ({ sessionId }) => {
       setTeamsArray([]);
       return;
     }
-    let numTeams = 2;
-    if (yesAttendances.length >= 23 && yesAttendances.length <= 28) {
-      numTeams = 3;
-    } else if (yesAttendances.length > 28) {
-      numTeams = 4;
+
+    let numTeams;
+    if (customNumTeams !== null) {
+      numTeams = customNumTeams;
+    } else {
+      numTeams = 2;
+      if (yesAttendances.length >= 23 && yesAttendances.length <= 28) {
+        numTeams = 3;
+      } else if (yesAttendances.length > 28) {
+        numTeams = 4;
+      }
+      setNumOfTeams(numTeams);
     }
+
     const teams = randomizeTeams(yesAttendances, numTeams);
     setTeamsArray(teams);
   };
@@ -77,9 +98,27 @@ const TeamDisplay = ({ sessionId }) => {
       <div className={styles.header}>
         <h1 className={styles.title}>Teams</h1>
         {isAdmin && (
-          <button className={styles.randomizeButton} onClick={calculateTeams}>
-            🔄 Randomize Teams
-          </button>
+          <div className={styles.adminControls}>
+            <div className={styles.inputGroup}>
+              <label htmlFor='numTeams' className={styles.label}>
+                Number of Teams:
+              </label>
+              <input
+                id='numTeams'
+                value={numOfTeams || ''}
+                onChange={handleNumOfTeamChange}
+                type='number'
+                min='2'
+                max='5'
+                required
+                className={styles.numTeamsInput}
+                placeholder='2-4'
+              />
+            </div>
+            <button className={styles.randomizeButton} onClick={calculateTeams}>
+              🔄 Randomize Teams
+            </button>
+          </div>
         )}
       </div>
 

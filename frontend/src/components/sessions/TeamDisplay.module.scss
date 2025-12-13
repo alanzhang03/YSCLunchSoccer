@@ -20,6 +20,55 @@
       margin: 0;
     }
 
+    .adminControls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .inputGroup {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .numTeamsInput {
+      width: 80px;
+      padding: 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      color: #1f2937;
+      background-color: white;
+      transition: all 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #1f73b7;
+        box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.1);
+      }
+
+      &:hover {
+        border-color: #cbd5e1;
+      }
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        opacity: 1;
+        cursor: pointer;
+      }
+    }
+
     .randomizeButton {
       background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       color: white;
@@ -172,6 +221,22 @@
 
       .title {
         font-size: 1.5rem;
+      }
+
+      .adminControls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .inputGroup {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .numTeamsInput {
+        flex: 1;
+        max-width: 120px;
       }
 
       .randomizeButton {
