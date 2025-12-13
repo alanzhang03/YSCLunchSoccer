@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './page.module.scss';
 import UpcomingSessions from '@/components/ui/UpcomingSessions';
+import ImageSlider from '@/components/ui/ImageSlider';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -50,8 +51,8 @@ export default function Home() {
         <motion.div
           className={styles.hero}
           variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
           <motion.h1 className={styles.title} variants={itemVariants}>
             Welcome to YSC Lunch Soccer!
@@ -79,7 +80,7 @@ export default function Home() {
               transition={{ delay: 0.4, duration: 0.4 }}
             >
               <motion.a
-                href="/signup"
+                href='/signup'
                 className={styles.signupButton}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
@@ -88,7 +89,7 @@ export default function Home() {
                 Sign Up
               </motion.a>
               <motion.a
-                href="/login"
+                href='/login'
                 className={styles.loginButton}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
@@ -100,17 +101,26 @@ export default function Home() {
           )}
         </motion.div>
 
+        <motion.div
+          variants={itemVariants}
+          initial='hidden'
+          animate='visible'
+          transition={{ delay: 0.2 }}
+        >
+          <ImageSlider />
+        </motion.div>
+
         <UpcomingSessions />
 
         <motion.div
           className={styles.ctaSection}
           variants={itemVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
           transition={{ delay: 0.3 }}
         >
           <motion.a
-            href="/sessions"
+            href='/sessions'
             className={styles.ctaButton}
             whileHover={{ scale: 1.05, y: -3 }}
             whileTap={{ scale: 0.98 }}
@@ -123,8 +133,8 @@ export default function Home() {
         <motion.div
           className={styles.infoSection}
           variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
           <motion.div
             className={styles.infoCard}
@@ -149,18 +159,18 @@ export default function Home() {
               {user ? (
                 <>
                   You're all set! Head over to the{' '}
-                  <Link href="/sessions" className={styles.link}>
+                  <Link href='/sessions' className={styles.link}>
                     Sessions
                   </Link>{' '}
                   page to see upcoming games.
                 </>
               ) : (
                 <>
-                  <Link href="/signup" className={styles.link}>
+                  <Link href='/signup' className={styles.link}>
                     Sign up
                   </Link>{' '}
                   or{' '}
-                  <Link href="/login" className={styles.link}>
+                  <Link href='/login' className={styles.link}>
                     log in
                   </Link>{' '}
                   to start RSVPing to sessions.

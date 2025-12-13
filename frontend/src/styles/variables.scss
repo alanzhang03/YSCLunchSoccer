@@ -1,0 +1,30 @@
+// YSC Sports Color Palette - Shared Constants
+
+// Primary Colors
+$ysc-primary-blue: #1f73b7;
+$ysc-dark-blue: #0f4c75;
+$ysc-medium-blue: #3282b8;
+$ysc-light-blue: #a3dafc;
+$ysc-very-light-blue: #e3f2fd;
+
+// Semantic Color Aliases
+$primary-color: $ysc-primary-blue;
+$secondary-color: $ysc-medium-blue;
+
+// Text Colors
+$text-dark: #1a202c;
+$text-medium: #4a5568;
+$white: #ffffff;
+
+// Gradients
+$primary-gradient: linear-gradient(
+  135deg,
+  $ysc-primary-blue 0%,
+  $ysc-medium-blue 100%
+);
+
+// Shadows (using primary blue for consistency)
+$shadow-sm: 0 2px 8px rgba(31, 115, 183, 0.1);
+$shadow-md: 0 4px 14px rgba(31, 115, 183, 0.15);
+$shadow-lg: 0 8px 32px rgba(31, 115, 183, 0.1);
+$shadow-xl: 0 12px 40px rgba(31, 115, 183, 0.15);
