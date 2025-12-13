@@ -16,12 +16,12 @@
     .title {
       font-size: 1.75rem;
       font-weight: 700;
-      color: #1e40af;
+      color: #1f73b7;
       margin: 0;
     }
 
     .randomizeButton {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
@@ -30,12 +30,12 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 2px 4px rgba(31, 115, 183, 0.3);
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 8px rgba(31, 115, 183, 0.4);
+        background: linear-gradient(135deg, #3282b8 0%, #1f73b7 100%);
       }
 
       &:active {
@@ -94,8 +94,8 @@
         }
 
         .teamCount {
-          background: #dbeafe;
-          color: #1e40af;
+          background: #e3f2fd;
+          color: #1f73b7;
           padding: 0.25rem 0.75rem;
           border-radius: 12px;
           font-size: 0.85rem;

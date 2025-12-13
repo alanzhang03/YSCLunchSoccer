@@ -9,13 +9,13 @@
     rgba(248, 250, 252, 0.95) 100%
   );
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+  border-bottom: 1px solid rgba(31, 115, 183, 0.15);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     left: 0;
@@ -24,7 +24,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(102, 126, 234, 0.3),
+      rgba(31, 115, 183, 0.3),
       transparent
     );
   }
@@ -62,22 +62,22 @@
       justify-content: center;
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       color: white;
       border-radius: 50%;
       font-weight: 800;
       font-size: 0.875rem;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
 
       &:hover {
         transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 16px rgba(31, 115, 183, 0.4);
       }
     }
 
     .brandText {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -102,21 +102,21 @@
       font-weight: 500;
 
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         bottom: 0.25rem;
         left: 50%;
         transform: translateX(-50%);
         width: 0;
         height: 2px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
         border-radius: 2px;
         transition: width 0.3s ease;
       }
 
       &:hover {
-        color: #667eea;
-        background-color: rgba(102, 126, 234, 0.08);
+        color: #1f73b7;
+        background-color: rgba(31, 115, 183, 0.08);
 
         &::before {
           width: calc(100% - 2rem);
@@ -136,15 +136,15 @@
       text-decoration: none;
       padding: 0.5rem 1rem;
       border-radius: 8px;
-      border: 1px solid rgba(102, 126, 234, 0.2);
+      border: 1px solid rgba(31, 115, 183, 0.2);
       background-color: rgba(255, 255, 255, 0.8);
       transition: all 0.2s ease;
       font-weight: 500;
 
       &:hover {
-        background-color: rgba(102, 126, 234, 0.08);
-        border-color: rgba(102, 126, 234, 0.4);
-        color: #667eea;
+        background-color: rgba(31, 115, 183, 0.08);
+        border-color: rgba(31, 115, 183, 0.4);
+        color: #1f73b7;
         transform: translateY(-1px);
       }
     }
@@ -155,15 +155,15 @@
       text-decoration: none;
       padding: 0.5rem 1.25rem;
       border-radius: 8px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       border: none;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
       transition: all 0.2s ease;
       font-weight: 600;
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 16px rgba(31, 115, 183, 0.4);
         opacity: 0.95;
       }
 
@@ -177,9 +177,9 @@
       color: #475569;
       font-weight: 500;
       padding: 0.5rem 1rem;
-      background: rgba(102, 126, 234, 0.05);
+      background: rgba(31, 115, 183, 0.05);
       border-radius: 8px;
-      border: 1px solid rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(31, 115, 183, 0.1);
     }
 
     .logoutButton {
