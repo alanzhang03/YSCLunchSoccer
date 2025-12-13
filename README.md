@@ -1,6 +1,6 @@
 # YSC Lunch Soccer ⚽
 
-A web application for managing lunchtime soccer sessions, RSVPs, team randomization, and communication for YSC (Yale Soccer Club) members.
+A web application for managing lunchtime soccer sessions, RSVPs, team randomization, and communication for YSC members.
 
 ## 🎯 Features
 
