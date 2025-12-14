@@ -12,7 +12,7 @@
   border-bottom: 1px solid rgba(31, 115, 183, 0.15);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 
   &::after {
     content: '';
@@ -43,32 +43,190 @@
 
   .mobileMenu {
     display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    gap: 1rem;
-    padding: 1rem;
-    background: white;
-    border-top: 1px solid rgba(31, 115, 183, 0.15);
+    max-width: 320px;
+    gap: 1.25rem;
+    padding: 4rem 1.5rem 2rem;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.98) 50%,
+      rgba(248, 250, 252, 0.98) 100%
+    );
+    backdrop-filter: blur(40px) saturate(180%);
+    border-right: 2px solid rgba(31, 115, 183, 0.15);
+    box-shadow: 8px 0 40px rgba(31, 115, 183, 0.15),
+      4px 0 16px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
     transform: translateX(-100%);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      visibility 0s linear 0.4s;
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    isolation: isolate;
+
+    // Blue accent gradient at top matching site theme
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 180px;
+      background: linear-gradient(
+        180deg,
+        rgba(31, 115, 183, 0.12) 0%,
+        rgba(31, 115, 183, 0.06) 50%,
+        transparent 100%
+      );
+      opacity: 0;
+      transition: opacity 0.4s ease 0.15s;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    // Backdrop overlay covering the rest of the screen
+    &::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: -1;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
 
     a,
     button {
-      font-size: 0.95rem;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
+      font-size: 1.05rem;
+      padding: 1.125rem 1.5rem;
+      border-radius: 14px;
       text-decoration: none;
-      background: rgba(31, 115, 183, 0.05);
-      border: none;
+      background: linear-gradient(
+        135deg,
+        rgba(31, 115, 183, 0.1) 0%,
+        rgba(31, 115, 183, 0.06) 100%
+      );
+      border: 2px solid rgba(31, 115, 183, 0.2);
       color: #1e293b;
       text-align: left;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform: translateX(-30px);
+      opacity: 0;
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+      will-change: transform, opacity;
+      box-shadow: 0 2px 8px rgba(31, 115, 183, 0.1);
+
+      // Shine effect on hover
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transition: left 0.6s ease;
+        z-index: 1;
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
+        color: white;
+        border-color: #1f73b7;
+        transform: translateX(0) translateY(-2px);
+        box-shadow: 0 8px 24px rgba(31, 115, 183, 0.35),
+          0 4px 12px rgba(31, 115, 183, 0.2);
+
+        &::after {
+          left: 100%;
+        }
+      }
+
+      &:active {
+        transform: translateX(0) translateY(0);
+        box-shadow: 0 4px 16px rgba(31, 115, 183, 0.3),
+          0 2px 8px rgba(31, 115, 183, 0.15);
+      }
     }
   }
 
   .mobileMenu.open {
-    display: flex;
+    display: flex !important;
     transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0s;
+
+    &::before {
+      opacity: 1;
+    }
+
+    &::after {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    a,
+    button {
+      transform: translateX(0);
+      opacity: 1;
+
+      &:nth-child(1) {
+        transition-delay: 0.1s;
+      }
+
+      &:nth-child(2) {
+        transition-delay: 0.15s;
+      }
+
+      &:nth-child(3) {
+        transition-delay: 0.2s;
+      }
+
+      &:nth-child(4) {
+        transition-delay: 0.25s;
+      }
+
+      &:nth-child(5) {
+        transition-delay: 0.3s;
+      }
+    }
+  }
+
+  // Closing animation - ensure smooth slide-out
+  .mobileMenu:not(.open) {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      visibility 0s linear 0.4s;
+
+    a,
+    button {
+      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
   }
 
   .hamburger {
@@ -81,14 +239,39 @@
     border: none;
     cursor: pointer;
     padding: 0;
+    position: relative;
+    z-index: 1001;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    &:hover {
+      transform: scale(1.05);
+    }
 
     span {
       display: block;
       height: 3px;
       width: 100%;
-      background: #1f73b7;
+      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       border-radius: 2px;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform-origin: center;
+    }
+  }
+
+  .mobileMenu.open ~ .mobileNav .hamburger {
+    span {
+      &:nth-child(1) {
+        transform: translateY(10.5px) rotate(45deg);
+      }
+
+      &:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+
+      &:nth-child(3) {
+        transform: translateY(-10.5px) rotate(-45deg);
+      }
     }
   }
 
@@ -262,6 +445,9 @@
 }
 
 @media (max-width: 768px) {
+  // .logoCircle {
+  //   display: none !important;
+  // }
   .navbar {
     .inner {
       padding: 0.875rem 1rem;
