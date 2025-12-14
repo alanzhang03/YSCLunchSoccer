@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import styles from './ImageSlider.module.scss';
+import Link from 'next/link';
 
 const images = [
   '/ysclunchsoccer1.jpg',
@@ -57,14 +58,16 @@ export default function ImageSlider() {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
           >
-            <Image
-              src={images[currentIndex]}
-              alt={`YSC Lunch Soccer ${currentIndex + 1}`}
-              fill
-              className={styles.image}
-              priority={currentIndex === 0}
-              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px'
-            />
+            <Link href={images[currentIndex]} target='_blank'>
+              <Image
+                src={images[currentIndex]}
+                alt={`YSC Lunch Soccer ${currentIndex + 1}`}
+                fill
+                className={styles.image}
+                priority={currentIndex === 0}
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px'
+              />
+            </Link>
             <div className={styles.overlay} />
           </motion.div>
         </AnimatePresence>
