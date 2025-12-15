@@ -38,20 +38,6 @@ const Navbar = () => {
           </Link>
         </nav>
 
-        <Link href='/' className={styles.brand}>
-          <span className={styles.logoCircle}>YSC</span>
-          <span className={styles.brandText}>YSC Lunch Soccer</span>
-        </Link>
-
-        <nav className={styles.navLinks} aria-label='Main navigation'>
-          <Link href='/' className={styles.link}>
-            Home
-          </Link>
-          <Link href='/sessions' className={styles.link}>
-            Sessions
-          </Link>
-        </nav>
-
         <div className={styles.mobileNav}>
           <button
             className={styles.hamburger}
@@ -64,6 +50,20 @@ const Navbar = () => {
             <span />
           </button>
         </div>
+
+        <Link href='/' className={styles.brand}>
+          <img src='/favicon.svg' alt='YSC Logo' className={styles.logo} />
+          <span className={styles.brandText}>YSC Lunch Soccer</span>
+        </Link>
+
+        <nav className={styles.navLinks} aria-label='Main navigation'>
+          <Link href='/' className={styles.link}>
+            Home
+          </Link>
+          <Link href='/sessions' className={styles.link}>
+            Sessions
+          </Link>
+        </nav>
 
         <div className={styles.authLinks}>
           {loading ? (

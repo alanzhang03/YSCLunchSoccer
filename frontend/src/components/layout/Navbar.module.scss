@@ -42,10 +42,10 @@
   }
 
   .mobileMenu {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
+    display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100%;
@@ -61,53 +61,16 @@
     backdrop-filter: blur(40px) saturate(180%);
     border-right: 2px solid rgba(31, 115, 183, 0.15);
     box-shadow: 8px 0 40px rgba(31, 115, 183, 0.15),
-      4px 0 16px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+      4px 0 16px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+
     transform: translateX(-100%);
     opacity: 0;
     visibility: hidden;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      visibility 0s linear 0.4s;
+    pointer-events: none;
+
     z-index: 1000;
-    overflow-y: auto;
-    overflow-x: hidden;
-    isolation: isolate;
-
-    // Blue accent gradient at top matching site theme
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 180px;
-      background: linear-gradient(
-        180deg,
-        rgba(31, 115, 183, 0.12) 0%,
-        rgba(31, 115, 183, 0.06) 50%,
-        transparent 100%
-      );
-      opacity: 0;
-      transition: opacity 0.4s ease 0.15s;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    // Backdrop overlay covering the rest of the screen
-    &::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(4px);
-      z-index: -1;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease,
+      visibility 0s linear 0.4s;
 
     a,
     button {
@@ -133,53 +96,74 @@
       z-index: 10;
       will-change: transform, opacity;
       box-shadow: 0 2px 8px rgba(31, 115, 183, 0.1);
-
-      // Shine effect on hover
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(31, 115, 183, 0.5),
+          rgba(99, 179, 237, 0.5)
+        );
+        opacity: 0;
+        filter: blur(10px);
+        z-index: -1;
+        transition: opacity 0.3s ease;
+      }
       &::after {
         content: '';
         position: absolute;
         top: 0;
-        left: -100%;
-        width: 100%;
+        left: -120%;
+        width: 120%;
         height: 100%;
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.4),
+          rgba(255, 255, 255, 0.45),
           transparent
         );
         transition: left 0.6s ease;
-        z-index: 1;
+        z-index: 2;
+        pointer-events: none;
       }
-
       &:hover {
         background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
         color: white;
-        border-color: #1f73b7;
-        transform: translateX(0) translateY(-2px);
-        box-shadow: 0 8px 24px rgba(31, 115, 183, 0.35),
-          0 4px 12px rgba(31, 115, 183, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+
+        transform: translateX(0) translateY(-2px) scale(1);
+
+        box-shadow: 0 10px 30px rgba(31, 115, 183, 0.35),
+          0 4px 12px rgba(31, 115, 183, 0.25);
+
+        &::before {
+          opacity: 1;
+        }
 
         &::after {
-          left: 100%;
+          left: 120%;
         }
       }
 
       &:active {
-        transform: translateX(0) translateY(0);
-        box-shadow: 0 4px 16px rgba(31, 115, 183, 0.3),
-          0 2px 8px rgba(31, 115, 183, 0.15);
+        transform: translateX(0) translateY(0) scale(0.98);
+
+        box-shadow: 0 4px 14px rgba(31, 115, 183, 0.25),
+          inset 0 2px 6px rgba(0, 0, 0, 0.15);
       }
     }
   }
 
   .mobileMenu.open {
-    display: flex !important;
     transform: translateX(0);
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
+
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0s;
+      opacity 0.3s ease, visibility 0s linear 0s;
 
     &::before {
       opacity: 1;
@@ -217,18 +201,6 @@
     }
   }
 
-  // Closing animation - ensure smooth slide-out
-  .mobileMenu:not(.open) {
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      visibility 0s linear 0.4s;
-
-    a,
-    button {
-      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-  }
-
   .hamburger {
     width: 32px;
     height: 24px;
@@ -248,7 +220,7 @@
     }
 
     span {
-      display: block;
+      display: none;
       height: 3px;
       width: 100%;
       background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
@@ -290,23 +262,14 @@
       opacity: 0.9;
     }
 
-    .logoCircle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .logo {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
-      color: white;
-      border-radius: 50%;
-      font-weight: 800;
-      font-size: 0.875rem;
-      box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      object-fit: contain;
+      transition: transform 0.2s ease, opacity 0.2s ease;
 
       &:hover {
         transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(31, 115, 183, 0.4);
       }
     }
 
@@ -445,23 +408,26 @@
 }
 
 @media (max-width: 768px) {
-  // .logoCircle {
-  //   display: none !important;
-  // }
   .navbar {
     .inner {
       padding: 0.875rem 1rem;
       gap: 1rem;
       flex-wrap: wrap;
+      display: flex;
+      justify-content: space-between;
+      .hamburger {
+        span {
+          display: block;
+        }
+      }
     }
 
     .brand {
       font-size: 1.125rem;
 
-      .logoCircle {
+      .logo {
         width: 36px;
         height: 36px;
-        font-size: 0.8125rem;
       }
 
       .brandText {
@@ -503,10 +469,9 @@
     .brand {
       font-size: 1rem;
 
-      .logoCircle {
+      .logo {
         width: 32px;
         height: 32px;
-        font-size: 0.75rem;
       }
     }
 
