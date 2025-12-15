@@ -1,7 +1,7 @@
-import React from "react";
-import Link from "next/link";
-import { FaFacebook, FaInstagram } from "react-icons/fa";
-import styles from "./Footer.module.scss";
+import React from 'react';
+import Link from 'next/link';
+import { FaFacebook, FaInstagram } from 'react-icons/fa';
+import styles from './Footer.module.scss';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,8 +10,8 @@ const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.brandSection}>
-          <Link href="/" className={styles.brand}>
-            <span className={styles.logoCircle}>YSC</span>
+          <Link href='/' className={styles.brand}>
+            <img src='/favicon.svg' alt='YSC Logo' className={styles.logo} />
             <span className={styles.brandText}>YSC Lunch Soccer</span>
           </Link>
           <p className={styles.tagline}>
@@ -23,10 +23,10 @@ const Footer = () => {
           <div className={styles.linksGroup}>
             <h3 className={styles.linksTitle}>Navigation</h3>
             <nav className={styles.links}>
-              <Link href="/" className={styles.link}>
+              <Link href='/' className={styles.link}>
                 Home
               </Link>
-              <Link href="/sessions" className={styles.link}>
+              <Link href='/sessions' className={styles.link}>
                 Sessions
               </Link>
             </nav>
@@ -35,26 +35,26 @@ const Footer = () => {
             <h3 className={styles.linksTitle}>Connect</h3>
             <nav className={styles.links}>
               <a
-                href="https://www.yscsports.com/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href='https://www.yscsports.com/'
+                target='_blank'
+                rel='noopener noreferrer'
                 className={styles.link}
               >
                 YSC Sports
               </a>
               <a
-                href="https://www.facebook.com/yscsports"
-                target="_blank"
-                rel="noopener noreferrer"
+                href='https://www.facebook.com/yscsports'
+                target='_blank'
+                rel='noopener noreferrer'
                 className={styles.link}
               >
                 <FaFacebook className={styles.icon} />
                 Facebook
               </a>
               <a
-                href="https://www.instagram.com/yscsports/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href='https://www.instagram.com/yscsports/'
+                target='_blank'
+                rel='noopener noreferrer'
                 className={styles.link}
               >
                 <FaInstagram className={styles.icon} />
