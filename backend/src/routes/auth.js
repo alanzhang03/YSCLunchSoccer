@@ -18,13 +18,39 @@ function setAuthCookies(res, accessToken, refreshToken) {
     isProduction &&
     (frontendUrl.startsWith('https://') || !frontendUrl.includes('localhost'));
 
+  const useSameSiteNone = isCrossOrigin || isLocalhostCrossOrigin;
+
+  const useSecure =
+    (isProduction && frontendUrl.startsWith('https://')) ||
+    (useSameSiteNone && !isLocalhostCrossOrigin);
+
   const cookieOptions = {
     httpOnly: true,
     maxAge: 60 * 60 * 1000,
     path: '/',
-    secure: isCrossOrigin && isProduction ? true : false,
-    sameSite: isCrossOrigin || isLocalhostCrossOrigin ? 'none' : 'lax',
+    secure: useSecure,
+    sameSite: useSameSiteNone ? 'none' : 'lax',
   };
+
+  if (
+    cookieOptions.sameSite === 'none' &&
+    !cookieOptions.secure &&
+    isProduction
+  ) {
+    console.warn(
+      'WARNING: sameSite: "none" requires secure: true in production!'
+    );
+    cookieOptions.secure = true;
+  }
+
+  if (isProduction) {
+    console.log('Cookie settings:', {
+      frontendUrl,
+      isCrossOrigin,
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
+    });
+  }
 
   res.cookie('sb_access_token', accessToken, cookieOptions);
 
@@ -47,12 +73,26 @@ function clearAuthCookies(res) {
     isProduction &&
     (frontendUrl.startsWith('https://') || !frontendUrl.includes('localhost'));
 
+  const useSameSiteNone = isCrossOrigin || isLocalhostCrossOrigin;
+
+  const useSecure =
+    (isProduction && frontendUrl.startsWith('https://')) ||
+    (useSameSiteNone && !isLocalhostCrossOrigin);
+
   const cookieOptions = {
     httpOnly: true,
     path: '/',
-    secure: isCrossOrigin && isProduction ? true : false,
-    sameSite: isCrossOrigin || isLocalhostCrossOrigin ? 'none' : 'lax',
+    secure: useSecure,
+    sameSite: useSameSiteNone ? 'none' : 'lax',
   };
+
+  if (
+    cookieOptions.sameSite === 'none' &&
+    !cookieOptions.secure &&
+    isProduction
+  ) {
+    cookieOptions.secure = true;
+  }
 
   res.clearCookie('sb_access_token', cookieOptions);
   res.clearCookie('sb_refresh_token', cookieOptions);
@@ -315,6 +355,48 @@ router.post('/logout', async (req, res) => {
     clearAuthCookies(res);
     return res.json({ message: 'Logout successful' });
   }
+});
+
+router.get('/debug', (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const frontendUrl = (
+    process.env.FRONTEND_URL || 'http://localhost:3000'
+  ).trim();
+
+  const isLocalhostCrossOrigin =
+    frontendUrl.includes('localhost') &&
+    !frontendUrl.includes('localhost:5001');
+  const isCrossOrigin =
+    isProduction &&
+    (frontendUrl.startsWith('https://') || !frontendUrl.includes('localhost'));
+
+  const useSameSiteNone = isCrossOrigin || isLocalhostCrossOrigin;
+  const useSecure =
+    (isProduction && frontendUrl.startsWith('https://')) ||
+    (useSameSiteNone && !isLocalhostCrossOrigin);
+
+  res.json({
+    environment: {
+      NODE_ENV: process.env.NODE_ENV,
+      FRONTEND_URL: frontendUrl,
+      isProduction,
+      isCrossOrigin,
+      isLocalhostCrossOrigin,
+    },
+    cookieSettings: {
+      secure: useSecure,
+      sameSite: useSameSiteNone ? 'none' : 'lax',
+      httpOnly: true,
+    },
+    receivedCookies: {
+      hasAccessToken: !!req.cookies?.sb_access_token,
+      cookieNames: Object.keys(req.cookies || {}),
+    },
+    headers: {
+      origin: req.get('origin'),
+      userAgent: req.get('user-agent'),
+    },
+  });
 });
 
 export default router;
