@@ -1,76 +1,80 @@
-import { Router } from "express";
-import prisma from "../db/client.js";
-import bcrypt from "bcrypt";
-import { supabaseAdmin } from "../lib/supabase.js";
+import { Router } from 'express';
+import prisma from '../db/client.js';
+import bcrypt from 'bcrypt';
+import { supabaseAdmin } from '../lib/supabase.js';
 
 const router = Router();
 
 function setAuthCookies(res, accessToken, refreshToken) {
-  const isProduction = process.env.NODE_ENV === "production";
-  const frontendUrl = (process.env.FRONTEND_URL || "").trim();
+  const isProduction = process.env.NODE_ENV === 'production';
+  const frontendUrl = (
+    process.env.FRONTEND_URL || 'http://localhost:3000'
+  ).trim();
+
+  const isLocalhostCrossOrigin =
+    frontendUrl.includes('localhost') &&
+    !frontendUrl.includes('localhost:5001');
   const isCrossOrigin =
     isProduction &&
-    (frontendUrl.startsWith("https://") || !frontendUrl.includes("localhost"));
+    (frontendUrl.startsWith('https://') || !frontendUrl.includes('localhost'));
 
   const cookieOptions = {
     httpOnly: true,
     maxAge: 60 * 60 * 1000,
-    path: "/",
-    secure: isCrossOrigin ? true : isProduction,
-    sameSite: isCrossOrigin ? "none" : "lax",
+    path: '/',
+    secure: isCrossOrigin && isProduction ? true : false,
+    sameSite: isCrossOrigin || isLocalhostCrossOrigin ? 'none' : 'lax',
   };
 
-  if (cookieOptions.sameSite === "none") {
-    cookieOptions.secure = true;
-  }
+  res.cookie('sb_access_token', accessToken, cookieOptions);
 
-  res.cookie("sb_access_token", accessToken, cookieOptions);
-
-  res.cookie("sb_refresh_token", refreshToken, {
+  res.cookie('sb_refresh_token', refreshToken, {
     ...cookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 }
 
 function clearAuthCookies(res) {
-  const isProduction = process.env.NODE_ENV === "production";
-  const frontendUrl = (process.env.FRONTEND_URL || "").trim();
+  const isProduction = process.env.NODE_ENV === 'production';
+  const frontendUrl = (
+    process.env.FRONTEND_URL || 'http://localhost:3000'
+  ).trim();
+
+  const isLocalhostCrossOrigin =
+    frontendUrl.includes('localhost') &&
+    !frontendUrl.includes('localhost:5001');
   const isCrossOrigin =
     isProduction &&
-    (frontendUrl.startsWith("https://") || !frontendUrl.includes("localhost"));
+    (frontendUrl.startsWith('https://') || !frontendUrl.includes('localhost'));
 
   const cookieOptions = {
     httpOnly: true,
-    path: "/",
-    secure: isCrossOrigin ? true : isProduction,
-    sameSite: isCrossOrigin ? "none" : "lax",
+    path: '/',
+    secure: isCrossOrigin && isProduction ? true : false,
+    sameSite: isCrossOrigin || isLocalhostCrossOrigin ? 'none' : 'lax',
   };
 
-  if (cookieOptions.sameSite === "none") {
-    cookieOptions.secure = true;
-  }
-
-  res.clearCookie("sb_access_token", cookieOptions);
-  res.clearCookie("sb_refresh_token", cookieOptions);
+  res.clearCookie('sb_access_token', cookieOptions);
+  res.clearCookie('sb_refresh_token', cookieOptions);
 }
 
-router.post("/signup", async (req, res) => {
+router.post('/signup', async (req, res) => {
   try {
     const { phoneNum, email, name, password, skill } = req.body;
 
     if (!phoneNum || !email || !name || !password) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({ error: 'All fields are required' });
     }
 
     const skillNumber =
-      skill !== undefined && skill !== null && skill !== ""
+      skill !== undefined && skill !== null && skill !== ''
         ? parseInt(skill, 10)
         : 5;
 
     if (isNaN(skillNumber) || skillNumber < 1 || skillNumber > 10) {
       return res
         .status(400)
-        .json({ error: "Skill level must be a number between 1 and 10" });
+        .json({ error: 'Skill level must be a number between 1 and 10' });
     }
 
     const existingUser = await prisma.user.findFirst({
@@ -82,7 +86,7 @@ router.post("/signup", async (req, res) => {
     if (existingUser) {
       return res
         .status(409)
-        .json({ error: "User with this email or phone already exists" });
+        .json({ error: 'User with this email or phone already exists' });
     }
 
     const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
@@ -109,7 +113,7 @@ router.post("/signup", async (req, res) => {
     if (authError) {
       return res
         .status(400)
-        .json({ error: authError.message || "Failed to create user" });
+        .json({ error: authError.message || 'Failed to create user' });
     }
 
     const user = await prisma.user.create({
@@ -149,23 +153,23 @@ router.post("/signup", async (req, res) => {
 
     return res.status(201).json({ user });
   } catch (error) {
-    console.error("Signup error:", error);
+    console.error('Signup error:', error);
     return res.status(500).json({
-      error: "Internal server error",
+      error: 'Internal server error',
       message:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { phoneNum, password } = req.body;
 
     if (!phoneNum || !password) {
       return res
         .status(400)
-        .json({ error: "Phone number and password are required" });
+        .json({ error: 'Phone number and password are required' });
     }
 
     const user = await prisma.user.findUnique({
@@ -175,7 +179,7 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res
         .status(401)
-        .json({ error: "Invalid phone number or password" });
+        .json({ error: 'Invalid phone number or password' });
     }
 
     let signInData = null;
@@ -195,13 +199,13 @@ router.post("/login", async (req, res) => {
     if (signInError || !signInData?.session) {
       const isPasswordValid = await bcrypt.compare(
         password,
-        user.password || ""
+        user.password || ''
       );
 
       if (!isPasswordValid) {
         return res
           .status(401)
-          .json({ error: "Invalid phone number or password" });
+          .json({ error: 'Invalid phone number or password' });
       }
 
       const safeUser = {
@@ -213,7 +217,7 @@ router.post("/login", async (req, res) => {
         isAdmin: user.isAdmin,
         createdAt: user.createdAt,
       };
-      return res.json({ message: "Login successful", user: safeUser });
+      return res.json({ message: 'Login successful', user: safeUser });
     }
 
     try {
@@ -223,11 +227,11 @@ router.post("/login", async (req, res) => {
         signInData.session.refresh_token
       );
     } catch (cookieError) {
-      console.error("Cookie setting error:", cookieError);
-      console.error("Environment:", {
+      console.error('Cookie setting error:', cookieError);
+      console.error('Environment:', {
         NODE_ENV: process.env.NODE_ENV,
         FRONTEND_URL: process.env.FRONTEND_URL,
-        isProduction: process.env.NODE_ENV === "production",
+        isProduction: process.env.NODE_ENV === 'production',
       });
     }
 
@@ -240,23 +244,23 @@ router.post("/login", async (req, res) => {
       createdAt: user.createdAt,
     };
 
-    return res.json({ message: "Login successful", user: safeUser });
+    return res.json({ message: 'Login successful', user: safeUser });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error('Login error:', error);
     return res.status(500).json({
-      error: "Internal server error",
+      error: 'Internal server error',
       message:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });
 
-router.get("/me", async (req, res) => {
+router.get('/me', async (req, res) => {
   try {
     const token = req.cookies?.sb_access_token;
 
     if (!token) {
-      return res.status(401).json({ error: "Not authenticated" });
+      return res.status(401).json({ error: 'Not authenticated' });
     }
 
     const {
@@ -265,7 +269,7 @@ router.get("/me", async (req, res) => {
     } = await supabaseAdmin.auth.getUser(token);
 
     if (error || !supabaseUser) {
-      return res.status(401).json({ error: "Invalid or expired token" });
+      return res.status(401).json({ error: 'Invalid or expired token' });
     }
 
     const user = await prisma.user.findUnique({
@@ -282,21 +286,21 @@ router.get("/me", async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     return res.json({ user });
   } catch (error) {
-    console.error("Error in /auth/me:", error);
+    console.error('Error in /auth/me:', error);
     return res.status(500).json({
-      error: "Internal server error",
+      error: 'Internal server error',
       message:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });
 
-router.post("/logout", async (req, res) => {
+router.post('/logout', async (req, res) => {
   try {
     const token = req.cookies?.sb_access_token;
 
@@ -306,10 +310,10 @@ router.post("/logout", async (req, res) => {
 
     clearAuthCookies(res);
 
-    return res.json({ message: "Logout successful" });
+    return res.json({ message: 'Logout successful' });
   } catch (error) {
     clearAuthCookies(res);
-    return res.json({ message: "Logout successful" });
+    return res.json({ message: 'Logout successful' });
   }
 });
 
