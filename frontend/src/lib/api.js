@@ -1,48 +1,49 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
 export async function getSessions() {
   const response = await fetch(`${API_BASE_URL}/sessions`, {
-    method: "GET",
-    cache: "no-store",
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
     headers: {
-      "Cache-Control": "no-cache",
+      'Cache-Control': 'no-cache',
     },
   });
   if (!response.ok) {
-    throw new Error("Failed to fetch sessions");
+    throw new Error('Failed to fetch sessions');
   }
   return response.json();
 }
 
 export async function getSessionsByUser() {
   const response = await fetch(`${API_BASE_URL}/sessions/sessionsByUser`, {
-    method: "GET",
-    credentials: "include",
-    cache: "no-store",
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
     headers: {
-      "Cache-Control": "no-cache",
+      'Cache-Control': 'no-cache',
     },
   });
   if (!response.ok) {
-    throw new Error("Failed to fetch sessions");
+    throw new Error('Failed to fetch sessions');
   }
   return response.json();
 }
 
 export async function attendSession(sessionId, status) {
   const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/attend`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ status }),
   });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "Failed to RSVP");
+    throw new Error(errorData.error || 'Failed to RSVP');
   }
 
   return response.json();
@@ -50,41 +51,46 @@ export async function attendSession(sessionId, status) {
 
 export async function getSessionById(sessionId) {
   const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}`, {
-    method: "GET",
-    cache: "no-store",
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
     headers: {
-      "Cache-Control": "no-cache",
+      'Cache-Control': 'no-cache',
     },
   });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "Failed to fetch session");
+    throw new Error(errorData.error || 'Failed to fetch session');
   }
   return response.json();
 }
 
 export async function getSessionAttendances(sessionId) {
   const response = await fetch(
-    `${API_BASE_URL}/sessions/${sessionId}/attendances`
+    `${API_BASE_URL}/sessions/${sessionId}/attendances`,
+    {
+      credentials: 'include',
+    }
   );
   if (!response.ok) {
-    throw new Error("Failed to fetch attendances");
+    throw new Error('Failed to fetch attendances');
   }
   return response.json();
 }
 
 export async function getMessages(sessionId) {
   const response = await fetch(`${API_BASE_URL}/messages/${sessionId}`, {
-    method: "GET",
-    cache: "no-store",
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
     headers: {
-      "Cache-Control": "no-cache",
+      'Cache-Control': 'no-cache',
     },
   });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "Failed to fetch messages");
+    throw new Error(errorData.error || 'Failed to fetch messages');
   }
 
   return response.json();
@@ -92,10 +98,10 @@ export async function getMessages(sessionId) {
 
 export async function sendMessage(sessionId, content) {
   const response = await fetch(`${API_BASE_URL}/messages`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       sessionId: sessionId,
@@ -105,7 +111,7 @@ export async function sendMessage(sessionId, content) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "Failed to send message");
+    throw new Error(errorData.error || 'Failed to send message');
   }
 
   return response.json();
