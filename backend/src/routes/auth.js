@@ -18,14 +18,10 @@ function setAuthCookies(res, accessToken, refreshToken) {
     isProduction &&
     (frontendUrl.startsWith('https://') || !frontendUrl.includes('localhost'));
 
-  // For cross-origin (production HTTPS or localhost different ports), use 'none'
-  // For same-origin, use 'lax' (more secure)
   const cookieOptions = {
     httpOnly: true,
     maxAge: 60 * 60 * 1000,
     path: '/',
-    // secure: true required for sameSite: 'none' in production HTTPS
-    // secure: false allowed for localhost development
     secure: isCrossOrigin && isProduction ? true : false,
     sameSite: isCrossOrigin || isLocalhostCrossOrigin ? 'none' : 'lax',
   };
@@ -51,7 +47,6 @@ function clearAuthCookies(res) {
     isProduction &&
     (frontendUrl.startsWith('https://') || !frontendUrl.includes('localhost'));
 
-  // Match the same cookie options used in setAuthCookies
   const cookieOptions = {
     httpOnly: true,
     path: '/',
