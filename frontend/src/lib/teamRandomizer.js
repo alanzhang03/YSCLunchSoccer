@@ -9,7 +9,7 @@ function shuffleArray(array) {
 
 export function randomizeTeams(players, numOfTeams) {
   if (numOfTeams < 2) {
-    throw new Error("Number of teams must be at least 2");
+    throw new Error('Number of teams must be at least 2');
   }
 
   const teams = Array(numOfTeams)

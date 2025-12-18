@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -6,7 +6,7 @@ async function main() {
   // clear existing data for fresh seed
   await prisma.attendance.deleteMany({});
   await prisma.session.deleteMany({});
-  console.log("🗑️  Cleared existing sessions and attendances");
+  console.log('🗑️  Cleared existing sessions and attendances');
 
   const sessions = [];
   const now = new Date();
@@ -36,10 +36,10 @@ async function main() {
       if (!existing) {
         sessions.push({
           date: new Date(currentDate),
-          dayOfWeek: dayOfWeek === 1 ? "Monday" : "Friday",
-          startTime: "11:45 AM",
-          endTime: "1:05 PM",
-          timezone: "EST",
+          dayOfWeek: dayOfWeek === 1 ? 'Monday' : 'Friday',
+          startTime: '11:45 AM',
+          endTime: '1:05 PM',
+          timezone: 'EST',
         });
       }
     }

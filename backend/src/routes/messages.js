@@ -1,10 +1,10 @@
-import { Router } from "express";
-import prisma from "../db/client.js";
-import { authenticateUser } from "../middleware/auth.js";
+import { Router } from 'express';
+import prisma from '../db/client.js';
+import { authenticateUser } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get("/:sessionId", async (req, res) => {
+router.get('/:sessionId', async (req, res) => {
   try {
     const { sessionId } = req.params;
 
@@ -13,7 +13,7 @@ router.get("/:sessionId", async (req, res) => {
     });
 
     if (!session) {
-      return res.status(404).json({ error: "Session not found" });
+      return res.status(404).json({ error: 'Session not found' });
     }
 
     const messages = await prisma.message.findMany({
@@ -28,7 +28,7 @@ router.get("/:sessionId", async (req, res) => {
         },
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: 'asc',
       },
     });
 
@@ -38,15 +38,15 @@ router.get("/:sessionId", async (req, res) => {
   }
 });
 
-router.post("/", authenticateUser, async (req, res) => {
+router.post('/', authenticateUser, async (req, res) => {
   try {
     const { sessionId, content } = req.body;
     const supabaseUser = req.user;
 
-    if (!sessionId || !content || content.trim() === "") {
+    if (!sessionId || !content || content.trim() === '') {
       return res
         .status(400)
-        .json({ error: "Session ID and message content are required" });
+        .json({ error: 'Session ID and message content are required' });
     }
 
     const session = await prisma.session.findUnique({
@@ -54,7 +54,7 @@ router.post("/", authenticateUser, async (req, res) => {
     });
 
     if (!session) {
-      return res.status(404).json({ error: "Session not found" });
+      return res.status(404).json({ error: 'Session not found' });
     }
 
     let dbUser = await prisma.user.findUnique({
@@ -62,7 +62,7 @@ router.post("/", authenticateUser, async (req, res) => {
     });
 
     if (!dbUser) {
-      return res.status(404).json({ error: "User not found in database" });
+      return res.status(404).json({ error: 'User not found in database' });
     }
 
     const message = await prisma.message.create({

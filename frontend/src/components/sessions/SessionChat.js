@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { sendMessage, getMessages } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
-import styles from "./SessionChat.module.scss";
+import { useState, useEffect } from 'react';
+import { sendMessage, getMessages } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
+import styles from './SessionChat.module.scss';
 
 export default function SessionChat({ sessionId }) {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [messagesLoading, setMessagesLoading] = useState(true);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
@@ -39,16 +39,16 @@ export default function SessionChat({ sessionId }) {
       setSending(true);
       const newMessage = await sendMessage(sessionId, text);
       setMessages((prev) => [...prev, newMessage]);
-      setText("");
+      setText('');
     } catch (err) {
-      alert(err.message || "Failed to send message");
+      alert(err.message || 'Failed to send message');
     } finally {
       setSending(false);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -78,7 +78,7 @@ export default function SessionChat({ sessionId }) {
               <div
                 key={message.id}
                 className={`${styles.message} ${
-                  user && message.userId === user.id ? styles.messageOwn : ""
+                  user && message.userId === user.id ? styles.messageOwn : ''
                 }`}
               >
                 <div className={styles.messageHeader}>
@@ -87,8 +87,8 @@ export default function SessionChat({ sessionId }) {
                   </span>
                   <span className={styles.messageTime}>
                     {new Date(message.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
+                      hour: '2-digit',
+                      minute: '2-digit',
                     })}
                   </span>
                 </div>
@@ -103,7 +103,7 @@ export default function SessionChat({ sessionId }) {
         <textarea
           className={styles.messageInput}
           placeholder={
-            user ? "Type your message..." : "Please log in to send a message"
+            user ? 'Type your message...' : 'Please log in to send a message'
           }
           rows={3}
           value={text}
@@ -116,20 +116,20 @@ export default function SessionChat({ sessionId }) {
           className={styles.sendButton}
           disabled={!user || !text.trim() || sending}
         >
-          <span>{sending ? "Sending..." : "Send"}</span>
+          <span>{sending ? 'Sending...' : 'Send'}</span>
           <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+            width='20'
+            height='20'
+            viewBox='0 0 20 20'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              d='M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
             />
           </svg>
         </button>

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, useEffect } from "react";
-import { getCurrentUser, login, logout, signup } from "@/lib/auth";
+import { createContext, useContext, useState, useEffect } from 'react';
+import { getCurrentUser, login, logout, signup } from '@/lib/auth';
 
 const AuthContext = createContext(null);
 
@@ -60,7 +60,7 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
+    throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
 }
