@@ -1,4 +1,4 @@
-import prisma from "../db/client.js";
+import prisma from '../db/client.js';
 
 async function verifyDatabaseConnection() {
   try {
@@ -30,7 +30,7 @@ export async function sessionGenerator() {
     const isConnected = await waitForDatabaseConnection();
     if (!isConnected) {
       throw new Error(
-        "❌ Cannot connect to database. Please check your database connection and try again."
+        '❌ Cannot connect to database. Please check your database connection and try again.'
       );
     }
 
@@ -56,7 +56,7 @@ export async function sessionGenerator() {
         },
       },
       orderBy: {
-        date: "asc",
+        date: 'asc',
       },
     });
 
@@ -92,10 +92,10 @@ export async function sessionGenerator() {
           await prisma.session.create({
             data: {
               date: dateToCheck,
-              dayOfWeek: dayOfWeek === 1 ? "Monday" : "Friday",
-              startTime: "11:45 AM",
-              endTime: "1:05 PM",
-              timezone: "EST",
+              dayOfWeek: dayOfWeek === 1 ? 'Monday' : 'Friday',
+              startTime: '11:45 AM',
+              endTime: '1:05 PM',
+              timezone: 'EST',
             },
           });
           sessionsCreated++;
@@ -110,20 +110,20 @@ export async function sessionGenerator() {
       }`
     );
   } catch (error) {
-    if (error.message?.includes("database")) {
-      console.error("❌ Database connection error:", error.message);
-    } else if (error.code === "P1001") {
+    if (error.message?.includes('database')) {
+      console.error('❌ Database connection error:', error.message);
+    } else if (error.code === 'P1001') {
       console.error(
-        "❌ Cannot reach database server. Please check:",
-        "\n  1. Your database server is running",
-        "\n  2. Your DATABASE_URL environment variable is correct",
-        "\n  3. Your network connection is stable",
-        "\n  4. Your database credentials are valid"
+        '❌ Cannot reach database server. Please check:',
+        '\n  1. Your database server is running',
+        '\n  2. Your DATABASE_URL environment variable is correct',
+        '\n  3. Your network connection is stable',
+        '\n  4. Your database credentials are valid'
       );
     } else {
-      console.error("❌ Error in session generation:", error.message || error);
+      console.error('❌ Error in session generation:', error.message || error);
       if (error.stack) {
-        console.error("Stack trace:", error.stack);
+        console.error('Stack trace:', error.stack);
       }
     }
     throw error;
