@@ -1,3 +1,49 @@
+.addSessionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(31, 115, 183, 0.25);
+  font-family: inherit;
+
+  &:hover {
+    background: linear-gradient(135deg, #3282b8 0%, #1f73b7 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31, 115, 183, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.2);
+  }
+
+  .addIcon {
+    font-size: 1.25rem;
+    line-height: 1;
+    font-weight: 300;
+  }
+
+  @media (max-width: 640px) {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
 .sessionList {
   overflow-x: auto;
   display: grid;

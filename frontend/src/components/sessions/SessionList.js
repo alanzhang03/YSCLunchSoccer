@@ -161,7 +161,13 @@ const SessionList = ({ passedData }) => {
   return (
     <>
       {isAdmin && (
-        <button onClick={() => setShowAddSession(true)}>Add Session</button>
+        <button
+          className={styles.addSessionButton}
+          onClick={() => setShowAddSession(true)}
+        >
+          <span className={styles.addIcon}>+</span>
+          <span>Add Session</span>
+        </button>
       )}
 
       {showAddSession && (
