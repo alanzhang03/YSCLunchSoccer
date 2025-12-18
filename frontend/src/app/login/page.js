@@ -1,28 +1,28 @@
-"use client";
-import React from "react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import styles from "./login.module.scss";
+'use client';
+import React from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import styles from './login.module.scss';
 
 const Page = () => {
-  const [phoneNum, setPhoneNum] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [phoneNum, setPhoneNum] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     try {
       await login(phoneNum, password);
-      router.push("/");
+      router.push('/');
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -46,22 +46,22 @@ const Page = () => {
                 value={phoneNum}
                 onChange={handlePhoneNum}
                 required
-                placeholder="ex. 123-456-7890"
+                placeholder='ex. 123-456-7890'
               />
               <label>Password</label>
               <input
                 value={password}
-                type="password"
+                type='password'
                 onChange={handlePassword}
                 required
-                placeholder="Password"
+                placeholder='Password'
               />
             </div>
 
             {error && <p className={styles.error}>{error}</p>}
 
-            <button type="submit" className={styles.button} disabled={loading}>
-              {loading ? "Logging in..." : "Submit"}
+            <button type='submit' className={styles.button} disabled={loading}>
+              {loading ? 'Logging in...' : 'Submit'}
             </button>
           </form>
         </div>

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import styles from "./sessions.module.scss";
-import SessionList from "@/components/sessions/SessionList";
+import { motion } from 'framer-motion';
+import styles from './sessions.module.scss';
+import SessionList from '@/components/sessions/SessionList';
 
 const headerVariants = {
   hidden: { opacity: 0, y: -20 },
@@ -36,15 +36,15 @@ export default function SessionsPage() {
         <motion.div
           className={styles.header}
           variants={headerVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
           <motion.h1 className={styles.title}>Upcoming Sessions</motion.h1>
           <motion.div
             className={styles.titleUnderline}
             variants={underlineVariants}
-            initial="hidden"
-            animate="visible"
+            initial='hidden'
+            animate='visible'
           ></motion.div>
         </motion.div>
         <SessionList />

@@ -1,11 +1,11 @@
-import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
+import 'dotenv/config';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
 });
 
-process.on("beforeExit", async () => {
+process.on('beforeExit', async () => {
   await prisma.$disconnect();
 });
 

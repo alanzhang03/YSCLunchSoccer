@@ -1,7 +1,7 @@
-"use client";
-import React from "react";
-import { useState, useEffect } from "react";
-import styles from "./AttendanceButton.module.scss";
+'use client';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import styles from './AttendanceButton.module.scss';
 
 const AttendanceButton = ({
   onSend,
@@ -19,7 +19,7 @@ const AttendanceButton = ({
 
   const handleClick = (status) => {
     if (disabled) return;
-    if (status === "yes" && yesDisabled) return;
+    if (status === 'yes' && yesDisabled) return;
 
     setCurrentStatus(status);
     if (onSend) {
@@ -31,9 +31,9 @@ const AttendanceButton = ({
     <div className={styles.attendanceButtonContainer}>
       <button
         className={`${styles.button} ${styles.buttonYes} ${
-          currentStatus === "yes" ? styles.active : ""
+          currentStatus === 'yes' ? styles.active : ''
         }`}
-        onClick={() => handleClick("yes")}
+        onClick={() => handleClick('yes')}
         disabled={disabled || yesDisabled}
       >
         <span className={styles.icon}>✅</span>
@@ -41,9 +41,9 @@ const AttendanceButton = ({
       </button>
       <button
         className={`${styles.button} ${styles.buttonNo} ${
-          currentStatus === "no" ? styles.active : ""
+          currentStatus === 'no' ? styles.active : ''
         }`}
-        onClick={() => handleClick("no")}
+        onClick={() => handleClick('no')}
         disabled={disabled}
       >
         <span className={styles.icon}>❌</span>
@@ -51,9 +51,9 @@ const AttendanceButton = ({
       </button>
       <button
         className={`${styles.button} ${styles.buttonMaybe} ${
-          currentStatus === "maybe" ? styles.active : ""
+          currentStatus === 'maybe' ? styles.active : ''
         }`}
-        onClick={() => handleClick("maybe")}
+        onClick={() => handleClick('maybe')}
         disabled={disabled}
       >
         <span className={styles.icon}>🤔</span>

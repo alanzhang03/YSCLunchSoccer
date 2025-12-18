@@ -2,15 +2,15 @@ const generateDummyAttendee = (index, name, skill) => {
   const now = new Date().toISOString();
   return {
     id: `dummy-${index}`,
-    sessionId: "dummy-session",
-    status: "yes",
+    sessionId: 'dummy-session',
+    status: 'yes',
     createdAt: now,
     updatedAt: now,
     user: {
       id: `dummy-user-${index}`,
       name: name,
-      email: `${name.toLowerCase().replace(/\s+/g, "")}@example.com`,
-      phone: `555-${String(1000 + index).padStart(4, "0")}`,
+      email: `${name.toLowerCase().replace(/\s+/g, '')}@example.com`,
+      phone: `555-${String(1000 + index).padStart(4, '0')}`,
       skill: skill,
       supabaseUserId: `dummy-supabase-${index}`,
       password: null,

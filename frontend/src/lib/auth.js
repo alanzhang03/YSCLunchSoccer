@@ -1,11 +1,11 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
 const fetchWithCredentials = (url, options = {}) => {
   return fetch(url, {
     ...options,
-    credentials: "include",
+    credentials: 'include',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...options.headers,
     },
   });
@@ -14,14 +14,14 @@ const fetchWithCredentials = (url, options = {}) => {
 export async function signup(phoneNum, email, name, password, skill) {
   try {
     const response = await fetchWithCredentials(`${API_BASE_URL}/auth/signup`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ phoneNum, email, name, password, skill }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Signup failed");
+      throw new Error(data.error || 'Signup failed');
     }
 
     return data;
@@ -33,14 +33,14 @@ export async function signup(phoneNum, email, name, password, skill) {
 export async function login(phoneNum, password) {
   try {
     const response = await fetchWithCredentials(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ phoneNum, password }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Login failed");
+      throw new Error(data.error || 'Login failed');
     }
 
     return data;
@@ -57,7 +57,7 @@ export async function getCurrentUser() {
       if (response.status === 401) {
         return null;
       }
-      throw new Error("Failed to get current user");
+      throw new Error('Failed to get current user');
     }
 
     return response.json();
@@ -69,11 +69,11 @@ export async function getCurrentUser() {
 export async function logout() {
   try {
     const response = await fetchWithCredentials(`${API_BASE_URL}/auth/logout`, {
-      method: "POST",
+      method: 'POST',
     });
 
     if (!response.ok) {
-      throw new Error("Logout failed");
+      throw new Error('Logout failed');
     }
 
     return response.json();

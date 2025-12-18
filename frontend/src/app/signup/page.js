@@ -1,16 +1,16 @@
-"use client";
-import React, { useState } from "react";
-import styles from "./signup.module.scss";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+'use client';
+import React, { useState } from 'react';
+import styles from './signup.module.scss';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
-  const [phoneNum, setPhoneNum] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [skill, setSkill] = useState("");
-  const [error, setError] = useState("");
+  const [phoneNum, setPhoneNum] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [skill, setSkill] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signup } = useAuth();
@@ -31,20 +31,20 @@ const Page = () => {
   const handleSkillChange = (e) => {
     const value = e.target.value;
 
-    if (value === "" || (parseInt(value) >= 1 && parseInt(value) <= 10)) {
+    if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 10)) {
       setSkill(value);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
     try {
       await signup(phoneNum, email, name, password, skill);
-      router.push("/");
+      router.push('/');
     } catch (err) {
-      setError(err.message || "Signup failed");
+      setError(err.message || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -62,30 +62,30 @@ const Page = () => {
                 value={name}
                 onChange={handleNameChange}
                 required
-                placeholder="Name"
+                placeholder='Name'
               />
               <label>Email</label>
               <input
                 value={email}
-                type="email"
+                type='email'
                 onChange={handleEmailChange}
                 required
-                placeholder="Email"
+                placeholder='Email'
               />
               <label>Phone Number</label>
               <input
                 value={phoneNum}
                 onChange={handlePhoneNum}
                 required
-                placeholder="ex. 123-456-7890"
+                placeholder='ex. 123-456-7890'
               />
               <label>Password</label>
               <input
                 value={password}
-                type="password"
+                type='password'
                 onChange={handlePassword}
                 required
-                placeholder="Password"
+                placeholder='Password'
               />
               <label>
                 What would you say your soccer skill level is? (1-10)
@@ -93,11 +93,11 @@ const Page = () => {
               <input
                 value={skill}
                 onChange={handleSkillChange}
-                type="number"
-                id="rating"
-                name="rating"
-                min="1"
-                max="10"
+                type='number'
+                id='rating'
+                name='rating'
+                min='1'
+                max='10'
                 required
                 className={styles.skill}
               ></input>
@@ -105,8 +105,8 @@ const Page = () => {
 
             {error && <p className={styles.error}>{error}</p>}
 
-            <button type="submit" className={styles.button} disabled={loading}>
-              {loading ? "Signing up..." : "Submit"}
+            <button type='submit' className={styles.button} disabled={loading}>
+              {loading ? 'Signing up...' : 'Submit'}
             </button>
           </form>
         </div>

@@ -1,5 +1,5 @@
-import styles from "./Card.module.scss";
-import Link from "next/link";
+import styles from './Card.module.scss';
+import Link from 'next/link';
 
 export default function Card({ sessionData, children, sessionId }) {
   const date = sessionData.date;
@@ -25,7 +25,7 @@ export default function Card({ sessionData, children, sessionId }) {
                 today ? styles.today : styles.tomorrow
               }`}
             >
-              {today ? "Today" : "Tomorrow"}
+              {today ? 'Today' : 'Tomorrow'}
             </span>
           )}
         </div>

@@ -35,9 +35,9 @@ export function getUpcomingSessions(count = 8) {
       sessions.push({
         id: Date.now() + sessions.length,
         date: formatDate(copy),
-        weekday: day_of_week === 1 ? "Monday" : "Friday",
-        time: "11:45 AM - 1:05 PM EST",
-        available: "0/100",
+        weekday: day_of_week === 1 ? 'Monday' : 'Friday',
+        time: '11:45 AM - 1:05 PM EST',
+        available: '0/100',
         today: isToday,
         tomorrow: isTomorrow,
         dateObj: new Date(copy),
@@ -52,16 +52,16 @@ export function getUpcomingSessions(count = 8) {
 
 function getDateString(date) {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
 function formatDate(date) {
-  return date.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 }

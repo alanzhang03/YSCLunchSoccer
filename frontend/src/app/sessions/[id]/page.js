@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { getSessionById } from "@/lib/api";
-import SessionCard from "@/components/sessions/SessionCard";
-import SessionChat from "@/components/sessions/SessionChat";
-import TeamDisplay from "@/components/sessions/TeamDisplay";
-import styles from "./page.module.scss";
+import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { getSessionById } from '@/lib/api';
+import SessionCard from '@/components/sessions/SessionCard';
+import SessionChat from '@/components/sessions/SessionChat';
+import TeamDisplay from '@/components/sessions/TeamDisplay';
+import styles from './page.module.scss';
 
 const pageVariants = {
   hidden: { opacity: 0 },
@@ -69,8 +69,8 @@ export default function SessionDetailPage() {
       <motion.div
         className={styles.page}
         variants={pageVariants}
-        initial="hidden"
-        animate="visible"
+        initial='hidden'
+        animate='visible'
       >
         <div className={styles.loading}>Loading session...</div>
       </motion.div>
@@ -82,12 +82,12 @@ export default function SessionDetailPage() {
       <motion.div
         className={styles.page}
         variants={pageVariants}
-        initial="hidden"
-        animate="visible"
+        initial='hidden'
+        animate='visible'
       >
         <div className={styles.error}>
           <p>Error: {error}</p>
-          <a href="/sessions" className={styles.backLink}>
+          <a href='/sessions' className={styles.backLink}>
             ← Back to Sessions
           </a>
         </div>
@@ -100,12 +100,12 @@ export default function SessionDetailPage() {
       <motion.div
         className={styles.page}
         variants={pageVariants}
-        initial="hidden"
-        animate="visible"
+        initial='hidden'
+        animate='visible'
       >
         <div className={styles.error}>
           <p>Session not found</p>
-          <a href="/sessions" className={styles.backLink}>
+          <a href='/sessions' className={styles.backLink}>
             ← Back to Sessions
           </a>
         </div>
@@ -117,17 +117,17 @@ export default function SessionDetailPage() {
     <motion.div
       className={styles.page}
       variants={pageVariants}
-      initial="hidden"
-      animate="visible"
+      initial='hidden'
+      animate='visible'
     >
       <main className={styles.main}>
         <motion.div
           className={styles.header}
           variants={contentVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
-          <a href="/sessions" className={styles.backLink}>
+          <a href='/sessions' className={styles.backLink}>
             ← Back to Sessions
           </a>
           <h1 className={styles.title}>Session Details</h1>
@@ -135,8 +135,8 @@ export default function SessionDetailPage() {
 
         <motion.div
           variants={contentVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
           transition={{ delay: 0.1 }}
         >
           <SessionCard
@@ -146,16 +146,16 @@ export default function SessionDetailPage() {
         </motion.div>
         <motion.div
           variants={contentVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
           transition={{ delay: 0.2 }}
         >
           <TeamDisplay sessionId={sessionId} />
         </motion.div>
         <motion.div
           variants={contentVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
           transition={{ delay: 0.2 }}
         >
           <SessionChat sessionId={sessionId} />
