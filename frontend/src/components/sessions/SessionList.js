@@ -101,12 +101,24 @@ const SessionList = ({ passedData }) => {
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
     const nextWeek = new Date(today);
     nextWeek.setDate(nextWeek.getDate() + 7);
     const nextMonth = new Date(today);
     nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-    if (filter === 'thisWeek') {
+    if (filter === 'today') {
+      filtered = filtered.filter((session) => {
+        const sessionDate = new Date(session.date);
+        const sessionDateOnly = new Date(
+          sessionDate.getFullYear(),
+          sessionDate.getMonth(),
+          sessionDate.getDate()
+        );
+        return sessionDateOnly.getTime() === today.getTime();
+      });
+    } else if (filter === 'thisWeek') {
       filtered = filtered.filter((session) => {
         const sessionDate = new Date(session.date);
         return sessionDate >= today && sessionDate < nextWeek;
@@ -139,27 +151,29 @@ const SessionList = ({ passedData }) => {
   }, [sessions, filter, sortBy]);
 
   const stats = useMemo(() => {
-    const totalSessions = sessions.length;
-    const upcomingSessions = sessions.filter((s) => {
+    const filteredSessions = filteredAndSortedSessions;
+
+    const totalSessions = filteredSessions.length;
+    const upcomingSessions = filteredSessions.filter((s) => {
       const sessionDate = new Date(s.date);
       return sessionDate >= new Date();
     }).length;
 
-    const userRSVPs = sessions.filter((s) => {
+    const userRSVPs = filteredSessions.filter((s) => {
       if (!user || !s.attendances) return false;
       return s.attendances.some(
         (a) => a.userId === user.id && a.status === 'yes'
       );
     }).length;
 
-    const totalAttendees = sessions.reduce((sum, s) => {
+    const totalAttendees = filteredSessions.reduce((sum, s) => {
       return (
         sum + (s.attendances?.filter((a) => a.status === 'yes').length || 0)
       );
     }, 0);
 
     return { totalSessions, upcomingSessions, userRSVPs, totalAttendees };
-  }, [sessions, user]);
+  }, [filteredAndSortedSessions, user]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -277,6 +291,14 @@ const SessionList = ({ passedData }) => {
             onClick={() => setFilter('all')}
           >
             All Sessions
+          </button>
+          <button
+            className={`${styles.filterButton} ${
+              filter === 'today' ? styles.active : ''
+            }`}
+            onClick={() => setFilter('today')}
+          >
+            Today
           </button>
           <button
             className={`${styles.filterButton} ${
