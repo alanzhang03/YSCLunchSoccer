@@ -1,12 +1,12 @@
-"use client";
-import React from "react";
-import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import styles from "./SessionCard.module.scss";
-import Card from "../ui/Card";
-import AttendanceButton from "./AttendanceButton";
-import { attendSession } from "@/lib/api";
-import Link from "next/link";
+'use client';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import styles from './SessionCard.module.scss';
+import Card from '../ui/Card';
+import AttendanceButton from './AttendanceButton';
+import { attendSession } from '@/lib/api';
+import Link from 'next/link';
 // import { useRouter } from "next/router";
 
 const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
@@ -27,7 +27,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
   useEffect(() => {
     if (sessionData?.attendances) {
       const count = sessionData.attendances.filter(
-        (a) => a.status === "yes"
+        (a) => a.status === 'yes'
       ).length;
       setYesCount(count);
 
@@ -60,18 +60,38 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
   const transformSessionData = (session) => {
     if (!session) return null;
 
-    const sessionDate = new Date(session.date);
+    let sessionDate;
+    if (
+      typeof session.date === 'string' &&
+      session.date.match(/^\d{4}-\d{2}-\d{2}/)
+    ) {
+      const [year, month, day] = session.date.split('T')[0].split('-');
+      sessionDate = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day)
+      );
+    } else {
+      sessionDate = new Date(session.date);
+    }
 
-    const weekday = sessionDate
-      .toLocaleDateString("en-US", {
-        weekday: "long",
-      })
-      .toUpperCase();
+    if (isNaN(sessionDate.getTime())) {
+      console.error('Invalid date for session:', session);
+      return null;
+    }
 
-    const formattedDate = sessionDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    const weekday = session.dayOfWeek
+      ? session.dayOfWeek.toUpperCase()
+      : sessionDate
+          .toLocaleDateString('en-US', {
+            weekday: 'long',
+          })
+          .toUpperCase();
+
+    const formattedDate = sessionDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
 
     const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
@@ -106,8 +126,8 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     if (!sessionData || isSubmitting || !user) return;
 
     if (
-      status === "yes" &&
-      currentStatus !== "yes" &&
+      status === 'yes' &&
+      currentStatus !== 'yes' &&
       yesCount >= maxAttendance
     ) {
       alert(`This session is full. Maximum capacity is ${maxAttendance}.`);
@@ -121,9 +141,9 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     setOptimisticStatus(status);
     setCurrentStatus(status);
 
-    if (status === "yes" && previousStatus !== "yes") {
+    if (status === 'yes' && previousStatus !== 'yes') {
       setYesCount((prev) => prev + 1);
-    } else if (previousStatus === "yes" && status !== "yes") {
+    } else if (previousStatus === 'yes' && status !== 'yes') {
       setYesCount((prev) => Math.max(0, prev - 1));
     }
 
@@ -138,12 +158,12 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     } catch (error) {
       setOptimisticStatus(null);
       setCurrentStatus(previousStatus);
-      if (status === "yes" && previousStatus !== "yes") {
+      if (status === 'yes' && previousStatus !== 'yes') {
         setYesCount((prev) => Math.max(0, prev - 1));
-      } else if (previousStatus === "yes" && status !== "yes") {
+      } else if (previousStatus === 'yes' && status !== 'yes') {
         setYesCount((prev) => prev + 1);
       }
-      alert("Failed to save your RSVP. Please try again.");
+      alert('Failed to save your RSVP. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -173,13 +193,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     }
 
     const yesAttendances = sessionData.attendances.filter(
-      (a) => a.status === "yes"
+      (a) => a.status === 'yes'
     );
     const noAttendances = sessionData.attendances.filter(
-      (a) => a.status === "no"
+      (a) => a.status === 'no'
     );
     const maybeAttendances = sessionData.attendances.filter(
-      (a) => a.status === "maybe"
+      (a) => a.status === 'maybe'
     );
 
     return {
@@ -193,96 +213,96 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
 
   const generateDummyAttendances = () => {
     const dummyUsers = [
-      { id: 1, name: "Peepee" },
-      { id: 2, name: "Sarah Johnson" },
-      { id: 3, name: "Michael Chen" },
-      { id: 4, name: "Emily Rodriguez" },
-      { id: 5, name: "David Kim" },
-      { id: 6, name: "Jessica Martinez" },
-      { id: 7, name: "Ryan Thompson" },
-      { id: 8, name: "Amanda Lee" },
-      { id: 9, name: "Chris Wilson" },
-      { id: 10, name: "Lisa Anderson" },
-      { id: 11, name: "James Brown" },
-      { id: 12, name: "Maria Garcia" },
-      { id: 13, name: "Robert Taylor" },
-      { id: 14, name: "Jennifer White" },
-      { id: 15, name: "Daniel Moore" },
-      { id: 16, name: "Nicole Davis" },
-      { id: 17, name: "Kevin Miller" },
-      { id: 18, name: "Rachel Adams" },
-      { id: 19, name: "Brandon Scott" },
-      { id: 20, name: "Megan Parker" },
-      { id: 21, name: "Tyler Brooks" },
-      { id: 22, name: "Olivia Bennett" },
-      { id: 23, name: "Nathan Reed" },
-      { id: 24, name: "Sophia Rivera" },
-      { id: 25, name: "Ethan Murphy" },
-      { id: 26, name: "Ava Hughes" },
-      { id: 27, name: "Zachary Cooper" },
-      { id: 28, name: "Hannah Foster" },
-      { id: 29, name: "Joshua Collins" },
-      { id: 30, name: "Chloe Peterson" },
-      { id: 31, name: "Matthew Phillips" },
-      { id: 32, name: "Isabella Ward" },
-      { id: 33, name: "Samuel Turner" },
-      { id: 34, name: "Victoria Morgan" },
-      { id: 35, name: "Benjamin Evans" },
-      { id: 36, name: "Ella Ramirez" },
-      { id: 37, name: "Jason Campbell" },
-      { id: 38, name: "Grace Sanders" },
-      { id: 39, name: "Dylan Mitchell" },
-      { id: 40, name: "Natalie Brooks" },
-      { id: 41, name: "Alex Murphy" },
-      { id: 42, name: "Lauren Price" },
-      { id: 43, name: "Cameron Simmons" },
-      { id: 44, name: "Abigail Cox" },
-      { id: 45, name: "Logan Bailey" },
-      { id: 46, name: "Morgan Hughes" },
-      { id: 47, name: "Jake Ramirez" },
-      { id: 48, name: "Elena Flores" },
-      { id: 49, name: "Aaron Bennett" },
-      { id: 50, name: "Kayla Scott" },
-      { id: 51, name: "Trevor Phillips" },
-      { id: 52, name: "Zoe Campbell" },
-      { id: 53, name: "Connor Reyes" },
-      { id: 54, name: "Samantha Ward" },
-      { id: 55, name: "Ian Jenkins" },
-      { id: 56, name: "Paige Armstrong" },
-      { id: 57, name: "Kyle Martinez" },
-      { id: 58, name: "Madison Stone" },
-      { id: 59, name: "Hunter Fisher" },
-      { id: 60, name: "Lily Parker" },
-      { id: 61, name: "Eric Gomez" },
-      { id: 62, name: "Natalia Ruiz" },
-      { id: 63, name: "Chase Gardner" },
-      { id: 64, name: "Jasmine Elliott" },
-      { id: 65, name: "Colin Spencer" },
-      { id: 66, name: "Brooke Howard" },
-      { id: 67, name: "Tristan Wallace" },
-      { id: 68, name: "Maya Hernandez" },
-      { id: 69, name: "Christian Boyd" },
+      { id: 1, name: 'Peepee' },
+      { id: 2, name: 'Sarah Johnson' },
+      { id: 3, name: 'Michael Chen' },
+      { id: 4, name: 'Emily Rodriguez' },
+      { id: 5, name: 'David Kim' },
+      { id: 6, name: 'Jessica Martinez' },
+      { id: 7, name: 'Ryan Thompson' },
+      { id: 8, name: 'Amanda Lee' },
+      { id: 9, name: 'Chris Wilson' },
+      { id: 10, name: 'Lisa Anderson' },
+      { id: 11, name: 'James Brown' },
+      { id: 12, name: 'Maria Garcia' },
+      { id: 13, name: 'Robert Taylor' },
+      { id: 14, name: 'Jennifer White' },
+      { id: 15, name: 'Daniel Moore' },
+      { id: 16, name: 'Nicole Davis' },
+      { id: 17, name: 'Kevin Miller' },
+      { id: 18, name: 'Rachel Adams' },
+      { id: 19, name: 'Brandon Scott' },
+      { id: 20, name: 'Megan Parker' },
+      { id: 21, name: 'Tyler Brooks' },
+      { id: 22, name: 'Olivia Bennett' },
+      { id: 23, name: 'Nathan Reed' },
+      { id: 24, name: 'Sophia Rivera' },
+      { id: 25, name: 'Ethan Murphy' },
+      { id: 26, name: 'Ava Hughes' },
+      { id: 27, name: 'Zachary Cooper' },
+      { id: 28, name: 'Hannah Foster' },
+      { id: 29, name: 'Joshua Collins' },
+      { id: 30, name: 'Chloe Peterson' },
+      { id: 31, name: 'Matthew Phillips' },
+      { id: 32, name: 'Isabella Ward' },
+      { id: 33, name: 'Samuel Turner' },
+      { id: 34, name: 'Victoria Morgan' },
+      { id: 35, name: 'Benjamin Evans' },
+      { id: 36, name: 'Ella Ramirez' },
+      { id: 37, name: 'Jason Campbell' },
+      { id: 38, name: 'Grace Sanders' },
+      { id: 39, name: 'Dylan Mitchell' },
+      { id: 40, name: 'Natalie Brooks' },
+      { id: 41, name: 'Alex Murphy' },
+      { id: 42, name: 'Lauren Price' },
+      { id: 43, name: 'Cameron Simmons' },
+      { id: 44, name: 'Abigail Cox' },
+      { id: 45, name: 'Logan Bailey' },
+      { id: 46, name: 'Morgan Hughes' },
+      { id: 47, name: 'Jake Ramirez' },
+      { id: 48, name: 'Elena Flores' },
+      { id: 49, name: 'Aaron Bennett' },
+      { id: 50, name: 'Kayla Scott' },
+      { id: 51, name: 'Trevor Phillips' },
+      { id: 52, name: 'Zoe Campbell' },
+      { id: 53, name: 'Connor Reyes' },
+      { id: 54, name: 'Samantha Ward' },
+      { id: 55, name: 'Ian Jenkins' },
+      { id: 56, name: 'Paige Armstrong' },
+      { id: 57, name: 'Kyle Martinez' },
+      { id: 58, name: 'Madison Stone' },
+      { id: 59, name: 'Hunter Fisher' },
+      { id: 60, name: 'Lily Parker' },
+      { id: 61, name: 'Eric Gomez' },
+      { id: 62, name: 'Natalia Ruiz' },
+      { id: 63, name: 'Chase Gardner' },
+      { id: 64, name: 'Jasmine Elliott' },
+      { id: 65, name: 'Colin Spencer' },
+      { id: 66, name: 'Brooke Howard' },
+      { id: 67, name: 'Tristan Wallace' },
+      { id: 68, name: 'Maya Hernandez' },
+      { id: 69, name: 'Christian Boyd' },
     ];
 
     const dummyYes = dummyUsers.slice(0, 10).map((user, index) => ({
       id: `dummy-yes-${index + 1}`,
       userId: user.id,
       user: user,
-      status: "yes",
+      status: 'yes',
     }));
 
     const dummyMaybe = dummyUsers.slice(8, 14).map((user, index) => ({
       id: `dummy-maybe-${index + 1}`,
       userId: user.id,
       user: user,
-      status: "maybe",
+      status: 'maybe',
     }));
 
     const dummyNo = dummyUsers.slice(12, 18).map((user, index) => ({
       id: `dummy-no-${index + 1}`,
       userId: user.id,
       user: user,
-      status: "no",
+      status: 'no',
     }));
 
     return {
@@ -318,14 +338,14 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
           <div key={attendance.id} className={styles.attendanceItem}>
             {attendance.user
               ? attendance.user.name
-              : `User ${attendance.userId || "Unknown"}`}
+              : `User ${attendance.userId || 'Unknown'}`}
           </div>
         ))}
         {shouldTruncate && (
           <button
             className={styles.viewMoreButton}
             onClick={() => toggleSection(section)}
-            type="button"
+            type='button'
           >
             {isExpanded ? `View Less` : `View More (${remainingCount} more)`}
           </button>
@@ -362,7 +382,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
                 </span>
               </div>
               <div className={styles.attendanceNames}>
-                {renderAttendanceList(attendanceList.yes, "yes")}
+                {renderAttendanceList(attendanceList.yes, 'yes')}
               </div>
             </div>
           )}
@@ -375,7 +395,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
                 </span>
               </div>
               <div className={styles.attendanceNames}>
-                {renderAttendanceList(attendanceList.maybe, "maybe")}
+                {renderAttendanceList(attendanceList.maybe, 'maybe')}
               </div>
             </div>
           )}
@@ -388,7 +408,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
                 </span>
               </div>
               <div className={styles.attendanceNames}>
-                {renderAttendanceList(attendanceList.no, "no")}
+                {renderAttendanceList(attendanceList.no, 'no')}
               </div>
             </div>
           )}
@@ -403,11 +423,11 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
         onSend={handleAttendance}
         currentStatus={currentStatus}
         disabled={isSubmitting || !user}
-        yesDisabled={yesCount >= maxAttendance && currentStatus !== "yes"}
+        yesDisabled={yesCount >= maxAttendance && currentStatus !== 'yes'}
       />
       {!user && (
         <div className={styles.loginPrompt}>
-          <a href="/login" className={styles.loginLink}>
+          <a href='/login' className={styles.loginLink}>
             Log in to RSVP
           </a>
         </div>

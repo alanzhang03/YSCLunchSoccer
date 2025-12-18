@@ -1,13 +1,13 @@
-import { Router } from "express";
-import prisma from "../db/client.js";
-import { authenticateUser } from "../middleware/auth.js";
+import { Router } from 'express';
+import prisma from '../db/client.js';
+import { authenticateUser } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const sessions = await prisma.session.findMany({
-      orderBy: { date: "asc" },
+      orderBy: { date: 'asc' },
       include: {
         attendances: {
           where: {
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/sessionsByUser", authenticateUser, async (req, res) => {
+router.post('/', authenticateUser, async (req, res) => {
   try {
     const supabaseUser = req.user;
 
@@ -42,7 +42,67 @@ router.get("/sessionsByUser", authenticateUser, async (req, res) => {
     });
 
     if (!dbUser) {
-      return res.status(404).json({ error: "User not found in database" });
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    if (!dbUser.isAdmin) {
+      return res.status(403).json({ error: 'Only admins can create sessions' });
+    }
+
+    const { date, dayOfWeek, startTime, endTime, timezone = 'EST' } = req.body;
+
+    if (!date || !dayOfWeek || !startTime || !endTime) {
+      return res.status(400).json({
+        error: 'Missing required fields: date, dayOfWeek, startTime, endTime',
+      });
+    }
+    const sessionDate = new Date(date);
+    sessionDate.setHours(0, 0, 0, 0);
+
+    const session = await prisma.session.create({
+      data: {
+        date: sessionDate,
+        dayOfWeek,
+        startTime,
+        endTime,
+        timezone,
+      },
+      include: {
+        attendances: {
+          where: {
+            userId: {
+              not: null,
+            },
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(201).json(session);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/sessionsByUser', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
     }
 
     const today = new Date();
@@ -59,7 +119,7 @@ router.get("/sessionsByUser", authenticateUser, async (req, res) => {
           },
         },
       },
-      orderBy: { date: "asc" },
+      orderBy: { date: 'asc' },
       include: {
         attendances: {
           where: {
@@ -83,16 +143,16 @@ router.get("/sessionsByUser", authenticateUser, async (req, res) => {
   }
 });
 
-router.post("/:id/attend", authenticateUser, async (req, res) => {
+router.post('/:id/attend', authenticateUser, async (req, res) => {
   try {
     const sessionId = req.params.id;
     const { status } = req.body;
     const supabaseUser = req.user;
 
-    if (!["yes", "no", "maybe"].includes(status)) {
+    if (!['yes', 'no', 'maybe'].includes(status)) {
       return res
         .status(400)
-        .json({ error: "Status must be yes, no, or maybe" });
+        .json({ error: 'Status must be yes, no, or maybe' });
     }
 
     const session = await prisma.session.findUnique({
@@ -100,7 +160,7 @@ router.post("/:id/attend", authenticateUser, async (req, res) => {
     });
 
     if (!session) {
-      return res.status(404).json({ error: "Session not found" });
+      return res.status(404).json({ error: 'Session not found' });
     }
 
     const dbUser = await prisma.user.findUnique({
@@ -108,7 +168,7 @@ router.post("/:id/attend", authenticateUser, async (req, res) => {
     });
 
     if (!dbUser) {
-      return res.status(404).json({ error: "User not found in database" });
+      return res.status(404).json({ error: 'User not found in database' });
     }
 
     let existingAttendance = await prisma.attendance.findFirst({
@@ -174,7 +234,7 @@ router.post("/:id/attend", authenticateUser, async (req, res) => {
   }
 });
 
-router.get("/:id/attendances", async (req, res) => {
+router.get('/:id/attendances', async (req, res) => {
   try {
     const sessionId = req.params.id;
 
@@ -186,9 +246,9 @@ router.get("/:id/attendances", async (req, res) => {
     });
 
     const counts = {
-      yes: attendances.filter((a) => a.status === "yes").length,
-      no: attendances.filter((a) => a.status === "no").length,
-      maybe: attendances.filter((a) => a.status === "maybe").length,
+      yes: attendances.filter((a) => a.status === 'yes').length,
+      no: attendances.filter((a) => a.status === 'no').length,
+      maybe: attendances.filter((a) => a.status === 'maybe').length,
     };
 
     res.json({ attendances, counts });
@@ -197,7 +257,7 @@ router.get("/:id/attendances", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const sessionId = req.params.id;
     const session = await prisma.session.findUnique({
@@ -223,7 +283,7 @@ router.get("/:id", async (req, res) => {
     });
 
     if (!session) {
-      return res.status(404).json({ error: "Session not found" });
+      return res.status(404).json({ error: 'Session not found' });
     }
 
     res.json(session);
