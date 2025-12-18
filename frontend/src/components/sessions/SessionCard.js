@@ -111,6 +111,22 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     const isToday = sessionDateOnly.getTime() === today.getTime();
     const isTomorrow = sessionDateOnly.getTime() === tomorrow.getTime();
 
+    const daysDiff = Math.ceil(
+      (sessionDateOnly.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    let relativeDate = null;
+    if (isToday) {
+      relativeDate = 'Today';
+    } else if (isTomorrow) {
+      relativeDate = 'Tomorrow';
+    } else if (daysDiff > 0 && daysDiff <= 7) {
+      relativeDate = `In ${daysDiff} ${daysDiff === 1 ? 'day' : 'days'}`;
+    } else if (daysDiff > 7 && daysDiff <= 14) {
+      const weeks = Math.floor(daysDiff / 7);
+      relativeDate = `In ${weeks} ${weeks === 1 ? 'week' : 'weeks'}`;
+    }
+
     return {
       date: formattedDate,
       weekday: weekday,
@@ -118,6 +134,8 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
       available: `${yesCount}/${maxAttendance}`,
       today: isToday,
       tomorrow: isTomorrow,
+      relativeDate: relativeDate,
+      daysUntil: daysDiff,
     };
   };
 

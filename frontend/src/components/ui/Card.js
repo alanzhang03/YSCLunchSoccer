@@ -8,6 +8,7 @@ export default function Card({ sessionData, children, sessionId }) {
   const available = sessionData.available;
   const today = sessionData.today;
   const tomorrow = sessionData.tomorrow;
+  const relativeDate = sessionData.relativeDate;
 
   return (
     <div className={styles.card}>
@@ -19,13 +20,17 @@ export default function Card({ sessionData, children, sessionId }) {
               More info
             </Link>
           )}
-          {(today || tomorrow) && (
+          {(today || tomorrow || relativeDate) && (
             <span
               className={`${styles.dateLabel} ${
-                today ? styles.today : styles.tomorrow
+                today
+                  ? styles.today
+                  : tomorrow
+                  ? styles.tomorrow
+                  : styles.upcoming
               }`}
             >
-              {today ? 'Today' : 'Tomorrow'}
+              {today ? 'Today' : tomorrow ? 'Tomorrow' : relativeDate}
             </span>
           )}
         </div>
