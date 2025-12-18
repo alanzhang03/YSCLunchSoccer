@@ -1,19 +1,44 @@
-"use client";
-import { useState, useEffect } from "react";
-import React from "react";
-import { motion } from "framer-motion";
-import styles from "./SessionList.module.scss";
-import SessionCard from "./SessionCard";
-import { getUpcomingSessions } from "@/lib/sessions";
-import { getSessions } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
+'use client';
+import { useState, useEffect } from 'react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import styles from './SessionList.module.scss';
+import SessionCard from './SessionCard';
+import { getUpcomingSessions } from '@/lib/sessions';
+import { getSessions, createSession } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
+import AddSessionModal from './AddSessionModal';
 
 const SessionList = ({ passedData }) => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAddSession, setShowAddSession] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   // const data = getUpcomingSessions(8);
+  const isAdmin = user?.isAdmin || false;
+
+  const handleNewSession = async (sessionData) => {
+    try {
+      setIsSubmitting(true);
+      setError(null);
+      await createSession({
+        date: sessionData.date,
+        dayOfWeek: sessionData.dayOfWeek,
+        startTime: sessionData.startTime,
+        endTime: sessionData.endTime,
+        timezone: sessionData.timezone || 'EST',
+      });
+      await fetchSessions(false);
+      setShowAddSession(false);
+    } catch (err) {
+      setError(err.message || 'Failed to create session');
+      console.error('Error creating session:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const fetchSessions = async (showLoading = true) => {
     try {
@@ -21,6 +46,7 @@ const SessionList = ({ passedData }) => {
         setLoading(true);
       }
       const data = await getSessions();
+      console.log('Fetched sessions:', data);
       setSessions(data || []);
       setError(null);
     } catch (err) {
@@ -75,7 +101,7 @@ const SessionList = ({ passedData }) => {
       transition: {
         staggerChildren: 0.1,
         delayChildren: 0.1,
-        when: "beforeChildren",
+        when: 'beforeChildren',
       },
     },
   };
@@ -133,26 +159,40 @@ const SessionList = ({ passedData }) => {
     );
 
   return (
-    <motion.div
-      className={styles.sessionList}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      key={`sessions-${sessions.length}`}
-    >
-      {sessions.map((session, index) => (
-        <motion.div
-          key={session.id}
-          variants={cardVariants}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
-        >
-          <SessionCard
-            sessionData={session}
-            onAttendanceUpdate={() => updateSession(session.id)}
-          />
-        </motion.div>
-      ))}
-    </motion.div>
+    <>
+      {isAdmin && (
+        <button onClick={() => setShowAddSession(true)}>Add Session</button>
+      )}
+
+      {showAddSession && (
+        <AddSessionModal
+          retrieveNewSession={handleNewSession}
+          onClose={() => setShowAddSession(false)}
+          isSubmitting={isSubmitting}
+        />
+      )}
+
+      <motion.div
+        className={styles.sessionList}
+        variants={containerVariants}
+        initial='hidden'
+        animate='visible'
+        key={`sessions-${sessions.length}`}
+      >
+        {sessions.map((session, index) => (
+          <motion.div
+            key={session.id}
+            variants={cardVariants}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+          >
+            <SessionCard
+              sessionData={session}
+              onAttendanceUpdate={() => updateSession(session.id)}
+            />
+          </motion.div>
+        ))}
+      </motion.div>
+    </>
   );
 };
 

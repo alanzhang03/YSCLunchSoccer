@@ -16,6 +16,24 @@ export async function getSessions() {
   return response.json();
 }
 
+export async function createSession(sessionData) {
+  const response = await fetch(`${API_BASE_URL}/sessions`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(sessionData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to create session');
+  }
+
+  return response.json();
+}
+
 export async function getSessionsByUser() {
   const response = await fetch(`${API_BASE_URL}/sessions/sessionsByUser`, {
     method: 'GET',
