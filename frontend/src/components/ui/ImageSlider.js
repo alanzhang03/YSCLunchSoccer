@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 const images = [
   '/ysclunchsoccer1.jpg',
-  '/ysclunchsoccer2.jpg',
+  // '/ysclunchsoccer2.jpg',
   '/ysclunchsoccer3.jpg',
   '/ysclunchsoccer4.jpg',
   '/ysclunchsoccer5.jpg',

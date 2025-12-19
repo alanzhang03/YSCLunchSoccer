@@ -115,7 +115,7 @@ const SessionList = ({ passedData }) => {
           sessionDate.getMonth(),
           sessionDate.getDate()
         );
-        return sessionDateOnly.getTime() === today.getTime();
+        return sessionDateOnly.getTime() <= today.getTime();
       });
     } else if (filter === 'thisWeek') {
       filtered = filtered.filter((session) => {
