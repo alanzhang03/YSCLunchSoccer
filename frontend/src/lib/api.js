@@ -134,3 +134,20 @@ export async function sendMessage(sessionId, content) {
 
   return response.json();
 }
+
+export async function deleteSession(sessionId) {
+  const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/delete`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to delete session');
+  }
+
+  return response.json();
+}

@@ -390,6 +390,9 @@ const SessionList = ({ passedData }) => {
               <SessionCard
                 sessionData={session}
                 onAttendanceUpdate={() => updateSession(session.id)}
+                onDelete={async (sessionId) => {
+                  await fetchSessions(false);
+                }}
               />
             </motion.div>
           ))}

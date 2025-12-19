@@ -33,6 +33,42 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.post('/:id/delete', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+    const sessionId = req.params.id;
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    if (!dbUser.isAdmin) {
+      return res.status(403).json({ error: 'Only admins can delete sessions' });
+    }
+
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    const deletedSession = await prisma.session.delete({
+      where: {
+        id: sessionId,
+      },
+    });
+    res.status(200).json({ success: true, deletedSession });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post('/', authenticateUser, async (req, res) => {
   try {
     const supabaseUser = req.user;
