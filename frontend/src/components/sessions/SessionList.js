@@ -48,7 +48,6 @@ const SessionList = ({ passedData }) => {
         setLoading(true);
       }
       const data = await getSessions();
-      console.log('Fetched sessions:', data);
       setSessions(data || []);
       setError(null);
     } catch (err) {
@@ -390,6 +389,9 @@ const SessionList = ({ passedData }) => {
               <SessionCard
                 sessionData={session}
                 onAttendanceUpdate={() => updateSession(session.id)}
+                onDelete={async (sessionId) => {
+                  await fetchSessions(false);
+                }}
               />
             </motion.div>
           ))}

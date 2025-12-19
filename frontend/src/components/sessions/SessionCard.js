@@ -5,12 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import styles from './SessionCard.module.scss';
 import Card from '../ui/Card';
 import AttendanceButton from './AttendanceButton';
-import { attendSession } from '@/lib/api';
+import { attendSession, deleteSession } from '@/lib/api';
 import Link from 'next/link';
 import { DUMMY_USERS } from '@/lib/constants';
 // import { useRouter } from "next/router";
 
-const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
+const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   const { user } = useAuth();
   // const router = useRouter();
   const [currentStatus, setCurrentStatus] = useState(null);
@@ -22,8 +22,10 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     maybe: false,
     no: false,
   });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const maxAttendance = 45;
+  const isAdmin = user?.isAdmin || false;
 
   useEffect(() => {
     if (sessionData?.attendances) {
@@ -270,6 +272,29 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
     }));
   };
 
+  const handleDelete = async () => {
+    if (!isAdmin || !sessionData?.id) return;
+
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this session? This action cannot be undone.'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteSession(sessionData.id);
+      if (onDelete) {
+        onDelete(sessionData.id);
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      alert('Failed to delete session. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const renderAttendanceList = (attendances, section) => {
     if (!attendances || attendances.length === 0) return null;
 
@@ -303,6 +328,17 @@ const SessionCard = ({ sessionData, onAttendanceUpdate }) => {
 
   return (
     <Card sessionData={transformedData} sessionId={sessionData.id}>
+      {isAdmin && (
+        <button
+          className={styles.deleteButton}
+          onClick={handleDelete}
+          disabled={isDeleting}
+          type='button'
+          title='Delete session'
+        >
+          {isDeleting ? 'Deleting...' : '🗑️'}
+        </button>
+      )}
       {statusMessage && (
         <div className={styles.statusIndicator}>
           <span className={styles.statusText}>{statusMessage}</span>
