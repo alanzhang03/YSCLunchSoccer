@@ -48,7 +48,6 @@ const SessionList = ({ passedData }) => {
         setLoading(true);
       }
       const data = await getSessions();
-      console.log('Fetched sessions:', data);
       setSessions(data || []);
       setError(null);
     } catch (err) {
