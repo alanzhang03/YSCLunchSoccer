@@ -80,15 +80,6 @@ export default function Home() {
               transition={{ delay: 0.4, duration: 0.4 }}
             >
               <motion.a
-                href='/signup'
-                className={styles.signupButton}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-              >
-                Sign Up
-              </motion.a>
-              <motion.a
                 href='/login'
                 className={styles.loginButton}
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -96,6 +87,15 @@ export default function Home() {
                 transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               >
                 Log In
+              </motion.a>
+              <motion.a
+                href='/signup'
+                className={styles.signupButton}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              >
+                Sign Up
               </motion.a>
             </motion.div>
           )}
