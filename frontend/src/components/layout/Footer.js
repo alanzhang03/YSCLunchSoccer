@@ -62,6 +62,17 @@ const Footer = () => {
               </a>
             </nav>
           </div>
+          <div className={styles.linksGroup}>
+            <h3 className={styles.linksTitle}>Questions & Concerns</h3>
+            <nav className={styles.links}>
+              <a href='mailto:ysclunchsoccer@gmail.com' className={styles.link}>
+                ysclunchsoccer@gmail.com
+              </a>
+              <a href='tel:+14848600997' className={styles.link}>
+                (484) 860-0997
+              </a>
+            </nav>
+          </div>
         </div>
       </div>
 
