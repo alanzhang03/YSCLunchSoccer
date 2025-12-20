@@ -1,4 +1,5 @@
 import { Open_Sans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -7,6 +8,11 @@ import { AuthProvider } from '@/contexts/AuthContext';
 const openSans = Open_Sans({
   subsets: ['latin'],
   variable: '--font-open-sans',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
 });
 
 export const metadata = {
@@ -28,7 +34,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang='en'>
-      <body className={openSans.className}>
+      <body className={inter.className}>
         <AuthProvider>
           <Navbar />
           {children}
