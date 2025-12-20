@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import styles from './SessionCard.module.scss';
 import Card from '../ui/Card';
 import AttendanceButton from './AttendanceButton';
-import { attendSession, deleteSession } from '@/lib/api';
+import { attendSession, deleteSession, deleteAttendances } from '@/lib/api';
 import Link from 'next/link';
 import { DUMMY_USERS } from '@/lib/constants';
 // import { useRouter } from "next/router";
@@ -23,9 +23,22 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     no: false,
   });
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isRemoveMode, setIsRemoveMode] = useState(false);
+  const [selectedAttendanceIds, setSelectedAttendanceIds] = useState(new Set());
+  const [isDeletingAttendances, setIsDeletingAttendances] = useState(false);
 
   const maxAttendance = 45;
   const isAdmin = user?.isAdmin || false;
+
+  const toggleSelectAttendance = (attendanceId) => {
+    setSelectedAttendanceIds((prev) => {
+      const next = new Set(prev);
+      next.has(attendanceId)
+        ? next.delete(attendanceId)
+        : next.add(attendanceId);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (sessionData?.attendances) {
@@ -295,6 +308,40 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
   };
 
+  const handleDeleteSelected = async () => {
+    if (!isAdmin || !sessionData?.id || selectedAttendanceIds.size === 0)
+      return;
+
+    const count = selectedAttendanceIds.size;
+    const confirmed = window.confirm(
+      `Are you sure you want to remove ${count} ${
+        count === 1 ? 'attendee' : 'attendees'
+      }? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setIsDeletingAttendances(true);
+      const attendanceIdsArray = Array.from(selectedAttendanceIds);
+      await deleteAttendances(sessionData.id, attendanceIdsArray);
+
+      setSelectedAttendanceIds(new Set());
+      setIsRemoveMode(false);
+
+      if (onAttendanceUpdate) {
+        setTimeout(() => {
+          onAttendanceUpdate();
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Error deleting attendances:', error);
+      alert(error.message || 'Failed to delete attendees. Please try again.');
+    } finally {
+      setIsDeletingAttendances(false);
+    }
+  };
+
   const renderAttendanceList = (attendances, section) => {
     if (!attendances || attendances.length === 0) return null;
 
@@ -302,15 +349,31 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     const isExpanded = expandedSections[section];
     const displayCount = shouldTruncate && !isExpanded ? 3 : attendances.length;
     const displayedAttendances = attendances.slice(0, displayCount);
-    const remainingCount = attendances.length - 5;
+    const remainingCount = attendances.length - displayCount;
 
     return (
       <>
         {displayedAttendances.map((attendance) => (
-          <div key={attendance.id} className={styles.attendanceItem}>
-            {attendance.user
-              ? attendance.user.name
-              : `User ${attendance.userId || 'Unknown'}`}
+          <div
+            key={attendance.id}
+            className={`${styles.attendanceItem} ${
+              isRemoveMode && selectedAttendanceIds.has(attendance.id)
+                ? styles.selected
+                : ''
+            } ${isRemoveMode ? styles.clickable : ''}`}
+            onClick={() =>
+              isRemoveMode && toggleSelectAttendance(attendance.id)
+            }
+          >
+            {isRemoveMode && (
+              <input
+                type='checkbox'
+                checked={selectedAttendanceIds.has(attendance.id)}
+                readOnly
+              />
+            )}
+
+            {attendance.user?.name ?? `User ${attendance.userId}`}
           </div>
         ))}
         {shouldTruncate && (
@@ -347,15 +410,43 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
 
       {attendanceList && (
         <div className={styles.attendanceList}>
-          <h3 className={styles.attendanceListTitle}>
-            Attendees (
-            {USE_DUMMY_DATA
-              ? attendanceList.yes.length +
-                attendanceList.maybe.length +
-                attendanceList.no.length
-              : sessionData.attendances?.length || 0}
-            )
-          </h3>
+          <div className={styles.attendeRemoveCont}>
+            <h3 className={styles.attendanceListTitle}>
+              Attendees (
+              {USE_DUMMY_DATA
+                ? attendanceList.yes.length +
+                  attendanceList.maybe.length +
+                  attendanceList.no.length
+                : sessionData.attendances?.length || 0}
+              )
+            </h3>
+            {isAdmin && (
+              <div className={styles.removeControls}>
+                {isRemoveMode && selectedAttendanceIds.size > 0 && (
+                  <button
+                    className={styles.deleteSelectedButton}
+                    onClick={handleDeleteSelected}
+                    disabled={isDeletingAttendances}
+                    type='button'
+                  >
+                    {isDeletingAttendances
+                      ? 'Deleting...'
+                      : `Delete Selected (${selectedAttendanceIds.size})`}
+                  </button>
+                )}
+                <button
+                  className={styles.removeAttendesButton}
+                  onClick={() => {
+                    setIsRemoveMode((prev) => !prev);
+                    setSelectedAttendanceIds(new Set());
+                  }}
+                  type='button'
+                >
+                  {isRemoveMode ? 'Cancel' : 'Remove Attendees'}
+                </button>
+              </div>
+            )}
+          </div>
 
           {attendanceList.yes.length > 0 && (
             <div className={styles.attendanceGroup}>
