@@ -328,4 +328,68 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.post('/:id/attendances/delete', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+    const sessionId = req.params.id;
+    const { attendanceIds } = req.body;
+
+    if (!Array.isArray(attendanceIds) || attendanceIds.length === 0) {
+      return res
+        .status(400)
+        .json({ error: 'attendanceIds must be a non-empty array' });
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    if (!dbUser.isAdmin) {
+      return res
+        .status(403)
+        .json({ error: 'Only admins can delete attendances' });
+    }
+
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    const attendances = await prisma.attendance.findMany({
+      where: {
+        id: { in: attendanceIds },
+        sessionId: sessionId,
+      },
+    });
+
+    if (attendances.length !== attendanceIds.length) {
+      return res.status(400).json({
+        error: 'Some attendances not found or do not belong to this session',
+      });
+    }
+
+    const result = await prisma.attendance.deleteMany({
+      where: {
+        id: { in: attendanceIds },
+        sessionId: sessionId,
+      },
+    });
+
+    res.json({
+      success: true,
+      deletedCount: result.count,
+      deletedIds: attendanceIds,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
