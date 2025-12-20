@@ -15,7 +15,7 @@ const SessionList = ({ passedData }) => {
   const [error, setError] = useState(null);
   const [showAddSession, setShowAddSession] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('thisWeek');
   const [sortBy, setSortBy] = useState('date');
   const { user } = useAuth();
   // const data = getUpcomingSessions(8);
