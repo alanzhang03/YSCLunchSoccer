@@ -8,6 +8,7 @@ import styles from './login.module.scss';
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -49,13 +50,23 @@ const Page = () => {
                 placeholder='ex. 123-456-7890'
               />
               <label>Password</label>
-              <input
-                value={password}
-                type='password'
-                onChange={handlePassword}
-                required
-                placeholder='Password'
-              />
+              <div className={styles.passwordInputWrapper}>
+                <input
+                  value={password}
+                  type={showPassword ? 'text' : 'password'}
+                  onChange={handlePassword}
+                  required
+                  placeholder='Password'
+                />
+                <button
+                  type='button'
+                  className={styles.togglePassword}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
 
             {error && <p className={styles.error}>{error}</p>}
