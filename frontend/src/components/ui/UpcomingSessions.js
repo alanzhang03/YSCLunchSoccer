@@ -35,9 +35,10 @@ const UpcomingSessions = () => {
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString, dayOfWeek) => {
     const date = new Date(dateString);
-    const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+    const weekday =
+      dayOfWeek || date.toLocaleDateString('en-US', { weekday: 'long' });
     const formattedDate = date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -106,7 +107,10 @@ const UpcomingSessions = () => {
       <h2>Your Upcoming Sessions</h2>
       <div className={styles.sessionsList}>
         {sessions.map((session, index) => {
-          const { weekday, formattedDate } = formatDate(session.date);
+          const { weekday, formattedDate } = formatDate(
+            session.date,
+            session.dayOfWeek
+          );
           const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
           return (
             <motion.div
