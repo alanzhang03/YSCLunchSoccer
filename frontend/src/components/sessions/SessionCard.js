@@ -414,10 +414,8 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
             <h3 className={styles.attendanceListTitle}>
               Attendees (
               {USE_DUMMY_DATA
-                ? attendanceList.yes.length +
-                  attendanceList.maybe.length +
-                  attendanceList.no.length
-                : sessionData.attendances?.length || 0}
+                ? attendanceList?.yes.length
+                : attendanceList.yes.length || 0}
               )
             </h3>
             {isAdmin && (
