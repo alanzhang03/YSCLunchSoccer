@@ -73,7 +73,7 @@ export async function sessionGenerator() {
     while (currSessions.length + sessionsCreated < 6) {
       const dayOfWeek = currentDate.getDay();
 
-      if (dayOfWeek === 1 || dayOfWeek === 5) {
+      if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) {
         const dateToCheck = new Date(
           currentDate.getFullYear(),
           currentDate.getMonth(),
@@ -92,7 +92,12 @@ export async function sessionGenerator() {
           await prisma.session.create({
             data: {
               date: dateToCheck,
-              dayOfWeek: dayOfWeek === 1 ? 'Monday' : 'Friday',
+              dayOfWeek:
+                dayOfWeek === 1
+                  ? 'Monday'
+                  : dayOfWeek === 3
+                  ? 'Wednesday'
+                  : 'Friday',
               startTime: '11:45 AM',
               endTime: '1:05 PM',
               timezone: 'EST',
