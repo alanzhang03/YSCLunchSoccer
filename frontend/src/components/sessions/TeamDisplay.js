@@ -2,7 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from './TeamDisplay.module.scss';
 import { useAuth } from '@/contexts/AuthContext';
-import { getSessionAttendances } from '@/lib/api';
+import {
+  getSessionAttendances,
+  getSessionById,
+  updateShowTeams,
+} from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
 import { randomizeTeams } from '@/lib/teamRandomizer';
 const TeamDisplay = ({ sessionId }) => {
@@ -35,12 +39,16 @@ const TeamDisplay = ({ sessionId }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await getSessionAttendances(sessionId);
-        setAttendes(result.attendances);
+        const [attendancesResult, sessionResult] = await Promise.all([
+          getSessionAttendances(sessionId),
+          getSessionById(sessionId),
+        ]);
+        setAttendes(attendancesResult.attendances);
+        setShowTeams(sessionResult.showTeams === true);
         setError(null);
       } catch (err) {
-        console.error('Failed to fetch attendances:', err);
-        setError(err.message || 'Failed to fetch attendances');
+        console.error('Failed to fetch data:', err);
+        setError(err.message || 'Failed to fetch data');
       } finally {
         setLoading(false);
       }
@@ -59,8 +67,15 @@ const TeamDisplay = ({ sessionId }) => {
     (attendes) => attendes.status === 'yes'
   );
 
-  const showTeamsSection = () => {
-    setShowTeams(!showTeams);
+  const showTeamsSection = async () => {
+    const newShowTeams = !showTeams;
+    try {
+      await updateShowTeams(sessionId, newShowTeams);
+      setShowTeams(newShowTeams);
+    } catch (err) {
+      console.error('Failed to update showTeams:', err);
+      setError(err.message || 'Failed to update showTeams');
+    }
   };
 
   const calculateTeams = () => {
@@ -84,7 +99,20 @@ const TeamDisplay = ({ sessionId }) => {
 
     const teams = randomizeTeams(yesAttendances, numTeams);
     setTeamsArray(teams);
-    setShowTeams(true);
+  };
+
+  const handleRandomizeTeams = async () => {
+    calculateTeams();
+
+    if (isAdmin) {
+      try {
+        await updateShowTeams(sessionId, true);
+        setShowTeams(true);
+      } catch (err) {
+        console.error('Failed to update showTeams:', err);
+        setError(err.message || 'Failed to update showTeams');
+      }
+    }
   };
 
   useEffect(() => {
@@ -130,7 +158,7 @@ const TeamDisplay = ({ sessionId }) => {
               </button>
               <button
                 className={styles.randomizeButton}
-                onClick={calculateTeams}
+                onClick={handleRandomizeTeams}
               >
                 🔄 Randomize Teams
               </button>

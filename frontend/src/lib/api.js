@@ -172,3 +172,24 @@ export async function deleteAttendances(sessionId, attendanceIds) {
 
   return response.json();
 }
+
+export async function updateShowTeams(sessionId, showTeams) {
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${sessionId}/showTeams`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ showTeams }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to update showTeams');
+  }
+
+  return response.json();
+}

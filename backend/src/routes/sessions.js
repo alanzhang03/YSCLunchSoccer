@@ -392,4 +392,47 @@ router.post('/:id/attendances/delete', authenticateUser, async (req, res) => {
   }
 });
 
+router.patch('/:id/showTeams', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+    const sessionId = req.params.id;
+    const { showTeams } = req.body;
+
+    if (typeof showTeams !== 'boolean') {
+      return res.status(400).json({ error: 'showTeams must be a boolean' });
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    if (!dbUser.isAdmin) {
+      return res
+        .status(403)
+        .json({ error: 'Only admins can update showTeams' });
+    }
+
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    const updatedSession = await prisma.session.update({
+      where: { id: sessionId },
+      data: { showTeams },
+    });
+
+    res.json({ success: true, session: updatedSession });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
