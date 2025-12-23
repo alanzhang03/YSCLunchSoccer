@@ -30,11 +30,11 @@ export async function signup(phoneNum, email, name, password, skill) {
   }
 }
 
-export async function login(phoneNum, password) {
+export async function login(phoneNum, password, rememberMe = false) {
   try {
     const response = await fetchWithCredentials(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      body: JSON.stringify({ phoneNum, password }),
+      body: JSON.stringify({ phoneNum, password, rememberMe }),
     });
 
     const data = await response.json();
@@ -49,12 +49,40 @@ export async function login(phoneNum, password) {
   }
 }
 
+export async function refreshToken() {
+  try {
+    const response = await fetchWithCredentials(
+      `${API_BASE_URL}/auth/refresh`,
+      {
+        method: 'POST',
+      }
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return response.json();
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function getCurrentUser() {
   try {
     const response = await fetchWithCredentials(`${API_BASE_URL}/auth/me`);
 
     if (!response.ok) {
       if (response.status === 401) {
+        const refreshResponse = await refreshToken();
+        if (refreshResponse) {
+          const retryResponse = await fetchWithCredentials(
+            `${API_BASE_URL}/auth/me`
+          );
+          if (retryResponse.ok) {
+            return retryResponse.json();
+          }
+        }
         return null;
       }
       throw new Error('Failed to get current user');

@@ -5,7 +5,7 @@ import { supabaseAdmin } from '../lib/supabase.js';
 
 const router = Router();
 
-function setAuthCookies(res, accessToken, refreshToken) {
+function setAuthCookies(res, accessToken, refreshToken, rememberMe = false) {
   const isProduction = process.env.NODE_ENV === 'production';
   const frontendUrl = (
     process.env.FRONTEND_URL || 'http://localhost:3000'
@@ -46,9 +46,17 @@ function setAuthCookies(res, accessToken, refreshToken) {
     (isProduction && frontendUrl.startsWith('https://')) ||
     (useSameSiteNone && !isLocalhostCrossOrigin);
 
+  const accessTokenMaxAge = rememberMe
+    ? 7 * 24 * 60 * 60 * 1000
+    : 60 * 60 * 1000;
+
+  const refreshTokenMaxAge = rememberMe
+    ? 30 * 24 * 60 * 60 * 1000
+    : 7 * 24 * 60 * 60 * 1000;
+
   const cookieOptions = {
     httpOnly: true,
-    maxAge: 60 * 60 * 1000,
+    maxAge: accessTokenMaxAge,
     path: '/',
     secure: useSecure,
     sameSite: useSameSiteNone ? 'none' : 'lax',
@@ -69,7 +77,12 @@ function setAuthCookies(res, accessToken, refreshToken) {
 
   res.cookie('sb_refresh_token', refreshToken, {
     ...cookieOptions,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: refreshTokenMaxAge,
+  });
+
+  res.cookie('sb_remember_me', rememberMe ? 'true' : 'false', {
+    ...cookieOptions,
+    maxAge: refreshTokenMaxAge,
   });
 }
 
@@ -130,6 +143,7 @@ function clearAuthCookies(res) {
 
   res.clearCookie('sb_access_token', cookieOptions);
   res.clearCookie('sb_refresh_token', cookieOptions);
+  res.clearCookie('sb_remember_me', cookieOptions);
 }
 
 router.post('/signup', async (req, res) => {
@@ -222,7 +236,8 @@ router.post('/signup', async (req, res) => {
     setAuthCookies(
       res,
       signInData.session.access_token,
-      signInData.session.refresh_token
+      signInData.session.refresh_token,
+      false
     );
 
     return res.status(201).json({ user });
@@ -238,7 +253,7 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { phoneNum, password } = req.body;
+    const { phoneNum, password, rememberMe } = req.body;
 
     if (!phoneNum || !password) {
       return res
@@ -298,7 +313,8 @@ router.post('/login', async (req, res) => {
       setAuthCookies(
         res,
         signInData.session.access_token,
-        signInData.session.refresh_token
+        signInData.session.refresh_token,
+        rememberMe === true
       );
     } catch (cookieError) {
       console.error('Cookie setting error:', cookieError);
@@ -331,16 +347,52 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', async (req, res) => {
   try {
-    const token = req.cookies?.sb_access_token;
+    let token = req.cookies?.sb_access_token;
+    const refreshToken = req.cookies?.sb_refresh_token;
 
-    if (!token) {
+    if (!token && !refreshToken) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
-    const {
-      data: { user: supabaseUser },
-      error,
-    } = await supabaseAdmin.auth.getUser(token);
+    let supabaseUser = null;
+    let error = null;
+
+    if (token) {
+      const result = await supabaseAdmin.auth.getUser(token);
+      supabaseUser = result.data?.user;
+      error = result.error;
+    }
+
+    if ((error || !supabaseUser) && refreshToken) {
+      try {
+        const {
+          data: { session: newSession },
+          error: refreshError,
+        } = await supabaseAdmin.auth.refreshSession({
+          refresh_token: refreshToken,
+        });
+
+        if (!refreshError && newSession) {
+          const rememberMe = req.cookies?.sb_remember_me === 'true';
+          setAuthCookies(
+            res,
+            newSession.access_token,
+            newSession.refresh_token,
+            rememberMe
+          );
+          token = newSession.access_token;
+
+          const userResult = await supabaseAdmin.auth.getUser(
+            newSession.access_token
+          );
+          supabaseUser = userResult.data?.user;
+          error = userResult.error;
+        }
+      } catch (refreshErr) {
+        console.error('Token refresh error:', refreshErr);
+        error = refreshErr;
+      }
+    }
 
     if (error || !supabaseUser) {
       return res.status(401).json({ error: 'Invalid or expired token' });
@@ -366,6 +418,46 @@ router.get('/me', async (req, res) => {
     return res.json({ user });
   } catch (error) {
     console.error('Error in /auth/me:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+});
+
+router.post('/refresh', async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.sb_refresh_token;
+
+    if (!refreshToken) {
+      return res.status(401).json({ error: 'No refresh token provided' });
+    }
+
+    const {
+      data: { session: newSession },
+      error: refreshError,
+    } = await supabaseAdmin.auth.refreshSession({
+      refresh_token: refreshToken,
+    });
+
+    if (refreshError || !newSession) {
+      return res
+        .status(401)
+        .json({ error: 'Invalid or expired refresh token' });
+    }
+
+    const rememberMe = req.cookies?.sb_remember_me === 'true';
+    setAuthCookies(
+      res,
+      newSession.access_token,
+      newSession.refresh_token,
+      rememberMe
+    );
+
+    return res.json({ message: 'Token refreshed successfully' });
+  } catch (error) {
+    console.error('Token refresh error:', error);
     return res.status(500).json({
       error: 'Internal server error',
       message:

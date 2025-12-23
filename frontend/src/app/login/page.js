@@ -9,6 +9,7 @@ const Page = () => {
   const [phoneNum, setPhoneNum] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -20,7 +21,7 @@ const Page = () => {
     setLoading(true);
 
     try {
-      await login(phoneNum, password);
+      await login(phoneNum, password, rememberMe);
       router.push('/');
     } catch (err) {
       setError(err.message || 'Login failed');
@@ -66,6 +67,16 @@ const Page = () => {
                 >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
+              </div>
+              <div className={styles.rememberMe}>
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type='checkbox'
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <span>Remember me</span>
+                </label>
               </div>
             </div>
 
