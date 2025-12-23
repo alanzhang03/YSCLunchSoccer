@@ -50,7 +50,6 @@ function setAuthCookies(res, accessToken, refreshToken, rememberMe = false) {
     ? 7 * 24 * 60 * 60 * 1000
     : 60 * 60 * 1000;
 
-
   const refreshTokenMaxAge = rememberMe
     ? 30 * 24 * 60 * 60 * 1000
     : 7 * 24 * 60 * 60 * 1000;
@@ -451,7 +450,6 @@ router.post('/refresh', async (req, res) => {
         .status(401)
         .json({ error: 'Invalid or expired refresh token' });
     }
-
 
     const rememberMe = req.cookies?.sb_remember_me === 'true';
     setAuthCookies(
