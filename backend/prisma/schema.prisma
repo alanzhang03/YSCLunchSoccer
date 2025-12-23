@@ -29,15 +29,17 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(uuid())
-  date      DateTime @db.Date
-  dayOfWeek String
-  startTime String
-  endTime   String
-  timezone  String   @default("EST")
-  showTeams Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  date        DateTime @db.Date
+  dayOfWeek   String
+  startTime   String
+  endTime     String
+  timezone    String   @default("EST")
+  showTeams   Boolean  @default(false)
+  teamsLocked Boolean  @default(false)
+  lockedTeams Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   attendances Attendance[]
   messages    Message[]

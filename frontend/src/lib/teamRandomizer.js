@@ -67,3 +67,33 @@ export function randomizeTeams(players, numOfTeams) {
 
   return teams;
 }
+
+export function fillTeamsRoundRobin(lockedTeams, newPlayers, numOfTeams) {
+  if (numOfTeams < 2) {
+    throw new Error('Number of teams must be at least 2');
+  }
+
+  const teams = lockedTeams.map((team) => [...team]);
+
+  const existingPlayerIds = new Set();
+  lockedTeams.forEach((team) => {
+    team.forEach((player) => {
+      const playerId = player.user?.id || player.userId || player.id;
+      if (playerId) {
+        existingPlayerIds.add(playerId);
+      }
+    });
+  });
+
+  const playersToAdd = newPlayers.filter((player) => {
+    const playerId = player.user?.id || player.userId || player.id;
+    return playerId && !existingPlayerIds.has(playerId);
+  });
+
+  playersToAdd.forEach((player, index) => {
+    const teamIndex = index % numOfTeams;
+    teams[teamIndex].push(player);
+  });
+
+  return teams;
+}

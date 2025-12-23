@@ -193,3 +193,24 @@ export async function updateShowTeams(sessionId, showTeams) {
 
   return response.json();
 }
+
+export async function lockTeams(sessionId, teams, numOfTeams) {
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${sessionId}/lockTeams`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ teams, numOfTeams }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to lock teams');
+  }
+
+  return response.json();
+}
