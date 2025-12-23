@@ -354,7 +354,6 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
-    // Try to get user with access token
     let supabaseUser = null;
     let error = null;
 
@@ -364,7 +363,6 @@ router.get('/me', async (req, res) => {
       error = result.error;
     }
 
-    // If access token is invalid/expired, try to refresh using refresh token
     if ((error || !supabaseUser) && refreshToken) {
       try {
         const {
@@ -375,7 +373,6 @@ router.get('/me', async (req, res) => {
         });
 
         if (!refreshError && newSession) {
-          // Set new tokens in cookies, preserving remember me status
           const rememberMe = req.cookies?.sb_remember_me === 'true';
           setAuthCookies(
             res,
@@ -385,7 +382,6 @@ router.get('/me', async (req, res) => {
           );
           token = newSession.access_token;
 
-          // Get user with new access token
           const userResult = await supabaseAdmin.auth.getUser(
             newSession.access_token
           );
