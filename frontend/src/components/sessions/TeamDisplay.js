@@ -173,31 +173,36 @@ const TeamDisplay = ({ sessionId }) => {
               RSVP.
             </p>
           </div>
-        ) : (
-          showTeams && (
-            <div className={styles.teamsGrid}>
-              {teamsArray.map((team, teamIndex) => (
-                <div key={teamIndex} className={styles.teamCard}>
-                  <div className={styles.teamHeader}>
-                    <h3 className={styles.teamTitle}>
-                      Team {teamIndex + 1} ({teamColors[teamIndex]})
-                    </h3>
-                    <span className={styles.teamCount}>
-                      {team.length} players
-                    </span>
-                  </div>
-
-                  <ul className={styles.playerList}>
-                    {team.map((player) => (
-                      <li key={player.id} className={styles.playerItem}>
-                        {player.user.name}
-                      </li>
-                    ))}
-                  </ul>
+        ) : showTeams ? (
+          <div className={styles.teamsGrid}>
+            {teamsArray.map((team, teamIndex) => (
+              <div key={teamIndex} className={styles.teamCard}>
+                <div className={styles.teamHeader}>
+                  <h3 className={styles.teamTitle}>
+                    Team {teamIndex + 1} ({teamColors[teamIndex]})
+                  </h3>
+                  <span className={styles.teamCount}>
+                    {team.length} players
+                  </span>
                 </div>
-              ))}
-            </div>
-          )
+
+                <ul className={styles.playerList}>
+                  {team.map((player) => (
+                    <li key={player.id} className={styles.playerItem}>
+                      {player.user.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.emptyState}>
+            <p>
+              Teams will be revealed on the day of the session. Please check
+              back then!
+            </p>
+          </div>
         )}
       </div>
     </>
