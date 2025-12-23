@@ -435,4 +435,63 @@ router.patch('/:id/showTeams', authenticateUser, async (req, res) => {
   }
 });
 
+router.post('/:id/lockTeams', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+    const sessionId = req.params.id;
+    const { teams, numOfTeams } = req.body;
+
+    if (!Array.isArray(teams)) {
+      return res.status(400).json({ error: 'teams must be an array' });
+    }
+
+    if (!numOfTeams || numOfTeams < 2) {
+      return res.status(400).json({ error: 'numOfTeams must be at least 2' });
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    if (!dbUser.isAdmin) {
+      return res.status(403).json({ error: 'Only admins can lock teams' });
+    }
+
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    const lockedTeamsData = {
+      teams: teams.map((team) =>
+        team.map((player) => ({
+          userId: player.user?.id || player.userId,
+          attendanceId: player.id,
+        }))
+      ),
+      numOfTeams,
+      lockedAt: new Date().toISOString(),
+    };
+
+    const updatedSession = await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        teamsLocked: true,
+        lockedTeams: lockedTeamsData,
+      },
+    });
+
+    res.json({ success: true, session: updatedSession });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

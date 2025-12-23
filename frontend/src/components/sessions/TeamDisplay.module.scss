@@ -114,6 +114,37 @@
         transform: translateY(0);
       }
     }
+
+    .lockStatus {
+      display: flex;
+      align-items: center;
+    }
+
+    .lockBadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+
+      &.locked {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+        border: 2px solid #fbbf24;
+        box-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
+      }
+
+      &.unlocked {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        border: 2px solid #10b981;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+      }
+    }
   }
 
   .loading {

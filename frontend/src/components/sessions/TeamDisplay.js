@@ -6,9 +6,10 @@ import {
   getSessionAttendances,
   getSessionById,
   updateShowTeams,
+  lockTeams,
 } from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
-import { randomizeTeams } from '@/lib/teamRandomizer';
+import { randomizeTeams, fillTeamsRoundRobin } from '@/lib/teamRandomizer';
 const TeamDisplay = ({ sessionId }) => {
   const { user } = useAuth();
   const [attendes, setAttendes] = useState(null);
@@ -18,6 +19,8 @@ const TeamDisplay = ({ sessionId }) => {
   const [numOfTeams, setNumOfTeams] = useState();
   const [customNumTeams, setCustomNumTeams] = useState(null);
   const [showTeams, setShowTeams] = useState(false);
+  const [teamsLocked, setTeamsLocked] = useState(false);
+  const [lockedTeamsData, setLockedTeamsData] = useState(null);
 
   const isAdmin = user?.isAdmin || false;
   const teamColors = ['Black', 'White', 'Red', 'Blue', 'Yellow'];
@@ -25,6 +28,9 @@ const TeamDisplay = ({ sessionId }) => {
   // const attendancesArray = getSessionAttendances(sessionId);
 
   function handleNumOfTeamChange(e) {
+    if (teamsLocked) {
+      return;
+    }
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 2 && value <= 5) {
       setCustomNumTeams(value);
@@ -45,6 +51,11 @@ const TeamDisplay = ({ sessionId }) => {
         ]);
         setAttendes(attendancesResult.attendances);
         setShowTeams(sessionResult.showTeams === true);
+        setTeamsLocked(sessionResult.teamsLocked === true);
+        setLockedTeamsData(sessionResult.lockedTeams);
+        if (sessionResult.lockedTeams?.numOfTeams) {
+          setNumOfTeams(sessionResult.lockedTeams.numOfTeams);
+        }
         setError(null);
       } catch (err) {
         console.error('Failed to fetch data:', err);
@@ -87,6 +98,67 @@ const TeamDisplay = ({ sessionId }) => {
     let numTeams;
     if (customNumTeams !== null) {
       numTeams = customNumTeams;
+    } else if (teamsLocked && lockedTeamsData?.numOfTeams) {
+      numTeams = lockedTeamsData.numOfTeams;
+    } else {
+      numTeams = 2;
+      if (yesAttendances.length >= 23 && yesAttendances.length <= 28) {
+        numTeams = 3;
+      } else if (yesAttendances.length > 28) {
+        numTeams = 4;
+      }
+      setNumOfTeams(numTeams);
+    }
+
+    if (teamsLocked && lockedTeamsData?.teams) {
+      const attendanceMap = new Map();
+      yesAttendances.forEach((attendance) => {
+        const key = attendance.user?.id || attendance.userId || attendance.id;
+        if (key) {
+          attendanceMap.set(key, attendance);
+        }
+      });
+
+      const reconstructedTeams = lockedTeamsData.teams.map((team) =>
+        team
+          .map((lockedPlayer) => {
+            const key = lockedPlayer.userId || lockedPlayer.attendanceId;
+            return attendanceMap.get(key);
+          })
+          .filter(Boolean)
+      );
+
+      const lockedPlayerIds = new Set();
+      lockedTeamsData.teams.forEach((team) => {
+        team.forEach((lockedPlayer) => {
+          const key = lockedPlayer.userId || lockedPlayer.attendanceId;
+          if (key) {
+            lockedPlayerIds.add(key);
+          }
+        });
+      });
+
+      const newPlayers = yesAttendances.filter((attendance) => {
+        const key = attendance.user?.id || attendance.userId || attendance.id;
+        return key && !lockedPlayerIds.has(key);
+      });
+
+      const teams = fillTeamsRoundRobin(
+        reconstructedTeams,
+        newPlayers,
+        numTeams
+      );
+      setTeamsArray(teams);
+    } else {
+      const teams = randomizeTeams(yesAttendances, numTeams);
+      setTeamsArray(teams);
+    }
+  };
+
+  const handleRandomizeTeams = async () => {
+    let numTeams;
+    if (customNumTeams !== null) {
+      numTeams = customNumTeams;
     } else {
       numTeams = 2;
       if (yesAttendances.length >= 23 && yesAttendances.length <= 28) {
@@ -99,25 +171,34 @@ const TeamDisplay = ({ sessionId }) => {
 
     const teams = randomizeTeams(yesAttendances, numTeams);
     setTeamsArray(teams);
-  };
-
-  const handleRandomizeTeams = async () => {
-    calculateTeams();
 
     if (isAdmin) {
       try {
+        await lockTeams(sessionId, teams, numTeams);
         await updateShowTeams(sessionId, true);
         setShowTeams(true);
+        setTeamsLocked(true);
+        const lockedData = {
+          teams: teams.map((team) =>
+            team.map((player) => ({
+              userId: player.user?.id || player.userId,
+              attendanceId: player.id,
+            }))
+          ),
+          numOfTeams: numTeams,
+          lockedAt: new Date().toISOString(),
+        };
+        setLockedTeamsData(lockedData);
       } catch (err) {
-        console.error('Failed to update showTeams:', err);
-        setError(err.message || 'Failed to update showTeams');
+        console.error('Failed to lock teams:', err);
+        setError(err.message || 'Failed to lock teams');
       }
     }
   };
 
   useEffect(() => {
     calculateTeams();
-  }, [attendes]);
+  }, [attendes, teamsLocked, lockedTeamsData, customNumTeams]);
 
   if (loading) {
     return (
@@ -148,6 +229,12 @@ const TeamDisplay = ({ sessionId }) => {
                   required
                   className={styles.numTeamsInput}
                   placeholder='2-4'
+                  disabled={teamsLocked}
+                  title={
+                    teamsLocked
+                      ? 'Teams are locked. Randomize again to change number of teams.'
+                      : ''
+                  }
                 />
               </div>
               <button
@@ -162,6 +249,15 @@ const TeamDisplay = ({ sessionId }) => {
               >
                 🔄 Randomize Teams
               </button>
+              <div className={styles.lockStatus}>
+                <span
+                  className={`${styles.lockBadge} ${
+                    teamsLocked ? styles.locked : styles.unlocked
+                  }`}
+                >
+                  {teamsLocked ? '🔒 Teams Locked' : '🔓 Teams Unlocked'}
+                </span>
+              </div>
             </div>
           )}
         </div>
