@@ -69,6 +69,29 @@
       }
     }
 
+    .showTeamsButton {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
     .randomizeButton {
       background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
       color: white;
@@ -239,6 +262,7 @@
         max-width: 120px;
       }
 
+      .showTeamsButton,
       .randomizeButton {
         width: 100%;
       }

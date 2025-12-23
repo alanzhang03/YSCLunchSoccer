@@ -13,6 +13,7 @@ const TeamDisplay = ({ sessionId }) => {
   const [teamsArray, setTeamsArray] = useState([]);
   const [numOfTeams, setNumOfTeams] = useState();
   const [customNumTeams, setCustomNumTeams] = useState(null);
+  const [showTeams, setShowTeams] = useState(false);
 
   const isAdmin = user?.isAdmin || false;
   const teamColors = ['Black', 'White', 'Red', 'Blue', 'Yellow'];
@@ -58,6 +59,10 @@ const TeamDisplay = ({ sessionId }) => {
     (attendes) => attendes.status === 'yes'
   );
 
+  const showTeamsSection = () => {
+    setShowTeams(!showTeams);
+  };
+
   const calculateTeams = () => {
     if (!yesAttendances || yesAttendances.length === 0) {
       setTeamsArray([]);
@@ -79,6 +84,7 @@ const TeamDisplay = ({ sessionId }) => {
 
     const teams = randomizeTeams(yesAttendances, numTeams);
     setTeamsArray(teams);
+    setShowTeams(true);
   };
 
   useEffect(() => {
@@ -94,64 +100,79 @@ const TeamDisplay = ({ sessionId }) => {
   }
 
   return (
-    <div className={styles.displayTeamsContainer}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Teams</h1>
-        {isAdmin && (
-          <div className={styles.adminControls}>
-            <div className={styles.inputGroup}>
-              <label htmlFor='numTeams' className={styles.label}>
-                Number of Teams:
-              </label>
-              <input
-                id='numTeams'
-                value={numOfTeams || ''}
-                onChange={handleNumOfTeamChange}
-                type='number'
-                min='2'
-                max='5'
-                required
-                className={styles.numTeamsInput}
-                placeholder='2-4'
-              />
+    <>
+      <div className={styles.displayTeamsContainer}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Teams</h1>
+          {isAdmin && (
+            <div className={styles.adminControls}>
+              <div className={styles.inputGroup}>
+                <label htmlFor='numTeams' className={styles.label}>
+                  Number of Teams:
+                </label>
+                <input
+                  id='numTeams'
+                  value={numOfTeams || ''}
+                  onChange={handleNumOfTeamChange}
+                  type='number'
+                  min='2'
+                  max='5'
+                  required
+                  className={styles.numTeamsInput}
+                  placeholder='2-4'
+                />
+              </div>
+              <button
+                className={styles.showTeamsButton}
+                onClick={showTeamsSection}
+              >
+                {showTeams ? 'Hide Teams' : 'Show Teams'}
+              </button>
+              <button
+                className={styles.randomizeButton}
+                onClick={calculateTeams}
+              >
+                🔄 Randomize Teams
+              </button>
             </div>
-            <button className={styles.randomizeButton} onClick={calculateTeams}>
-              🔄 Randomize Teams
-            </button>
+          )}
+        </div>
+
+        {teamsArray.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>
+              No players attending yet. Teams will appear here once players
+              RSVP.
+            </p>
           </div>
+        ) : (
+          showTeams && (
+            <div className={styles.teamsGrid}>
+              {teamsArray.map((team, teamIndex) => (
+                <div key={teamIndex} className={styles.teamCard}>
+                  <div className={styles.teamHeader}>
+                    <h3 className={styles.teamTitle}>
+                      Team {teamIndex + 1} ({teamColors[teamIndex]})
+                    </h3>
+                    <span className={styles.teamCount}>
+                      {team.length} players
+                    </span>
+                  </div>
+
+                  <ul className={styles.playerList}>
+                    {team.map((player) => (
+                      <li key={player.id} className={styles.playerItem}>
+                        {player.user.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )
         )}
       </div>
-
-      {teamsArray.length === 0 ? (
-        <div className={styles.emptyState}>
-          <p>
-            No players attending yet. Teams will appear here once players RSVP.
-          </p>
-        </div>
-      ) : (
-        <div className={styles.teamsGrid}>
-          {teamsArray.map((team, teamIndex) => (
-            <div key={teamIndex} className={styles.teamCard}>
-              <div className={styles.teamHeader}>
-                <h3 className={styles.teamTitle}>
-                  Team {teamIndex + 1} ({teamColors[teamIndex]})
-                </h3>
-                <span className={styles.teamCount}>{team.length} players</span>
-              </div>
-              <ul className={styles.playerList}>
-                {team.map((player) => (
-                  <li key={player?.id} className={styles.playerItem}>
-                    <span className={styles.playerName}>
-                      {player?.user?.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 
