@@ -1,30 +1,67 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.EMAIL_PORT || '587'),
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 10000, 
-  socketTimeout: 10000,
-  greetingTimeout: 10000, 
-  pool: true,
-  maxConnections: 1,
-  maxMessages: 3,
-});
+const useSendGrid = !!process.env.SENDGRID_API_KEY;
+
+let transporter;
+
+if (useSendGrid) {
+  transporter = nodemailer.createTransport({
+    host: 'smtp.sendgrid.net',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'apikey',
+      pass: process.env.SENDGRID_API_KEY,
+    },
+    connectionTimeout: 10000,
+    socketTimeout: 10000,
+    greetingTimeout: 10000,
+  });
+  console.log('[EMAIL] Using SendGrid for email delivery');
+} else {
+  transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.EMAIL_PORT || '587'),
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    connectionTimeout: 10000,
+    socketTimeout: 10000,
+    greetingTimeout: 10000,
+    pool: true,
+    maxConnections: 1,
+    maxMessages: 3,
+  });
+  console.log('[EMAIL] Using Gmail/custom SMTP for email delivery');
+}
 
 export async function sendPasswordResetEmail(email, resetLink) {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    const error = new Error('Email configuration missing: EMAIL_USER or EMAIL_PASS not set');
-    console.error('[EMAIL] Configuration error:', error.message);
-    throw error;
+  if (useSendGrid) {
+    if (!process.env.SENDGRID_API_KEY) {
+      const error = new Error('SendGrid API key not set (SENDGRID_API_KEY)');
+      console.error('[EMAIL] Configuration error:', error.message);
+      throw error;
+    }
+  } else {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      const error = new Error(
+        'Email configuration missing: EMAIL_USER or EMAIL_PASS not set'
+      );
+      console.error('[EMAIL] Configuration error:', error.message);
+      throw error;
+    }
   }
 
+  const fromEmail =
+    process.env.EMAIL_FROM ||
+    process.env.EMAIL_USER ||
+    process.env.SENDGRID_FROM_EMAIL ||
+    'noreply@ysclunchsoccer.com';
+
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: fromEmail,
     to: email,
     subject: 'Reset Your Password - YSC Lunch Soccer',
     html: `
