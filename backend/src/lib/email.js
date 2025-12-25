@@ -1,11 +1,3 @@
-if (!process.env.SENDGRID_API_KEY) {
-  console.error(
-    '[EMAIL] ⚠️  WARNING: SENDGRID_API_KEY not set. Email sending will fail.'
-  );
-} else {
-  console.log('[EMAIL] ✅ SendGrid REST API configured');
-}
-
 export async function sendPasswordResetEmail(email, resetLink) {
   if (!process.env.SENDGRID_API_KEY) {
     const error = new Error('SendGrid API key not set (SENDGRID_API_KEY)');
@@ -13,12 +5,10 @@ export async function sendPasswordResetEmail(email, resetLink) {
     throw error;
   }
 
-  const fromEmail = process.env.EMAIL_FROM || process.env.SENDGRID_FROM_EMAIL;
+  const fromEmail = process.env.EMAIL_FROM;
 
   if (!fromEmail) {
-    const error = new Error(
-      'EMAIL_FROM or SENDGRID_FROM_EMAIL environment variable must be set'
-    );
+    const error = new Error('EMAIL_FROM environment variable must be set');
     console.error('[EMAIL] Configuration error:', error.message);
     throw error;
   }
@@ -61,7 +51,14 @@ This link will expire in 1 hour. If you didn't request a password reset, you can
         subject: 'Reset Your Password - YSC Lunch Soccer',
       },
     ],
-    from: { email: fromEmail },
+    from: {
+      email: fromEmail,
+      name: 'YSC Lunch Soccer',
+    },
+    reply_to: {
+      email: fromEmail,
+      name: 'YSC Lunch Soccer',
+    },
     content: [
       {
         type: 'text/plain',
@@ -72,6 +69,10 @@ This link will expire in 1 hour. If you didn't request a password reset, you can
         value: htmlContent.trim(),
       },
     ],
+    categories: ['password-reset'],
+    custom_args: {
+      type: 'password_reset',
+    },
   };
 
   try {
@@ -101,17 +102,11 @@ This link will expire in 1 hour. If you didn't request a password reset, you can
       throw error;
     }
 
-    console.log(
-      `[EMAIL] ✅ Password reset email sent successfully to ${email}`
-    );
     return true;
   } catch (error) {
-    console.error('[EMAIL] ❌ Error sending email:', error);
+    console.error('[EMAIL] Error sending password reset email:', error.message);
     if (error.details) {
-      console.error('[EMAIL] Error details:', error.details);
-    }
-    if (error.status) {
-      console.error('[EMAIL] HTTP status:', error.status);
+      console.error('[EMAIL] SendGrid error details:', error.details);
     }
     throw error;
   }
