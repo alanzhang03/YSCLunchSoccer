@@ -17,6 +17,12 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendPasswordResetEmail(email, resetLink) {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    const error = new Error('Email configuration missing: EMAIL_USER or EMAIL_PASS not set');
+    console.error('[EMAIL] Configuration error:', error.message);
+    throw error;
+  }
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,

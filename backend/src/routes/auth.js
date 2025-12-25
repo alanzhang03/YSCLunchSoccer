@@ -528,16 +528,43 @@ router.post('/forgot-password', async (req, res) => {
     ).trim();
     const resetLink = `${frontendUrl}/reset-password/${token}`;
 
-    sendPasswordResetEmail(user.email, resetLink).catch((emailError) => {
-      console.error('Error sending password reset email:', emailError);
-      console.error('Email configuration check:', {
-        hasHost: !!process.env.EMAIL_HOST,
-        hasUser: !!process.env.EMAIL_USER,
-        hasPass: !!process.env.EMAIL_PASS,
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-      });
+    console.log(`[PASSWORD RESET] Attempting to send email to ${user.email}`);
+    console.log(`[PASSWORD RESET] Email config:`, {
+      hasHost: !!process.env.EMAIL_HOST,
+      hasUser: !!process.env.EMAIL_USER,
+      hasPass: !!process.env.EMAIL_PASS,
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      env: process.env.NODE_ENV,
     });
+
+    sendPasswordResetEmail(user.email, resetLink)
+      .then(() => {
+        console.log(
+          `[PASSWORD RESET] ✅ Email sent successfully to ${user.email}`
+        );
+      })
+      .catch((emailError) => {
+        console.error(
+          '[PASSWORD RESET] ❌ Error sending password reset email:',
+          emailError
+        );
+        console.error('[PASSWORD RESET] Error details:', {
+          message: emailError.message,
+          code: emailError.code,
+          response: emailError.response,
+          responseCode: emailError.responseCode,
+          command: emailError.command,
+          stack: emailError.stack,
+        });
+        console.error('[PASSWORD RESET] Email configuration:', {
+          hasHost: !!process.env.EMAIL_HOST,
+          hasUser: !!process.env.EMAIL_USER,
+          hasPass: !!process.env.EMAIL_PASS,
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+        });
+      });
 
     return res.json({
       message:
