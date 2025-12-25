@@ -151,6 +151,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       tomorrow: isTomorrow,
       relativeDate: relativeDate,
       daysUntil: daysDiff,
+      teamsLocked: session.teamsLocked,
     };
   };
 

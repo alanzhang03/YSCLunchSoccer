@@ -9,6 +9,7 @@ export default function Card({ sessionData, children, sessionId }) {
   const today = sessionData.today;
   const tomorrow = sessionData.tomorrow;
   const relativeDate = sessionData.relativeDate;
+  const teamsLocked = sessionData.teamsLocked;
 
   return (
     <div className={styles.card}>
@@ -43,7 +44,9 @@ export default function Card({ sessionData, children, sessionId }) {
         <div className={styles.time}>{time}</div>
       </div>
 
-      {children && <div className={styles.actions}>{children}</div>}
+      {!teamsLocked && children && (
+        <div className={styles.actions}>{children}</div>
+      )}
     </div>
   );
 }
