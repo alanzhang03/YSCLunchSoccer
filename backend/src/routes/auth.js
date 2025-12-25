@@ -529,18 +529,11 @@ router.post('/forgot-password', async (req, res) => {
     const resetLink = `${frontendUrl}/reset-password/${token}`;
 
     console.log(`[PASSWORD RESET] Attempting to send email to ${user.email}`);
-    console.log(`[PASSWORD RESET] Email service:`, {
-      usingSendGrid: !!process.env.SENDGRID_API_KEY,
-      hasSendGridKey: !!process.env.SENDGRID_API_KEY,
-      hasHost: !!process.env.EMAIL_HOST,
-      hasUser: !!process.env.EMAIL_USER,
-      hasPass: !!process.env.EMAIL_PASS,
-      host:
-        process.env.EMAIL_HOST ||
-        (process.env.SENDGRID_API_KEY ? 'smtp.sendgrid.net' : 'not configured'),
-      port:
-        process.env.EMAIL_PORT ||
-        (process.env.SENDGRID_API_KEY ? '587' : 'not configured'),
+    console.log(`[PASSWORD RESET] SendGrid config:`, {
+      hasApiKey: !!process.env.SENDGRID_API_KEY,
+      hasFromEmail:
+        !!process.env.EMAIL_FROM || !!process.env.SENDGRID_FROM_EMAIL,
+      fromEmail: process.env.EMAIL_FROM || process.env.SENDGRID_FROM_EMAIL,
       env: process.env.NODE_ENV,
     });
 

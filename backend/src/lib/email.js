@@ -1,64 +1,42 @@
 import nodemailer from 'nodemailer';
 
-const useSendGrid = !!process.env.SENDGRID_API_KEY;
-
-let transporter;
-
-if (useSendGrid) {
-  transporter = nodemailer.createTransport({
-    host: 'smtp.sendgrid.net',
-    port: 587,
-    secure: false,
-    auth: {
-      user: 'apikey',
-      pass: process.env.SENDGRID_API_KEY,
-    },
-    connectionTimeout: 10000,
-    socketTimeout: 10000,
-    greetingTimeout: 10000,
-  });
-  console.log('[EMAIL] Using SendGrid for email delivery');
-} else {
-  transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    connectionTimeout: 10000,
-    socketTimeout: 10000,
-    greetingTimeout: 10000,
-    pool: true,
-    maxConnections: 1,
-    maxMessages: 3,
-  });
-  console.log('[EMAIL] Using Gmail/custom SMTP for email delivery');
+if (!process.env.SENDGRID_API_KEY) {
+  console.error(
+    '[EMAIL] ⚠️  WARNING: SENDGRID_API_KEY not set. Email sending will fail.'
+  );
 }
 
+const transporter = nodemailer.createTransport({
+  host: 'smtp.sendgrid.net',
+  port: 587,
+  secure: false,
+  auth: {
+    user: 'apikey',
+    pass: process.env.SENDGRID_API_KEY,
+  },
+  connectionTimeout: 10000,
+  socketTimeout: 10000,
+  greetingTimeout: 10000,
+});
+
+console.log('[EMAIL] ✅ SendGrid email service configured');
+
 export async function sendPasswordResetEmail(email, resetLink) {
-  if (useSendGrid) {
-    if (!process.env.SENDGRID_API_KEY) {
-      const error = new Error('SendGrid API key not set (SENDGRID_API_KEY)');
-      console.error('[EMAIL] Configuration error:', error.message);
-      throw error;
-    }
-  } else {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      const error = new Error(
-        'Email configuration missing: EMAIL_USER or EMAIL_PASS not set'
-      );
-      console.error('[EMAIL] Configuration error:', error.message);
-      throw error;
-    }
+  if (!process.env.SENDGRID_API_KEY) {
+    const error = new Error('SendGrid API key not set (SENDGRID_API_KEY)');
+    console.error('[EMAIL] Configuration error:', error.message);
+    throw error;
   }
 
-  const fromEmail =
-    process.env.EMAIL_FROM ||
-    process.env.EMAIL_USER ||
-    process.env.SENDGRID_FROM_EMAIL ||
-    'noreply@ysclunchsoccer.com';
+  const fromEmail = process.env.EMAIL_FROM || process.env.SENDGRID_FROM_EMAIL;
+
+  if (!fromEmail) {
+    const error = new Error(
+      'EMAIL_FROM or SENDGRID_FROM_EMAIL environment variable must be set'
+    );
+    console.error('[EMAIL] Configuration error:', error.message);
+    throw error;
+  }
 
   const mailOptions = {
     from: fromEmail,
