@@ -2,6 +2,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './login.module.scss';
 
@@ -86,6 +87,9 @@ const Page = () => {
               {loading ? 'Logging in...' : 'Submit'}
             </button>
           </form>
+          <div className={styles.link}>
+            <Link href='/reset-password'>Forgot Password?</Link>
+          </div>
         </div>
       </div>
     </>

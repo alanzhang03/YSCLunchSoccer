@@ -109,3 +109,47 @@ export async function logout() {
     throw error;
   }
 }
+
+export async function requestPasswordReset(email) {
+  try {
+    const response = await fetchWithCredentials(
+      `${API_BASE_URL}/auth/forgot-password`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to request password reset');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function resetPassword(token, newPassword) {
+  try {
+    const response = await fetchWithCredentials(
+      `${API_BASE_URL}/auth/reset-password`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ token, newPassword }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to reset password');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}

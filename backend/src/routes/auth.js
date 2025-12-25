@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { supabaseAdmin } from '../lib/supabase.js';
+import { sendPasswordResetEmail } from '../lib/email.js';
 
 const router = Router();
 
@@ -480,6 +482,136 @@ router.post('/logout', async (req, res) => {
   } catch (error) {
     clearAuthCookies(res);
     return res.json({ message: 'Logout successful' });
+  }
+});
+
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.json({
+        message:
+          'If an account with that email exists, a password reset link has been sent.',
+      });
+    }
+
+    const jwtSecret =
+      process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    const token = jwt.sign(
+      { email: user.email, type: 'password-reset' },
+      jwtSecret,
+      { expiresIn: '1h' }
+    );
+
+    const frontendUrl = (
+      process.env.FRONTEND_URL || 'http://localhost:3000'
+    ).trim();
+    const resetLink = `${frontendUrl}/reset-password/${token}`;
+
+    try {
+      await sendPasswordResetEmail(user.email, resetLink);
+    } catch (emailError) {
+      console.error('Error sending password reset email:', emailError);
+    }
+
+    return res.json({
+      message:
+        'If an account with that email exists, a password reset link has been sent.',
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+});
+
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({
+        error: 'Token and new password are required',
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        error: 'Password must be at least 6 characters long',
+      });
+    }
+
+    const jwtSecret =
+      process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    let decoded;
+    try {
+      decoded = jwt.verify(token, jwtSecret);
+    } catch (jwtError) {
+      return res.status(400).json({
+        error: 'Invalid or expired reset token',
+      });
+    }
+
+    if (decoded.type !== 'password-reset') {
+      return res.status(400).json({
+        error: 'Invalid token type',
+      });
+    }
+
+    const { email } = decoded;
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+      });
+    }
+
+    if (user.supabaseUserId) {
+      try {
+        const { error: updateError } =
+          await supabaseAdmin.auth.admin.updateUserById(user.supabaseUserId, {
+            password: newPassword,
+          });
+
+        if (updateError) {
+        }
+      } catch (supabaseError) {
+        console.error('Error updating Supabase password:', supabaseError);
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    return res.json({
+      message: 'Password has been reset successfully',
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
   }
 });
 
