@@ -36,14 +36,40 @@ const UpcomingSessions = () => {
   };
 
   const formatDate = (dateString, dayOfWeek) => {
-    const date = new Date(dateString);
-    const weekday =
-      dayOfWeek || date.toLocaleDateString('en-US', { weekday: 'long' });
-    const formattedDate = date.toLocaleDateString('en-US', {
+    let sessionDate;
+    if (
+      typeof dateString === 'string' &&
+      dateString.match(/^\d{4}-\d{2}-\d{2}/)
+    ) {
+      const [year, month, day] = dateString.split('T')[0].split('-');
+      sessionDate = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day)
+      );
+    } else {
+      sessionDate = new Date(dateString);
+    }
+
+    if (isNaN(sessionDate.getTime())) {
+      console.error('Invalid date for session:', dateString);
+      return { weekday: '', formattedDate: '' };
+    }
+
+    const weekday = dayOfWeek
+      ? dayOfWeek.toUpperCase()
+      : sessionDate
+          .toLocaleDateString('en-US', {
+            weekday: 'long',
+          })
+          .toUpperCase();
+
+    const formattedDate = sessionDate.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
+
     return { weekday, formattedDate };
   };
 
