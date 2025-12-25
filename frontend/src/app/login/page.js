@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import styles from './login.module.scss';
 
 const Page = () => {
-  const [phoneNum, setPhoneNum] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -22,7 +22,7 @@ const Page = () => {
     setLoading(true);
 
     try {
-      await login(phoneNum, password, rememberMe);
+      await login(identifier, password, rememberMe);
       router.push('/');
     } catch (err) {
       setError(err.message || 'Login failed');
@@ -31,8 +31,8 @@ const Page = () => {
     }
   };
 
-  const handlePhoneNum = (e) => {
-    setPhoneNum(e.target.value);
+  const handleIdentifier = (e) => {
+    setIdentifier(e.target.value);
   };
   const handlePassword = (e) => {
     setPassword(e.target.value);
@@ -44,12 +44,12 @@ const Page = () => {
           <h1 className={styles.title}>Login</h1>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formGroup}>
-              <label>Phone Number</label>
+              <label>Email or Phone Number</label>
               <input
-                value={phoneNum}
-                onChange={handlePhoneNum}
+                value={identifier}
+                onChange={handleIdentifier}
                 required
-                placeholder='ex. 123-456-7890'
+                placeholder='Email or phone number (e.g. user@example.com or 123-456-7890)'
               />
               <label>Password</label>
               <div className={styles.passwordInputWrapper}>

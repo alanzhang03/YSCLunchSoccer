@@ -255,22 +255,33 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { phoneNum, password, rememberMe } = req.body;
+    const { phoneNum, email, password, rememberMe } = req.body;
 
-    if (!phoneNum || !password) {
+    const identifier = phoneNum || email;
+
+    if (!identifier || !password) {
       return res
         .status(400)
-        .json({ error: 'Phone number and password are required' });
+        .json({ error: 'Email or phone number and password are required' });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { phone: phoneNum },
-    });
+    const isEmail = identifier.includes('@');
+
+    let user;
+    if (isEmail) {
+      user = await prisma.user.findUnique({
+        where: { email: identifier },
+      });
+    } else {
+      user = await prisma.user.findUnique({
+        where: { phone: identifier },
+      });
+    }
 
     if (!user) {
       return res
         .status(401)
-        .json({ error: 'Invalid phone number or password' });
+        .json({ error: 'Invalid email/phone number or password' });
     }
 
     let signInData = null;
@@ -296,7 +307,7 @@ router.post('/login', async (req, res) => {
       if (!isPasswordValid) {
         return res
           .status(401)
-          .json({ error: 'Invalid phone number or password' });
+          .json({ error: 'Invalid email/phone number or password' });
       }
 
       const safeUser = {

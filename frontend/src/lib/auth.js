@@ -30,11 +30,16 @@ export async function signup(phoneNum, email, name, password, skill) {
   }
 }
 
-export async function login(phoneNum, password, rememberMe = false) {
+export async function login(identifier, password, rememberMe = false) {
   try {
+    const isEmail = identifier.includes('@');
+    const body = isEmail
+      ? { email: identifier, password, rememberMe }
+      : { phoneNum: identifier, password, rememberMe };
+
     const response = await fetchWithCredentials(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      body: JSON.stringify({ phoneNum, password, rememberMe }),
+      body: JSON.stringify(body),
     });
 
     const data = await response.json();
