@@ -6,6 +6,7 @@ import {
   getSessionAttendances,
   getSessionById,
   updateShowTeams,
+  updateTeamsLocked,
   lockTeams,
 } from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
@@ -211,6 +212,39 @@ const TeamDisplay = ({ sessionId }) => {
     } catch (err) {
       console.error('Failed to update showTeams:', err);
       setError(err.message || 'Failed to update showTeams');
+    }
+  };
+
+  const toggleTeamsLocked = async () => {
+    const newTeamsLocked = !teamsLocked;
+
+    if (newTeamsLocked && !lockedTeamsData && teamsArray.length > 0) {
+      try {
+        await lockTeams(sessionId, teamsArray, numOfTeams);
+        const lockedData = {
+          teams: teamsArray.map((team) =>
+            team.map((player) => ({
+              userId: player.user?.id || player.userId,
+              attendanceId: player.id,
+            }))
+          ),
+          numOfTeams: numOfTeams,
+          lockedAt: new Date().toISOString(),
+        };
+        setLockedTeamsData(lockedData);
+        setTeamsLocked(true);
+      } catch (err) {
+        console.error('Failed to lock teams:', err);
+        setError(err.message || 'Failed to lock teams');
+      }
+    } else {
+      try {
+        await updateTeamsLocked(sessionId, newTeamsLocked);
+        setTeamsLocked(newTeamsLocked);
+      } catch (err) {
+        console.error('Failed to update teamsLocked:', err);
+        setError(err.message || 'Failed to update teamsLocked');
+      }
     }
   };
 
@@ -528,13 +562,14 @@ const TeamDisplay = ({ sessionId }) => {
                 🔄 Randomize Teams
               </button>
               <div className={styles.lockStatus}>
-                <span
+                <button
                   className={`${styles.lockBadge} ${
                     teamsLocked ? styles.locked : styles.unlocked
                   }`}
+                  onClick={toggleTeamsLocked}
                 >
                   {teamsLocked ? '🔒 Teams Locked' : '🔓 Teams Unlocked'}
-                </span>
+                </button>
               </div>
             </div>
           )}

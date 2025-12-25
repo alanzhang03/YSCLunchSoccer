@@ -435,6 +435,49 @@ router.patch('/:id/showTeams', authenticateUser, async (req, res) => {
   }
 });
 
+router.patch('/:id/teamsLocked', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+    const sessionId = req.params.id;
+    const { teamsLocked } = req.body;
+
+    if (typeof teamsLocked !== 'boolean') {
+      return res.status(400).json({ error: 'teamsLocked must be a boolean' });
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    if (!dbUser.isAdmin) {
+      return res
+        .status(403)
+        .json({ error: 'Only admins can update teamsLocked' });
+    }
+
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    const updatedSession = await prisma.session.update({
+      where: { id: sessionId },
+      data: { teamsLocked },
+    });
+
+    res.json({ success: true, session: updatedSession });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post('/:id/lockTeams', authenticateUser, async (req, res) => {
   try {
     const supabaseUser = req.user;
