@@ -30,8 +30,8 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  const handleLogin = async (phoneNum, password) => {
-    const data = await login(phoneNum, password);
+  const handleLogin = async (phoneNum, password, rememberMe = false) => {
+    const data = await login(phoneNum, password, rememberMe);
     setUser(data.user);
     return data;
   };
