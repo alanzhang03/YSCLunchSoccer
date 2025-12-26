@@ -1,8 +1,8 @@
-# YSC Lunch Soccer ⚽
+# YSC Lunch Soccer
 
 A web application for managing lunchtime soccer sessions, RSVPs, team randomization, and communication for YSC sports lunch soccer members.
 
-## 🎯 Features
+## Features
 
 - **User Authentication**: Secure signup and login with Supabase Auth
 - **Session Management**: Automatically generates Monday and Friday lunch soccer sessions
@@ -13,7 +13,7 @@ A web application for managing lunchtime soccer sessions, RSVPs, team randomizat
 - **Admin Features**: Admins can randomize teams and manage sessions
 - **Attendance Tracking**: View who's attending each session with capacity limits (45 max)
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 
@@ -58,14 +58,14 @@ YSCLunchSoccer/
 └── README.md
 ```
 
-## 🗄️ Database Schema
+## Database Schema
 
 - **User**: Stores user information, skill level, and admin status
 - **Session**: Stores session dates, times, and timezone
 - **Attendance**: Links users to sessions with RSVP status
 - **Message**: Stores chat messages for each session
 
-## 🔄 Session Generation
+## Session Generation
 
 Sessions are automatically generated:
 
@@ -74,7 +74,7 @@ Sessions are automatically generated:
 - **Maintenance**: Old sessions are automatically deleted
 - **Capacity**: Maintains 6 upcoming sessions at all times
 
-## 📝 API Endpoints
+## API Endpoints
 
 ### Authentication
 
@@ -94,7 +94,7 @@ Sessions are automatically generated:
 - `GET /api/messages/:sessionId` - Get messages for session
 - `POST /api/messages` - Send message to session
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -102,15 +102,15 @@ Sessions are automatically generated:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is private and proprietary.
 
-## 👥 Authors
+## Authors
 
 - Alan Zhang
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built for YSC sports lunch soccer members
 - Thanks to all testers!
