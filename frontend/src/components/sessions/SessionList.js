@@ -221,7 +221,7 @@ const SessionList = ({ passedData }) => {
         animate={{ opacity: 1 }}
         className={styles.error}
       >
-        <div className={styles.errorIcon}>⚠️</div>
+        <div className={styles.errorIcon}></div>
         <p className={styles.errorTitle}>Error loading sessions</p>
         <p className={styles.errorMessage}>{error}</p>
         <button className={styles.retryButton} onClick={() => fetchSessions()}>
@@ -237,7 +237,7 @@ const SessionList = ({ passedData }) => {
         animate={{ opacity: 1 }}
         className={styles.empty}
       >
-        <div className={styles.emptyIcon}>⚽</div>
+        <div className={styles.emptyIcon}></div>
         <p className={styles.emptyTitle}>No sessions found</p>
         <p className={styles.emptySubtext}>
           Sessions will appear here once they're created.
@@ -360,7 +360,7 @@ const SessionList = ({ passedData }) => {
           animate={{ opacity: 1 }}
           className={styles.empty}
         >
-          <div className={styles.emptyIcon}>🔍</div>
+          <div className={styles.emptyIcon}></div>
           <p className={styles.emptyTitle}>No sessions match your filter</p>
           <p className={styles.emptySubtext}>
             Try adjusting your filter settings to see more sessions.

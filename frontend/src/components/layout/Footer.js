@@ -81,7 +81,7 @@ const Footer = () => {
           <p className={styles.copy}>
             © {currentYear} YSC Lunch Soccer. All rights reserved.
           </p>
-          <p className={styles.meta}>Built for lunchtime pickup soccer ⚽</p>
+          <p className={styles.meta}>Built for lunchtime pickup soccer</p>
         </div>
       </div>
     </footer>

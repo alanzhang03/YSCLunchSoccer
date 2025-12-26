@@ -213,9 +213,9 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     if (!currentStatus) return null;
 
     const messages = {
-      yes: "✅ You're attending!",
-      no: "❌ You can't make it",
-      maybe: "🤔 You're a maybe",
+      yes: "You're attending!",
+      no: "You can't make it",
+      maybe: "You're a maybe",
     };
     return messages[currentStatus];
   };

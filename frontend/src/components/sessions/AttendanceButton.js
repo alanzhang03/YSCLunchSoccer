@@ -36,7 +36,6 @@ const AttendanceButton = ({
         onClick={() => handleClick('yes')}
         disabled={disabled || yesDisabled}
       >
-        <span className={styles.icon}>✅</span>
         <span className={styles.text}>Yes</span>
       </button>
       <button
@@ -46,7 +45,6 @@ const AttendanceButton = ({
         onClick={() => handleClick('no')}
         disabled={disabled}
       >
-        <span className={styles.icon}>❌</span>
         <span className={styles.text}>No</span>
       </button>
       <button
@@ -56,7 +54,6 @@ const AttendanceButton = ({
         onClick={() => handleClick('maybe')}
         disabled={disabled}
       >
-        <span className={styles.icon}>🤔</span>
         <span className={styles.text}>Maybe</span>
       </button>
     </div>

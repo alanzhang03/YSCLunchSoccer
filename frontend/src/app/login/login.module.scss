@@ -162,7 +162,7 @@
       .button {
         width: 100%;
         padding: 0.875rem;
-        background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
+        background: #1f73b7;
         color: white;
         border: none;
         border-radius: 8px;
@@ -173,8 +173,7 @@
         margin-top: 0.5rem;
 
         &:hover:not(:disabled) {
-          background: linear-gradient(135deg, #3282b8 0%, #1f73b7 100%);
-          transform: translateY(-1px);
+          background: #3282b8;
           box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
         }
 

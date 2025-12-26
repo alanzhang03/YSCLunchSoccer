@@ -107,41 +107,40 @@
             transition: all 0.2s ease;
             position: relative;
             padding-left: 0;
+            padding-bottom: 2px;
             width: fit-content;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            border-bottom: 2px solid transparent;
 
             .icon {
               font-size: 1rem;
               transition: all 0.2s ease;
+              display: inline-flex;
+              flex-shrink: 0;
             }
 
-            &::before {
+            &::after {
               content: '';
               position: absolute;
-              left: -0.5rem;
-              top: 50%;
-              transform: translateY(-50%);
-              width: 4px;
-              height: 4px;
-              background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
-              border-radius: 50%;
-              opacity: 0;
-              transition: opacity 0.2s ease;
+              bottom: 0;
+              left: 0;
+              width: 0;
+              height: 2px;
+              background: #1f73b7;
+              transition: width 0.3s ease;
             }
 
             &:hover {
               color: #1f73b7;
-              padding-left: 1rem;
-              transform: translateX(4px);
 
               .icon {
-                transform: scale(1.1);
+                transform: scale(1.05);
               }
 
-              &::before {
-                opacity: 1;
+              &::after {
+                width: 100%;
               }
             }
 
