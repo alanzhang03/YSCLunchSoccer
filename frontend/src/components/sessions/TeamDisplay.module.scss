@@ -70,7 +70,7 @@
     }
 
     .showTeamsButton {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: #10b981;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
@@ -79,12 +79,11 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
-        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        background: #059669;
+        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
       }
 
       &:active {
@@ -93,7 +92,7 @@
     }
 
     .randomizeButton {
-      background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
+      background: #1f73b7;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
@@ -102,12 +101,11 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(31, 115, 183, 0.3);
+      box-shadow: 0 2px 4px rgba(31, 115, 183, 0.2);
 
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(31, 115, 183, 0.4);
-        background: linear-gradient(135deg, #3282b8 0%, #1f73b7 100%);
+        background: #3282b8;
+        box-shadow: 0 4px 8px rgba(31, 115, 183, 0.3);
       }
 
       &:active {
@@ -132,17 +130,17 @@
       transition: all 0.2s ease;
 
       &.locked {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        background: #fef3c7;
         color: #92400e;
         border: 2px solid #fbbf24;
-        box-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
+        box-shadow: 0 2px 4px rgba(251, 191, 36, 0.2);
       }
 
       &.unlocked {
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        background: #d1fae5;
         color: #065f46;
         border: 2px solid #10b981;
-        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
       }
       &:hover {
         cursor: pointer;
@@ -192,13 +190,12 @@
       &.teamOver {
         border-color: #1f73b7;
         border-width: 2px;
-        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        background: #eff6ff;
         box-shadow: 0 0 0 2px rgba(31, 115, 183, 0.3),
-          0 8px 24px rgba(31, 115, 183, 0.25),
-          inset 0 0 40px rgba(31, 115, 183, 0.08);
-        transform: translateY(-2px) scale(1.01);
-        transition: transform 0.2s ease-out, box-shadow 0.3s ease-out,
-          background 0.3s ease-out;
+          0 8px 24px rgba(31, 115, 183, 0.2);
+        transform: translateY(-2px);
+        transition: transform 0.2s ease-out, box-shadow 0.2s ease-out,
+          background 0.2s ease-out;
 
         .teamTitle {
           color: #1f73b7;
@@ -206,11 +203,9 @@
         }
 
         .teamCount {
-          background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
+          background: #1f73b7;
           color: white;
-          transform: scale(1.05);
-          transition: transform 0.2s ease-out, background 0.2s ease-out,
-            color 0.2s ease-out;
+          transition: background 0.2s ease-out, color 0.2s ease-out;
         }
       }
 
@@ -363,11 +358,10 @@
             }
 
             &:hover {
-              background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+              background: #f0f9ff;
               border-color: #1f73b7;
-              box-shadow: 0 4px 8px rgba(31, 115, 183, 0.15),
-                0 0 0 1px rgba(31, 115, 183, 0.1);
-              transform: translateX(6px) scale(1.02);
+              box-shadow: 0 2px 4px rgba(31, 115, 183, 0.1);
+              transform: translateX(4px);
 
               .dragHandle {
                 opacity: 1;
@@ -392,11 +386,11 @@
     }
 
     .dragOverlay {
-      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      background: #ffffff;
       border: 2px solid #1f73b7;
       border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(31, 115, 183, 0.1), 0 0 20px rgba(31, 115, 183, 0.3);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(31, 115, 183, 0.1);
       transform: rotate(-2deg) scale(1.05);
       opacity: 1;
       cursor: grabbing;
@@ -421,7 +415,7 @@
 
       .dragOverlayBadge {
         display: inline-block;
-        background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
+        background: #1f73b7;
         color: white;
         font-size: 0.75rem;
         font-weight: 700;
@@ -430,7 +424,6 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         align-self: flex-start;
-        animation: dragBadgePulse 1.5s ease-in-out infinite;
       }
     }
   }
@@ -492,18 +485,6 @@
   }
 }
 
-@keyframes dragBadgePulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.9;
-  }
-}
-
 @media (max-width: 768px) {
   .displayTeamsContainer {
     padding: 1.5rem;
@@ -550,7 +531,7 @@
         }
 
         &:active {
-          background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+          background: #e0f2fe;
           transform: scale(0.98);
         }
       }
