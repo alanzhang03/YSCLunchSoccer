@@ -49,7 +49,7 @@ const Page = () => {
                 value={identifier}
                 onChange={handleIdentifier}
                 required
-                placeholder='Email or phone number (e.g. user@example.com or 123-456-7890)'
+                placeholder='Email or phone number'
               />
               <label>Password</label>
               <div className={styles.passwordInputWrapper}>
