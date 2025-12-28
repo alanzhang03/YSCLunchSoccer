@@ -63,9 +63,11 @@ const Navbar = () => {
           <Link href='/sessions' className={styles.link}>
             Sessions
           </Link>
-          {/* <Link href='/payments' className={styles.link}>
-            Payments
-          </Link> */}
+          {user && (
+            <Link href='/payments' className={styles.link}>
+              Payments
+            </Link>
+          )}
         </nav>
 
         <div className={styles.authLinks}>
