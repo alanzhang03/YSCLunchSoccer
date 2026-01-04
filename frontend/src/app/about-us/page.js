@@ -75,7 +75,7 @@ const AboutUsPage = () => {
               <p>
                 YSC Lunch Soccer is dedicated to organizing and facilitating
                 lunchtime pickup soccer sessions for our community. We believe
-                that soccer is more than just a game—it's a way to build
+                that soccer is more than just a game, it's a way to build
                 friendships, stay active, and create lasting memories during
                 your lunch break.
               </p>
@@ -173,7 +173,7 @@ const AboutUsPage = () => {
               <h3>Community First</h3>
               <p>
                 Build connections with fellow players. It's about more than just
-                soccer—it's about community.
+                soccer, it's about community.
               </p>
             </motion.div>
           </div>
