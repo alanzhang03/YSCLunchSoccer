@@ -29,6 +29,9 @@ const Footer = () => {
               <Link href='/sessions' className={styles.link}>
                 Sessions
               </Link>
+              <Link href='/about-us' className={styles.link}>
+                About Us
+              </Link>
             </nav>
           </div>
           <div className={styles.linksGroup}>
