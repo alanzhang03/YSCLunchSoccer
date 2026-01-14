@@ -29,18 +29,6 @@ const itemVariants = {
   },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.4, 0, 0.2, 1],
-    },
-  },
-};
-
 export default function Home() {
   const { user, loading } = useAuth();
 
@@ -121,53 +109,55 @@ export default function Home() {
         </motion.div>
 
         <motion.div
-          className={styles.infoSection}
+          className={styles.featuresSection}
           variants={containerVariants}
           initial='hidden'
           animate='visible'
         >
-          <motion.div
-            className={styles.infoCard}
-            variants={cardVariants}
-            whileHover={{ y: -6, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          >
-            <h2>How it works</h2>
+          <motion.div className={styles.feature} variants={itemVariants}>
+            <h2>Play together.</h2>
             <p>
-              Browse upcoming lunch soccer sessions and RSVP to let others know
-              if you're attending, can't make it, or are a maybe.
+              Join your friends for lunchtime soccer. RSVP to sessions, see who&apos;s
+              playing, and get ready for kickoff.
             </p>
           </motion.div>
-          <motion.div
-            className={styles.infoCard}
-            variants={cardVariants}
-            whileHover={{ y: -6, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          >
-            <h2>Get started</h2>
+
+          <motion.div className={styles.feature} variants={itemVariants}>
+            <h2>Stay organized.</h2>
             <p>
-              {user ? (
-                <>
-                  You're all set! Head over to the{' '}
-                  <Link href='/sessions' className={styles.link}>
-                    Sessions
-                  </Link>{' '}
-                  page to see upcoming games.
-                </>
-              ) : (
-                <>
-                  <Link href='/signup' className={styles.link}>
-                    Sign up
-                  </Link>{' '}
-                  or{' '}
-                  <Link href='/login' className={styles.link}>
-                    log in
-                  </Link>{' '}
-                  to start RSVPing to sessions.
-                </>
-              )}
+              Automatic team formation. Real-time attendance tracking. Everything
+              you need, all in one place.
             </p>
           </motion.div>
+
+          <motion.div className={styles.feature} variants={itemVariants}>
+            <h2>Build community.</h2>
+            <p>
+              Connect with fellow players. Make new friends. Strengthen bonds
+              through the beautiful game.
+            </p>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className={styles.ctaSection}
+          variants={itemVariants}
+          initial='hidden'
+          animate='visible'
+        >
+          {!user && (
+            <>
+              <h3>Ready to play?</h3>
+              <div className={styles.ctaButtons}>
+                <Link href='/signup' className={styles.primaryButton}>
+                  Get started
+                </Link>
+                <Link href='/about-us' className={styles.secondaryLink}>
+                  Learn more
+                </Link>
+              </div>
+            </>
+          )}
         </motion.div>
       </main>
     </div>
