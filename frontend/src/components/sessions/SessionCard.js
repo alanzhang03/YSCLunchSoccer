@@ -408,7 +408,12 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           <span className={styles.statusText}>{statusMessage}</span>
         </div>
       )}
-
+      {transformedData.teamsLocked && (
+        <Link href={`/sessions/${sessionData.id}`} className={styles.viewTeamsLink}>
+          <span>View Teams</span>
+          <span className={styles.arrow}>→</span>
+        </Link>
+      )}
       {attendanceList && !transformedData.teamsLocked && (
         <div className={styles.attendanceList}>
           <div className={styles.attendeRemoveCont}>

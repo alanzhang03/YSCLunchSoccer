@@ -68,6 +68,43 @@
   }
 }
 
+.viewTeamsLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(31, 115, 183, 0.2);
+
+  .arrow {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, #3282b8 0%, #1f73b7 100%);
+    box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
+    transform: translateY(-2px);
+
+    .arrow {
+      transform: translateX(4px);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(31, 115, 183, 0.2);
+  }
+}
+
 .loginPrompt {
   margin-top: 1rem;
   text-align: center;
@@ -315,6 +352,16 @@
     }
   }
 
+  .viewTeamsLink {
+    padding: 0.65rem 1rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.875rem;
+
+    .arrow {
+      font-size: 1.125rem;
+    }
+  }
+
   .attendanceList {
     margin: 1.25rem 0;
     padding: 0.875rem;
@@ -389,6 +436,17 @@
 
     .statusText {
       font-size: 0.75rem;
+    }
+  }
+
+  .viewTeamsLink {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    margin-bottom: 0.75rem;
+    border-radius: 6px;
+
+    .arrow {
+      font-size: 1rem;
     }
   }
 
