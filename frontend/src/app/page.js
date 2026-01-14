@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './page.module.scss';
 import UpcomingSessions from '@/components/ui/UpcomingSessions';
-import ImageSlider from '@/components/ui/ImageSlider';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -55,7 +54,7 @@ export default function Home() {
           animate='visible'
         >
           <motion.h1 className={styles.title} variants={itemVariants}>
-            Welcome to YSC Lunch Soccer!
+            YSC Lunch Soccer
           </motion.h1>
           <motion.p className={styles.subtitle} variants={itemVariants}>
             Join your friends for lunchtime soccer sessions
@@ -99,15 +98,6 @@ export default function Home() {
               </motion.a>
             </motion.div>
           )}
-        </motion.div>
-
-        <motion.div
-          variants={itemVariants}
-          initial='hidden'
-          animate='visible'
-          transition={{ delay: 0.2 }}
-        >
-          <ImageSlider />
         </motion.div>
 
         <UpcomingSessions />
