@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './Navbar.module.scss';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 const Navbar = () => {
   const { user, loading, logout } = useAuth();
@@ -23,39 +24,47 @@ const Navbar = () => {
 
   return (
     <header className={styles.navbar}>
+      <div
+        className={`${styles.mobileBackdrop} ${
+          isMobileNavOpen ? styles.open : ''
+        }`}
+        onClick={() => setIsMobileNavOpen(false)}
+        aria-hidden='true'
+      />
+
+      <nav
+        className={`${styles.mobileMenu} ${
+          isMobileNavOpen ? styles.open : ''
+        }`}
+        aria-label='Mobile navigation'
+      >
+        <Link href='/' onClick={() => setIsMobileNavOpen(false)}>
+          Home
+        </Link>
+        <Link href='/sessions' onClick={() => setIsMobileNavOpen(false)}>
+          Sessions
+        </Link>
+        <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
+          About Us
+        </Link>
+      </nav>
+
       <div className={styles.inner}>
-        <nav
-          className={`${styles.mobileMenu} ${
+        <button
+          className={`${styles.hamburger} ${
             isMobileNavOpen ? styles.open : ''
           }`}
-          aria-label='Mobile navigation'
+          aria-label='Toggle menu'
+          aria-expanded={isMobileNavOpen}
+          onClick={() => setIsMobileNavOpen((prev) => !prev)}
         >
-          <Link href='/' onClick={() => setIsMobileNavOpen(false)}>
-            Home
-          </Link>
-          <Link href='/sessions' onClick={() => setIsMobileNavOpen(false)}>
-            Sessions
-          </Link>
-          <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
-            About Us
-          </Link>
-        </nav>
-
-        <div className={styles.mobileNav}>
-          <button
-            className={styles.hamburger}
-            aria-label='Toggle menu'
-            aria-expanded={isMobileNavOpen}
-            onClick={() => setIsMobileNavOpen((prev) => !prev)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-        </div>
+          <span />
+          <span />
+          <span />
+        </button>
 
         <Link href='/' className={styles.brand}>
-          <img src='/favicon.svg' alt='YSC Logo' className={styles.logo} />
+          <Image width={25} height={25} src='/favicon.svg' alt='YSC Logo' className={styles.logo} />
           <span className={styles.brandText}>YSC Lunch Soccer</span>
         </Link>
 
@@ -69,9 +78,6 @@ const Navbar = () => {
           <Link href='/about-us' className={styles.link}>
             About Us
           </Link>
-          {/* <Link href='/payments' className={styles.link}>
-            Payments
-          </Link> */}
         </nav>
 
         <div className={styles.authLinks}>
