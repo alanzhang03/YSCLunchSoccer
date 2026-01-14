@@ -409,7 +409,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         </div>
       )}
 
-      {attendanceList && (
+      {attendanceList && !transformedData.teamsLocked && (
         <div className={styles.attendanceList}>
           <div className={styles.attendeRemoveCont}>
             <h3 className={styles.attendanceListTitle}>
@@ -477,7 +477,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
             <div className={styles.attendanceGroup}>
               <div className={styles.attendanceGroupHeader}>
                 <span className={styles.statusBadgeNo}>
-                  Can't Make It ({attendanceList.no.length})
+                  Can&apos;t Make It ({attendanceList.no.length})
                 </span>
               </div>
               <div className={styles.attendanceNames}>
