@@ -13,8 +13,8 @@
     padding: 0.625rem 0.75rem;
     border: none;
     border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 0.8125rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     flex: 1;
@@ -23,7 +23,7 @@
 
     &:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
     }
 
     &:active:not(:disabled) {
@@ -32,7 +32,7 @@
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.2);
+      box-shadow: 0 0 0 2px rgba(31, 115, 183, 0.2);
     }
 
     &:disabled {
@@ -49,8 +49,8 @@
       }
 
       &.active {
-        background: #047857;
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+        background: #059669;
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
         transform: translateY(-1px);
       }
     }
@@ -64,8 +64,8 @@
       }
 
       &.active {
-        background: #b91c1c;
-        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+        background: #dc2626;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
         transform: translateY(-1px);
       }
     }
@@ -79,8 +79,8 @@
       }
 
       &.active {
-        background: #b45309;
-        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+        background: #d97706;
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
         transform: translateY(-1px);
       }
     }

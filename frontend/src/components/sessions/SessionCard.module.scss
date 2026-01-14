@@ -54,15 +54,15 @@
 }
 
 .statusIndicator {
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  margin-bottom: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  background: #dbeafe;
   border-radius: 8px;
   border: 1px solid #93c5fd;
   text-align: center;
 
   .statusText {
-    font-size: 0.9rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: #1e40af;
   }
@@ -88,11 +88,11 @@
 }
 
 .attendanceList {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: #f9fafb;
+  margin: 1.25rem 0;
+  padding: 0.875rem;
+  background: #f8fafc;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e2e8f0;
 
   .attendeRemoveCont {
     display: flex;
