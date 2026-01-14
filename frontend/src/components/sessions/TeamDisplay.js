@@ -559,7 +559,7 @@ const TeamDisplay = ({ sessionId }) => {
                 className={styles.randomizeButton}
                 onClick={handleRandomizeTeams}
               >
-                🔄 Randomize Teams
+                Randomize Teams
               </button>
               <div className={styles.lockStatus}>
                 <button

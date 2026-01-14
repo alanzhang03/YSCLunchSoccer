@@ -36,6 +36,9 @@ const Navbar = () => {
           <Link href='/sessions' onClick={() => setIsMobileNavOpen(false)}>
             Sessions
           </Link>
+          <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
+            About Us
+          </Link>
         </nav>
 
         <div className={styles.mobileNav}>
@@ -63,6 +66,12 @@ const Navbar = () => {
           <Link href='/sessions' className={styles.link}>
             Sessions
           </Link>
+          <Link href='/about-us' className={styles.link}>
+            About Us
+          </Link>
+          {/* <Link href='/payments' className={styles.link}>
+            Payments
+          </Link> */}
         </nav>
 
         <div className={styles.authLinks}>
