@@ -11,7 +11,11 @@ const Footer = () => {
       <div className={styles.inner}>
         <div className={styles.brandSection}>
           <Link href='/' className={styles.brand}>
-            <img src='/favicon.svg' alt='YSC Logo' className={styles.logo} />
+            <img
+              src='/favicon/favicon.svg'
+              alt='YSC Logo'
+              className={styles.logo}
+            />
             <span className={styles.brandText}>YSC Lunch Soccer</span>
           </Link>
           <p className={styles.tagline}>

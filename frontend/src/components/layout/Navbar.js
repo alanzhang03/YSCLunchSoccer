@@ -33,9 +33,7 @@ const Navbar = () => {
       />
 
       <nav
-        className={`${styles.mobileMenu} ${
-          isMobileNavOpen ? styles.open : ''
-        }`}
+        className={`${styles.mobileMenu} ${isMobileNavOpen ? styles.open : ''}`}
         aria-label='Mobile navigation'
       >
         <Link href='/' onClick={() => setIsMobileNavOpen(false)}>
@@ -64,7 +62,13 @@ const Navbar = () => {
         </button>
 
         <Link href='/' className={styles.brand}>
-          <Image width={25} height={25} src='/favicon.svg' alt='YSC Logo' className={styles.logo} />
+          <Image
+            width={25}
+            height={25}
+            src='/favicon/favicon.svg'
+            alt='YSC Logo'
+            className={styles.logo}
+          />
           <span className={styles.brandText}>YSC Lunch Soccer</span>
         </Link>
 
