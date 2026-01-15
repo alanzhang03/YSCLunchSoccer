@@ -55,6 +55,9 @@ const Navbar = () => {
           <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
             About Us
           </Link>
+          <Link href='/payments' onClick={() => setIsMobileNavOpen(false)}>
+            Payments
+          </Link>
         </div>
 
         <div className={styles.menuDivider} />

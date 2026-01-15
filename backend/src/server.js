@@ -6,6 +6,7 @@ import cron from 'node-cron';
 import sessionsRouter from './routes/sessions.js';
 import authRouter from './routes/auth.js';
 import messagesRouter from './routes/messages.js';
+import checkoutRouter from './routes/checkout.js';
 import { sessionGenerator } from './utils/sessionGenerator.js';
 
 dotenv.config();
@@ -47,6 +48,7 @@ app.use(
   })
 );
 
+app.use('/api/checkout/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -57,6 +59,7 @@ app.get('/', (req, res) => {
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/checkout', checkoutRouter);
 
 setTimeout(async () => {
   try {
