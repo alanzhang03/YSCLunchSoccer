@@ -6,7 +6,14 @@ import Image from 'next/image';
 import styles from './ImageSlider.module.scss';
 import Link from 'next/link';
 
-const images = ['/1.jpg', '/2.jpg', '/3.jpg', '/4.jpg', '/5.jpg', '/6.jpg'];
+const images = [
+  '/backgrounds/1.png',
+  '/backgrounds/2.png',
+  '/backgrounds/3.png',
+  '/backgrounds/4.png',
+  '/backgrounds/5.jpg',
+  '/backgrounds/6.jpg',
+];
 
 export default function ImageSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -59,7 +66,6 @@ export default function ImageSlider() {
                 fill
                 className={styles.image}
                 priority={currentIndex === 0}
-                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px'
               />
             </Link>
             <div className={styles.overlay} />

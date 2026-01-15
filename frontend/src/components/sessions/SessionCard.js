@@ -408,8 +408,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           <span className={styles.statusText}>{statusMessage}</span>
         </div>
       )}
-
-      {attendanceList && (
+      {transformedData.teamsLocked && (
+        <Link href={`/sessions/${sessionData.id}`} className={styles.viewTeamsLink}>
+          <span>View Teams</span>
+          <span className={styles.arrow}>→</span>
+        </Link>
+      )}
+      {attendanceList && !transformedData.teamsLocked && (
         <div className={styles.attendanceList}>
           <div className={styles.attendeRemoveCont}>
             <h3 className={styles.attendanceListTitle}>
@@ -477,7 +482,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
             <div className={styles.attendanceGroup}>
               <div className={styles.attendanceGroupHeader}>
                 <span className={styles.statusBadgeNo}>
-                  Can't Make It ({attendanceList.no.length})
+                  Can&apos;t Make It ({attendanceList.no.length})
                 </span>
               </div>
               <div className={styles.attendanceNames}>

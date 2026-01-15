@@ -5,15 +5,17 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './Navbar.module.scss';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const handleLogout = async () => {
     try {
       await logout();
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -21,38 +23,89 @@ const Navbar = () => {
     return () => (document.body.style.overflow = '');
   }, [isMobileNavOpen]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className={styles.navbar}>
-      <div className={styles.inner}>
-        <nav
-          className={`${styles.mobileMenu} ${
-            isMobileNavOpen ? styles.open : ''
+    <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
+      <div
+        className={`${styles.mobileBackdrop} ${isMobileNavOpen ? styles.open : ''
           }`}
-          aria-label='Mobile navigation'
-        >
+        onClick={() => setIsMobileNavOpen(false)}
+        aria-hidden='true'
+      />
+
+      <nav
+        className={`${styles.mobileMenu} ${isMobileNavOpen ? styles.open : ''}`}
+        aria-label='Mobile navigation'
+      >
+        <div className={styles.menuSection}>
           <Link href='/' onClick={() => setIsMobileNavOpen(false)}>
             Home
           </Link>
           <Link href='/sessions' onClick={() => setIsMobileNavOpen(false)}>
             Sessions
           </Link>
-        </nav>
-
-        <div className={styles.mobileNav}>
-          <button
-            className={styles.hamburger}
-            aria-label='Toggle menu'
-            aria-expanded={isMobileNavOpen}
-            onClick={() => setIsMobileNavOpen((prev) => !prev)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+          <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
+            About Us
+          </Link>
         </div>
 
+        <div className={styles.menuDivider} />
+
+        <div className={styles.menuSection}>
+          {loading ? (
+            <span className={styles.mobileLoading}>Loading...</span>
+          ) : user ? (
+            <>
+              <span className={styles.mobileUserName}>Welcome, {user.name}!</span>
+              <button onClick={() => {
+                handleLogout();
+                setIsMobileNavOpen(false);
+              }} className={styles.mobileLogoutButton}>
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href='/login' className={styles.mobileAuthLink} onClick={() => setIsMobileNavOpen(false)}>
+                Log In
+              </Link>
+              <Link href='/signup' className={styles.mobileSignupButton} onClick={() => setIsMobileNavOpen(false)}>
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+      </nav>
+
+      <div className={styles.inner}>
+        <button
+          className={`${styles.hamburger} ${isMobileNavOpen ? styles.open : ''
+            }`}
+          aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMobileNavOpen}
+          onClick={() => setIsMobileNavOpen((prev) => !prev)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
         <Link href='/' className={styles.brand}>
-          <img src='/favicon.svg' alt='YSC Logo' className={styles.logo} />
+          <Image
+            width={25}
+            height={25}
+            src='/favicon/favicon.svg'
+            alt='YSC Logo'
+            className={styles.logo}
+          />
           <span className={styles.brandText}>YSC Lunch Soccer</span>
         </Link>
 
@@ -62,6 +115,9 @@ const Navbar = () => {
           </Link>
           <Link href='/sessions' className={styles.link}>
             Sessions
+          </Link>
+          <Link href='/about-us' className={styles.link}>
+            About Us
           </Link>
           {user && (
             <Link href='/payments' className={styles.link}>

@@ -8,6 +8,7 @@ import { getUpcomingSessions } from '@/lib/sessions';
 import { getSessions, createSession } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import AddSessionModal from './AddSessionModal';
+import { FcCalendar, FcCheckmark } from "react-icons/fc";
 
 const SessionList = ({ passedData }) => {
   const [sessions, setSessions] = useState([]);
@@ -221,7 +222,7 @@ const SessionList = ({ passedData }) => {
         animate={{ opacity: 1 }}
         className={styles.error}
       >
-        <div className={styles.errorIcon}></div>
+        <div className={styles.errorIcon}>⚠️</div>
         <p className={styles.errorTitle}>Error loading sessions</p>
         <p className={styles.errorMessage}>{error}</p>
         <button className={styles.retryButton} onClick={() => fetchSessions()}>
@@ -237,7 +238,7 @@ const SessionList = ({ passedData }) => {
         animate={{ opacity: 1 }}
         className={styles.empty}
       >
-        <div className={styles.emptyIcon}></div>
+        <div className={styles.emptyIcon}>⚽</div>
         <p className={styles.emptyTitle}>No sessions found</p>
         <p className={styles.emptySubtext}>
           Sessions will appear here once they're created.
@@ -261,16 +262,19 @@ const SessionList = ({ passedData }) => {
         className={styles.statsBar}
       >
         <div className={styles.statItem}>
+          <span className={styles.statIcon}><FcCalendar/></span>
           <span className={styles.statValue}>{stats.upcomingSessions}</span>
           <span className={styles.statLabel}>Upcoming</span>
         </div>
         <div className={styles.statDivider}></div>
         <div className={styles.statItem}>
+          <span className={styles.statIcon}><FcCheckmark /></span>
           <span className={styles.statValue}>{stats.userRSVPs}</span>
           <span className={styles.statLabel}>Your RSVPs</span>
         </div>
         <div className={styles.statDivider}></div>
         <div className={styles.statItem}>
+          <span className={styles.statIcon}>👥</span>
           <span className={styles.statValue}>{stats.totalAttendees}</span>
           <span className={styles.statLabel}>Total Attendees</span>
         </div>
@@ -360,7 +364,7 @@ const SessionList = ({ passedData }) => {
           animate={{ opacity: 1 }}
           className={styles.empty}
         >
-          <div className={styles.emptyIcon}></div>
+          <div className={styles.emptyIcon}>🔍</div>
           <p className={styles.emptyTitle}>No sessions match your filter</p>
           <p className={styles.emptySubtext}>
             Try adjusting your filter settings to see more sessions.
