@@ -44,10 +44,13 @@ router.post('/', authenticateUser, async (req, res) => {
     });
 
     if (existingPayment) {
-      return res.status(400).json({ error: 'You have already paid for this session' });
+      return res
+        .status(400)
+        .json({ error: 'You have already paid for this session' });
     }
 
-    const origin = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:3000';
+    const origin =
+      req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:3000';
 
     const stripeSession = await stripe.checkout.sessions.create({
       line_items: [
@@ -108,7 +111,9 @@ router.post('/webhook', async (req, res) => {
       },
     });
 
-    console.log(`Payment completed for user: ${session.metadata.userId}, session: ${session.metadata.sessionId}`);
+    console.log(
+      `Payment completed for user: ${session.metadata.userId}, session: ${session.metadata.sessionId}`
+    );
   }
 
   res.json({ received: true });
@@ -168,47 +173,49 @@ router.get('/session/:sessionId/status', authenticateUser, async (req, res) => {
   }
 });
 
-// Get all payment statuses for a session (admin only)
-router.get('/session/:sessionId/all-statuses', authenticateUser, async (req, res) => {
-  try {
-    const supabaseUser = req.user;
-    const { sessionId } = req.params;
+router.get(
+  '/session/:sessionId/all-statuses',
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const supabaseUser = req.user;
+      const { sessionId } = req.params;
 
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
+      const dbUser = await prisma.user.findUnique({
+        where: { supabaseUserId: supabaseUser.id },
+      });
 
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
+      if (!dbUser) {
+        return res.status(404).json({ error: 'User not found in database' });
+      }
+
+      if (!dbUser.isAdmin) {
+        return res
+          .status(403)
+          .json({ error: 'Only admins can view all payment statuses' });
+      }
+
+      const payments = await prisma.payment.findMany({
+        where: {
+          sessionId: sessionId,
+          status: 'completed',
+        },
+        select: {
+          userId: true,
+          status: true,
+        },
+      });
+
+      const paymentStatusMap = {};
+      payments.forEach((payment) => {
+        paymentStatusMap[payment.userId] = payment.status === 'completed';
+      });
+
+      res.json({ paymentStatusMap });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-
-    // Check if user is admin
-    if (!dbUser.isAdmin) {
-      return res.status(403).json({ error: 'Only admins can view all payment statuses' });
-    }
-
-    // Get all payments for this session
-    const payments = await prisma.payment.findMany({
-      where: {
-        sessionId: sessionId,
-        status: 'completed',
-      },
-      select: {
-        userId: true,
-        status: true,
-      },
-    });
-
-    // Create a map of userId to payment status
-    const paymentStatusMap = {};
-    payments.forEach(payment => {
-      paymentStatusMap[payment.userId] = payment.status === 'completed';
-    });
-
-    res.json({ paymentStatusMap });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
-});
+);
 
 export default router;

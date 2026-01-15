@@ -98,7 +98,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         );
         setHasPaid(paidStatus);
 
-        // If admin, also fetch all payment statuses
         if (isAdmin) {
           const { paymentStatusMap } = await getAllSessionPaymentStatuses(
             sessionData.id
