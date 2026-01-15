@@ -1,6 +1,315 @@
+@import '@/styles/variables.scss';
+
 .paymentsContainer {
+  flex: 1;
   display: flex;
-  justify-content: center;
-  padding-top: 5vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  width: 100%;
+  position: relative;
+  background: $ysc-dark-blue;
+  min-height: 100vh;
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/backgrounds/3.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 51, 102, 0.88) 0%,
+      rgba(31, 115, 183, 0.85) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 5rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+      position: relative;
+      z-index: 1;
+
+      .title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: $white;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        line-height: 1.1;
+      }
+
+      .subtitle {
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 400;
+        line-height: 1.7;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+    }
+
+    .paymentOptions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 4rem;
+
+      .paymentCard {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: $shadow-lg;
+        text-align: center;
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .cardIcon {
+          font-size: 3rem;
+          margin-bottom: 1.5rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $ysc-primary-blue;
+          margin-bottom: 1rem;
+          line-height: 1.3;
+        }
+
+        p {
+          font-size: 1rem;
+          color: $text-medium;
+          line-height: 1.7;
+          margin-bottom: 1.5rem;
+        }
+
+        .error {
+          color: #dc2626;
+          font-size: 0.875rem;
+          margin-bottom: 1rem;
+        }
+
+        .stripeButton {
+          width: 100%;
+          padding: 1rem 2rem;
+          font-size: 1.0625rem;
+          font-weight: 600;
+          color: $white;
+          background: linear-gradient(135deg, $ysc-primary-blue, $ysc-medium-blue);
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: $shadow-md;
+
+          &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: $shadow-lg;
+          }
+
+          &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+          }
+        }
+
+        .stripeBadge {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 1.25rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+          .stripeLogo {
+            height: 26px;
+            width: auto;
+
+          }
+        }
+
+        .venmoInfo {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          align-items: center;
+
+          .venmoHandle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: $ysc-primary-blue;
+            background: rgba($ysc-primary-blue, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+          }
+
+          .venmoButton {
+            width: 100%;
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            color: $white;
+            background: #008CFF;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: $shadow-md;
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: $shadow-lg;
+              background: #0070cc;
+            }
+          }
+        }
+      }
+    }
+
+    .note {
+      text-align: center;
+      max-width: 600px;
+
+      p {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.7;
+
+        a {
+          color: $white;
+          text-decoration: underline;
+          font-weight: 500;
+          transition: opacity 0.2s ease;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .paymentsContainer {
+    .main {
+      padding: 3rem 1rem;
+
+      .hero {
+        margin-bottom: 3rem;
+
+        .title {
+          margin-bottom: 1rem;
+        }
+      }
+
+      .paymentOptions {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+
+        .paymentCard {
+          padding: 2rem 1.5rem;
+
+          .cardIcon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+          }
+
+          h2 {
+            font-size: 1.25rem;
+          }
+
+          p {
+            font-size: 0.9375rem;
+          }
+
+          .stripeButton,
+          .venmoInfo .venmoButton {
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+          }
+
+          .venmoInfo .venmoHandle {
+            font-size: 1.125rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .paymentsContainer {
+    .main {
+      padding: 2rem 1rem;
+
+      .hero {
+        margin-bottom: 2.5rem;
+      }
+
+      .paymentOptions {
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+
+        .paymentCard {
+          padding: 1.75rem 1.25rem;
+
+          .cardIcon {
+            font-size: 2rem;
+          }
+
+          h2 {
+            font-size: 1.125rem;
+          }
+
+          p {
+            font-size: 0.875rem;
+          }
+        }
+      }
+
+      .note p {
+        font-size: 0.9375rem;
+      }
+    }
+  }
 }

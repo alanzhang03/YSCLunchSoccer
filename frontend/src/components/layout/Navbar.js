@@ -15,7 +15,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout();
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -35,9 +35,8 @@ const Navbar = () => {
   return (
     <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
       <div
-        className={`${styles.mobileBackdrop} ${
-          isMobileNavOpen ? styles.open : ''
-        }`}
+        className={`${styles.mobileBackdrop} ${isMobileNavOpen ? styles.open : ''
+          }`}
         onClick={() => setIsMobileNavOpen(false)}
         aria-hidden='true'
       />
@@ -55,6 +54,9 @@ const Navbar = () => {
           </Link>
           <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
             About Us
+          </Link>
+          <Link href='/payments' onClick={() => setIsMobileNavOpen(false)}>
+            Payments
           </Link>
         </div>
 
@@ -88,9 +90,8 @@ const Navbar = () => {
 
       <div className={styles.inner}>
         <button
-          className={`${styles.hamburger} ${
-            isMobileNavOpen ? styles.open : ''
-          }`}
+          className={`${styles.hamburger} ${isMobileNavOpen ? styles.open : ''
+            }`}
           aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileNavOpen}
           onClick={() => setIsMobileNavOpen((prev) => !prev)}
@@ -120,6 +121,9 @@ const Navbar = () => {
           </Link>
           <Link href='/about-us' className={styles.link}>
             About Us
+          </Link>
+          <Link href='/payments' className={styles.link}>
+            Payments
           </Link>
         </nav>
 

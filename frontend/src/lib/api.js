@@ -235,3 +235,22 @@ export async function lockTeams(sessionId, teams, numOfTeams) {
 
   return response.json();
 }
+
+
+export async function createCheckoutSession(priceId, quantity = 1) {
+  const response = await fetch(`${API_BASE_URL}/checkout`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ priceId, quantity }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to create checkout session');
+  }
+
+  return response.json();
+}
