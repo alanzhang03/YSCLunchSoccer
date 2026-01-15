@@ -44,6 +44,7 @@ model Session {
 
   attendances Attendance[]
   messages    Message[]
+  payments    Payment[]
 
   @@index([date])
 }
@@ -81,6 +82,7 @@ model Message {
 model Payment {
   id                    String   @id @default(uuid())
   userId                String
+  sessionId             String
   stripeCheckoutId      String   @unique
   stripePaymentIntentId String?
   amount                Int
@@ -89,8 +91,11 @@ model Payment {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, sessionId])
   @@index([userId])
+  @@index([sessionId])
   @@index([status])
 }

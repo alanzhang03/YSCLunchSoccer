@@ -237,19 +237,55 @@ export async function lockTeams(sessionId, teams, numOfTeams) {
 }
 
 
-export async function createCheckoutSession(priceId, quantity = 1) {
+export async function createCheckoutSession(priceId, sessionId, quantity = 1) {
   const response = await fetch(`${API_BASE_URL}/checkout`, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ priceId, quantity }),
+    body: JSON.stringify({ priceId, sessionId, quantity }),
   });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error || 'Failed to create checkout session');
+  }
+
+  return response.json();
+}
+
+export async function getSessionPaymentStatus(sessionId) {
+  const response = await fetch(`${API_BASE_URL}/checkout/session/${sessionId}/status`, {
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to fetch payment status');
+  }
+
+  return response.json();
+}
+
+export async function getAllSessionPaymentStatuses(sessionId) {
+  const response = await fetch(`${API_BASE_URL}/checkout/session/${sessionId}/all-statuses`, {
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to fetch all payment statuses');
   }
 
   return response.json();
