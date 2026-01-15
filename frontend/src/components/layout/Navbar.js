@@ -122,11 +122,9 @@ const Navbar = () => {
           <Link href='/about-us' className={styles.link}>
             About Us
           </Link>
-          {user && (
-            <Link href='/payments' className={styles.link}>
-              Payments
-            </Link>
-          )}
+          <Link href='/payments' className={styles.link}>
+            Payments
+          </Link>
         </nav>
 
         <div className={styles.authLinks}>
