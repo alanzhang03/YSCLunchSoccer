@@ -10,6 +10,7 @@ import Image from 'next/image';
 const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -22,8 +23,17 @@ const Navbar = () => {
     return () => (document.body.style.overflow = '');
   }, [isMobileNavOpen]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className={styles.navbar}>
+    <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
       <div
         className={`${styles.mobileBackdrop} ${
           isMobileNavOpen ? styles.open : ''
@@ -36,15 +46,44 @@ const Navbar = () => {
         className={`${styles.mobileMenu} ${isMobileNavOpen ? styles.open : ''}`}
         aria-label='Mobile navigation'
       >
-        <Link href='/' onClick={() => setIsMobileNavOpen(false)}>
-          Home
-        </Link>
-        <Link href='/sessions' onClick={() => setIsMobileNavOpen(false)}>
-          Sessions
-        </Link>
-        <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
-          About Us
-        </Link>
+        <div className={styles.menuSection}>
+          <Link href='/' onClick={() => setIsMobileNavOpen(false)}>
+            Home
+          </Link>
+          <Link href='/sessions' onClick={() => setIsMobileNavOpen(false)}>
+            Sessions
+          </Link>
+          <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
+            About Us
+          </Link>
+        </div>
+
+        <div className={styles.menuDivider} />
+
+        <div className={styles.menuSection}>
+          {loading ? (
+            <span className={styles.mobileLoading}>Loading...</span>
+          ) : user ? (
+            <>
+              <span className={styles.mobileUserName}>Welcome, {user.name}!</span>
+              <button onClick={() => {
+                handleLogout();
+                setIsMobileNavOpen(false);
+              }} className={styles.mobileLogoutButton}>
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href='/login' className={styles.mobileAuthLink} onClick={() => setIsMobileNavOpen(false)}>
+                Log In
+              </Link>
+              <Link href='/signup' className={styles.mobileSignupButton} onClick={() => setIsMobileNavOpen(false)}>
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
       </nav>
 
       <div className={styles.inner}>
@@ -52,7 +91,7 @@ const Navbar = () => {
           className={`${styles.hamburger} ${
             isMobileNavOpen ? styles.open : ''
           }`}
-          aria-label='Toggle menu'
+          aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileNavOpen}
           onClick={() => setIsMobileNavOpen((prev) => !prev)}
         >
