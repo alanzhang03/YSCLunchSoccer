@@ -5,8 +5,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import styles from './SessionCard.module.scss';
 import Card from '../ui/Card';
 import AttendanceButton from './AttendanceButton';
-import { attendSession, deleteSession, deleteAttendances } from '@/lib/api';
+import {
+  attendSession,
+  deleteSession,
+  deleteAttendances,
+  getSessionPaymentStatus,
+  createCheckoutSession,
+  getAllSessionPaymentStatuses,
+} from '@/lib/api';
 import Link from 'next/link';
+import Image from 'next/image';
 import { DUMMY_USERS } from '@/lib/constants';
 // import { useRouter } from "next/router";
 
@@ -26,9 +34,15 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   const [isRemoveMode, setIsRemoveMode] = useState(false);
   const [selectedAttendanceIds, setSelectedAttendanceIds] = useState(new Set());
   const [isDeletingAttendances, setIsDeletingAttendances] = useState(false);
+  const [hasPaid, setHasPaid] = useState(false);
+  const [isLoadingPayment, setIsLoadingPayment] = useState(false);
+  const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
+  const [allPaymentStatuses, setAllPaymentStatuses] = useState({});
 
   const maxAttendance = 45;
   const isAdmin = user?.isAdmin || false;
+  const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
+  // const STRIPE_PRICE_ID = 'price_1SpwqERf4ipOc26aXS2u5tuu';
 
   const toggleSelectAttendance = (attendanceId) => {
     setSelectedAttendanceIds((prev) => {
@@ -72,6 +86,51 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       }
     }
   }, [sessionData, user, optimisticStatus]);
+
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      if (!user || !sessionData?.id) return;
+
+      try {
+        setIsLoadingPayment(true);
+        const { hasPaid: paidStatus } = await getSessionPaymentStatus(
+          sessionData.id
+        );
+        setHasPaid(paidStatus);
+
+        // If admin, also fetch all payment statuses
+        if (isAdmin) {
+          const { paymentStatusMap } = await getAllSessionPaymentStatuses(
+            sessionData.id
+          );
+          setAllPaymentStatuses(paymentStatusMap);
+        }
+      } catch (error) {
+        console.error('Error checking payment status:', error);
+      } finally {
+        setIsLoadingPayment(false);
+      }
+    };
+
+    checkPaymentStatus();
+  }, [sessionData?.id, user, isAdmin]);
+
+  const handlePayment = async () => {
+    if (!sessionData?.id || isPaymentProcessing) return;
+
+    try {
+      setIsPaymentProcessing(true);
+      const { url } = await createCheckoutSession(
+        STRIPE_PRICE_ID,
+        sessionData.id
+      );
+      window.location.href = url;
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert(error.message || 'Failed to initiate payment');
+      setIsPaymentProcessing(false);
+    }
+  };
 
   const transformSessionData = (session) => {
     if (!session) return null;
@@ -354,29 +413,44 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
 
     return (
       <>
-        {displayedAttendances.map((attendance) => (
-          <div
-            key={attendance.id}
-            className={`${styles.attendanceItem} ${
-              isRemoveMode && selectedAttendanceIds.has(attendance.id)
-                ? styles.selected
-                : ''
-            } ${isRemoveMode ? styles.clickable : ''}`}
-            onClick={() =>
-              isRemoveMode && toggleSelectAttendance(attendance.id)
-            }
-          >
-            {isRemoveMode && (
-              <input
-                type='checkbox'
-                checked={selectedAttendanceIds.has(attendance.id)}
-                readOnly
-              />
-            )}
+        {displayedAttendances.map((attendance) => {
+          const userHasPaid = isAdmin && allPaymentStatuses[attendance.userId];
 
-            {attendance.user?.name ?? `User ${attendance.userId}`}
-          </div>
-        ))}
+          return (
+            <div
+              key={attendance.id}
+              className={`${styles.attendanceItem} ${
+                isRemoveMode && selectedAttendanceIds.has(attendance.id)
+                  ? styles.selected
+                  : ''
+              } ${isRemoveMode ? styles.clickable : ''}`}
+              onClick={() =>
+                isRemoveMode && toggleSelectAttendance(attendance.id)
+              }
+            >
+              {isRemoveMode && (
+                <input
+                  type='checkbox'
+                  checked={selectedAttendanceIds.has(attendance.id)}
+                  readOnly
+                />
+              )}
+
+              <span className={styles.attendeeName}>
+                {attendance.user?.name ?? `User ${attendance.userId}`}
+              </span>
+              {isAdmin && (
+                <span
+                  className={
+                    userHasPaid ? styles.userPaidBadge : styles.userUnpaidBadge
+                  }
+                >
+                  {userHasPaid ? 'Paid' : 'Not paid'}
+                </span>
+              )}
+            </div>
+          );
+        })}
         {shouldTruncate && (
           <button
             className={styles.viewMoreButton}
@@ -409,7 +483,10 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         </div>
       )}
       {transformedData.teamsLocked && (
-        <Link href={`/sessions/${sessionData.id}`} className={styles.viewTeamsLink}>
+        <Link
+          href={`/sessions/${sessionData.id}`}
+          className={styles.viewTeamsLink}
+        >
           <span>View Teams</span>
           <span className={styles.arrow}>→</span>
         </Link>
@@ -508,6 +585,40 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           <a href='/login' className={styles.loginLink}>
             Log in to RSVP
           </a>
+        </div>
+      )}
+      {user && (
+        <div className={styles.paymentSection}>
+          {isLoadingPayment ? (
+            <div className={styles.paymentLoading}>
+              Checking payment status...
+            </div>
+          ) : hasPaid ? (
+            <div className={styles.paymentStatus}>
+              <span className={styles.paidBadge}>Paid</span>
+              <span className={styles.paidText}>
+                You have paid for this session
+              </span>
+            </div>
+          ) : (
+            <>
+              <button
+                className={styles.payButton}
+                onClick={handlePayment}
+                disabled={isPaymentProcessing}
+              >
+                {isPaymentProcessing ? 'Processing...' : 'Pay for Session'}
+              </button>
+              <div className={styles.stripeBadge}>
+                <Image
+                  src='/logos/Powered by Stripe - blurple.svg'
+                  alt='Powered by Stripe'
+                  width={80}
+                  height={18}
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
     </Card>

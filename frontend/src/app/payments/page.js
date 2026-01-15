@@ -3,10 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { createCheckoutSession } from '@/lib/api';
 import styles from './payments.module.scss';
-
-const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -51,8 +48,7 @@ const PaymentsPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const { url } = await createCheckoutSession(STRIPE_PRICE_ID);
-      window.location.href = url;
+      window.location.href = '/sessions';
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -65,8 +61,8 @@ const PaymentsPage = () => {
         <motion.div
           className={styles.hero}
           variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
           <motion.h1 className={styles.title} variants={itemVariants}>
             Payments
@@ -79,8 +75,8 @@ const PaymentsPage = () => {
         <motion.div
           className={styles.paymentOptions}
           variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
           <motion.div
             className={styles.paymentCard}
@@ -89,14 +85,17 @@ const PaymentsPage = () => {
           >
             <div className={styles.cardIcon}>
               <Image
-                src="/logos/Stripe wordmark - Blurple.svg"
-                alt="Stripe"
+                src='/logos/Stripe wordmark - Blurple.svg'
+                alt='Stripe'
                 width={60}
                 height={25}
               />
             </div>
             <h2>Pay with Card</h2>
-            <p>Secure payment via Stripe. All major credit and debit cards accepted.</p>
+            <p>
+              Secure payment via Stripe. All major credit and debit cards
+              accepted.
+            </p>
             {error && <p className={styles.error}>{error}</p>}
             <button
               className={styles.stripeButton}
@@ -107,8 +106,8 @@ const PaymentsPage = () => {
             </button>
             <div className={styles.stripeBadge}>
               <Image
-                src="/logos/Powered by Stripe - blurple.svg"
-                alt="Powered by Stripe"
+                src='/logos/Powered by Stripe - blurple.svg'
+                alt='Powered by Stripe'
                 width={119}
                 height={26}
                 className={styles.stripeLogo}
@@ -123,20 +122,22 @@ const PaymentsPage = () => {
           >
             <div className={styles.cardIcon}>
               <Image
-                src="/logos/Venmo_Logo_Blue.png"
-                alt="Venmo"
+                src='/logos/Venmo_Logo_Blue.png'
+                alt='Venmo'
                 width={80}
                 height={20}
               />
             </div>
             <h2>Pay with Venmo</h2>
-            <p>Send payment directly via Venmo for a quick and easy transaction.</p>
+            <p>
+              Send payment directly via Venmo for a quick and easy transaction.
+            </p>
             <div className={styles.venmoInfo}>
               <span className={styles.venmoHandle}>@ysc_sports</span>
               <a
-                href="https://venmo.com/ysc_sports"
-                target="_blank"
-                rel="noopener noreferrer"
+                href='https://venmo.com/ysc_sports'
+                target='_blank'
+                rel='noopener noreferrer'
                 className={styles.venmoButton}
               >
                 Open Venmo
@@ -148,12 +149,14 @@ const PaymentsPage = () => {
         <motion.div
           className={styles.note}
           variants={itemVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
           <p>
             Questions about payments? Contact us at{' '}
-            <a href="mailto:ysclunchsoccer@gmail.com">ysclunchsoccer@gmail.com</a>
+            <a href='mailto:ysclunchsoccer@gmail.com'>
+              ysclunchsoccer@gmail.com
+            </a>
           </p>
         </motion.div>
       </main>
