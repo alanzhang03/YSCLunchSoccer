@@ -47,7 +47,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   // test1
   // const STRIPE_PRICE_ID = 'price_1SpwqERf4ipOc26aXS2u5tuu';
   // test2
-  const STRIPE_PRICE_ID = 'price_1Spy6MRf4ipOc26aGeq3KUwR';
+  const STRIPE_PRICE_ID = 'price_1Spy9CRf4ipOc26aZ4nKjvYy';
 
   const toggleSelectAttendance = (attendanceId) => {
     setSelectedAttendanceIds((prev) => {
