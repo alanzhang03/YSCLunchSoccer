@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { createCheckoutSession } from '@/lib/api';
 import styles from './payments.module.scss';
@@ -86,7 +87,14 @@ const PaymentsPage = () => {
             variants={cardVariants}
             whileHover={{ y: -4 }}
           >
-            <div className={styles.cardIcon}>💳</div>
+            <div className={styles.cardIcon}>
+              <Image
+                src="/logos/Stripe wordmark - Blurple.svg"
+                alt="Stripe"
+                width={60}
+                height={25}
+              />
+            </div>
             <h2>Pay with Card</h2>
             <p>Secure payment via Stripe. All major credit and debit cards accepted.</p>
             {error && <p className={styles.error}>{error}</p>}
@@ -97,6 +105,15 @@ const PaymentsPage = () => {
             >
               {loading ? 'Redirecting...' : 'Pay with Stripe'}
             </button>
+            <div className={styles.stripeBadge}>
+              <Image
+                src="/logos/Powered by Stripe - blurple.svg"
+                alt="Powered by Stripe"
+                width={119}
+                height={26}
+                className={styles.stripeLogo}
+              />
+            </div>
           </motion.div>
 
           <motion.div
@@ -104,7 +121,14 @@ const PaymentsPage = () => {
             variants={cardVariants}
             whileHover={{ y: -4 }}
           >
-            <div className={styles.cardIcon}>📱</div>
+            <div className={styles.cardIcon}>
+              <Image
+                src="/logos/Venmo_Logo_Blue.png"
+                alt="Venmo"
+                width={80}
+                height={20}
+              />
+            </div>
             <h2>Pay with Venmo</h2>
             <p>Send payment directly via Venmo for a quick and easy transaction.</p>
             <div className={styles.venmoInfo}>
