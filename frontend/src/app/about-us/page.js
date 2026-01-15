@@ -59,36 +59,82 @@ const AboutUsPage = () => {
         </motion.div>
 
         <motion.section
-          className={styles.contentSection}
+          className={styles.howItWorksSection}
           variants={containerVariants}
           initial='hidden'
           animate='visible'
+          viewport={{ once: true }}
         >
-          <motion.div className={styles.contentBlock} variants={itemVariants}>
-            <h2>Built for community.</h2>
-            <p>
-              YSC Lunch Soccer brings people together through the game we love.
-              Every session is a chance to connect, compete, and build lasting
-              friendships on the field.
-            </p>
-          </motion.div>
+          <motion.h2 className={styles.sectionTitle} variants={itemVariants}>
+            How It Works
+          </motion.h2>
+          <div className={styles.stepsGrid}>
+            <motion.div className={styles.step} variants={cardVariants}>
+              <div className={styles.stepNumber}>1</div>
+              <h3>Browse Sessions</h3>
+              <p>
+                Check out upcoming games and find a time that works for your
+                schedule.
+              </p>
+            </motion.div>
 
-          <motion.div className={styles.contentBlock} variants={itemVariants}>
-            <h2>Simple to use.</h2>
-            <p>
-              Browse upcoming sessions. RSVP with your status. See who&apos;s playing.
-              When teams are locked, you&apos;re ready to go. Everything you need in
-              one place.
-            </p>
-          </motion.div>
+            <motion.div className={styles.step} variants={cardVariants}>
+              <div className={styles.stepNumber}>2</div>
+              <h3>RSVP</h3>
+              <p>
+                Reserve your spot by updating your status. See who else is
+                playing.
+              </p>
+            </motion.div>
 
-          <motion.div className={styles.contentBlock} variants={itemVariants}>
-            <h2>Everyone plays.</h2>
-            <p>
-              From seasoned players to those just starting out, all skill levels
-              are welcome. The only requirement is showing up ready to have fun.
-            </p>
-          </motion.div>
+            <motion.div className={styles.step} variants={cardVariants}>
+              <div className={styles.stepNumber}>3</div>
+              <h3>Play & Enjoy</h3>
+              <p>
+                Show up, lace up, and have fun playing the beautiful game with
+                great people.
+              </p>
+            </motion.div>
+          </div>
+        </motion.section>
+
+        <motion.section
+          className={styles.faqSection}
+          variants={containerVariants}
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: true }}
+        >
+          <motion.h2 className={styles.sectionTitle} variants={itemVariants}>
+            Frequently Asked Questions
+          </motion.h2>
+          <div className={styles.faqGrid}>
+            <motion.div className={styles.faqItem} variants={cardVariants}>
+              <h3>Do I need to be an experienced player?</h3>
+              <p>Not at all! We welcome players of all skill levels.</p>
+            </motion.div>
+
+            <motion.div className={styles.faqItem} variants={cardVariants}>
+              <h3>What should I bring?</h3>
+              <p>Just bring your enthusiasm and appropriate athletic wear!</p>
+            </motion.div>
+
+            <motion.div className={styles.faqItem} variants={cardVariants}>
+              <h3>How are teams formed?</h3>
+              <p>
+                Teams are balanced based on RSVPs to ensure fair and competitive
+                games.
+              </p>
+            </motion.div>
+
+            <motion.div className={styles.faqItem} variants={cardVariants}>
+              <h3>Can I bring friends?</h3>
+              <p>
+                Absolutely! Just make sure they sign up and RSVP for the
+                session.
+              </p>
+            </motion.div>
+          </div>
         </motion.section>
 
         <motion.div
@@ -144,8 +190,8 @@ const AboutUsPage = () => {
           >
             <h2>Get in Touch</h2>
             <p>
-              Have questions, suggestions, or want to learn more? We&apos;d love to
-              hear from you!
+              Have questions, suggestions, or want to learn more? We&apos;d love
+              to hear from you!
             </p>
             <div className={styles.contactInfo}>
               <a href='mailto:ysclunchsoccer@gmail.com' className={styles.link}>

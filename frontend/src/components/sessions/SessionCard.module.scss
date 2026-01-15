@@ -225,31 +225,34 @@
       .statusBadgeYes {
         display: inline-block;
         padding: 0.25rem 0.5rem;
-        background: #10b981;
+        background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
         color: white;
         border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 600;
+        box-shadow: 0 1px 3px rgba(31, 115, 183, 0.3);
       }
 
       .statusBadgeMaybe {
         display: inline-block;
         padding: 0.25rem 0.5rem;
-        background: #f59e0b;
+        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
         color: white;
         border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 600;
+        box-shadow: 0 1px 3px rgba(14, 165, 233, 0.3);
       }
 
       .statusBadgeNo {
         display: inline-block;
         padding: 0.25rem 0.5rem;
-        background: #ef4444;
+        background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
         color: white;
         border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 600;
+        box-shadow: 0 1px 3px rgba(100, 116, 139, 0.3);
       }
     }
 
