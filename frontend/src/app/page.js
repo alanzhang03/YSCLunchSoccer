@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './page.module.scss';
 import UpcomingSessions from '@/components/ui/UpcomingSessions';
+import TestimonialsSlider from '@/components/ui/TestimonialsSlider';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -138,6 +139,8 @@ export default function Home() {
             </p>
           </motion.div>
         </motion.div>
+
+        <TestimonialsSlider />
 
         <motion.div
           className={styles.ctaSection}
