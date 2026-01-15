@@ -41,8 +41,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
 
   const maxAttendance = 45;
   const isAdmin = user?.isAdmin || false;
-  const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
+  // main
+  // const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
+
+  // test1
   // const STRIPE_PRICE_ID = 'price_1SpwqERf4ipOc26aXS2u5tuu';
+  // test2
+  const STRIPE_PRICE_ID = 'price_1Spy6MRf4ipOc26aGeq3KUwR';
 
   const toggleSelectAttendance = (attendanceId) => {
     setSelectedAttendanceIds((prev) => {
