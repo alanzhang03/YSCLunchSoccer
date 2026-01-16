@@ -92,8 +92,8 @@ router.post('/', authenticateUser, async (req, res) => {
         error: 'Missing required fields: date, dayOfWeek, startTime, endTime',
       });
     }
-    const sessionDate = new Date(date);
-    sessionDate.setHours(0, 0, 0, 0);
+    const [year, month, day] = date.split('-').map(Number);
+    const sessionDate = new Date(year, month - 1, day, 0, 0, 0, 0);
 
     const session = await prisma.session.create({
       data: {

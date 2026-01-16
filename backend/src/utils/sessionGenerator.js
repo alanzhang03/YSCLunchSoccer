@@ -63,8 +63,12 @@ export async function sessionGenerator() {
     let startDate = formattedDate;
     if (currSessions.length > 0) {
       const latestSession = currSessions[currSessions.length - 1];
-      startDate = new Date(latestSession.date);
-      startDate.setDate(startDate.getDate() + 1);
+      const latestDate = new Date(latestSession.date);
+      startDate = new Date(
+        latestDate.getFullYear(),
+        latestDate.getMonth(),
+        latestDate.getDate() + 1
+      );
     }
 
     let currentDate = new Date(startDate);

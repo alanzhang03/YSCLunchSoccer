@@ -108,29 +108,40 @@ const SessionList = ({ passedData }) => {
     const nextMonth = new Date(today);
     nextMonth.setMonth(nextMonth.getMonth() + 1);
 
+    const parseSessionDate = (session) => {
+      if (
+        typeof session.date === 'string' &&
+        session.date.match(/^\d{4}-\d{2}-\d{2}/)
+      ) {
+        const [year, month, day] = session.date.split('T')[0].split('-');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+      return new Date(session.date);
+    };
+
     if (filter === 'today') {
       filtered = filtered.filter((session) => {
-        const sessionDate = new Date(session.date);
+        const sessionDate = parseSessionDate(session);
         const sessionDateOnly = new Date(
           sessionDate.getFullYear(),
           sessionDate.getMonth(),
           sessionDate.getDate()
         );
-        return sessionDateOnly.getTime() <= today.getTime();
+        return sessionDateOnly.getTime() === today.getTime();
       });
     } else if (filter === 'thisWeek') {
       filtered = filtered.filter((session) => {
-        const sessionDate = new Date(session.date);
+        const sessionDate = parseSessionDate(session);
         return sessionDate >= today && sessionDate < nextWeek;
       });
     } else if (filter === 'nextWeek') {
       filtered = filtered.filter((session) => {
-        const sessionDate = new Date(session.date);
+        const sessionDate = parseSessionDate(session);
         return sessionDate >= nextWeek && sessionDate < nextMonth;
       });
     } else if (filter === 'thisMonth') {
       filtered = filtered.filter((session) => {
-        const sessionDate = new Date(session.date);
+        const sessionDate = parseSessionDate(session);
         return sessionDate >= today && sessionDate < nextMonth;
       });
     }
@@ -154,9 +165,22 @@ const SessionList = ({ passedData }) => {
     const filteredSessions = filteredAndSortedSessions;
 
     const totalSessions = filteredSessions.length;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
     const upcomingSessions = filteredSessions.filter((s) => {
-      const sessionDate = new Date(s.date);
-      return sessionDate >= new Date();
+      let sessionDate;
+      if (
+        typeof s.date === 'string' &&
+        s.date.match(/^\d{4}-\d{2}-\d{2}/)
+      ) {
+        const [year, month, day] = s.date.split('T')[0].split('-');
+        sessionDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      } else {
+        sessionDate = new Date(s.date);
+      }
+      return sessionDate >= today;
     }).length;
 
     const userRSVPs = filteredSessions.filter((s) => {
