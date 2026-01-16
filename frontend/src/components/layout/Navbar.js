@@ -15,7 +15,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout();
-    } catch (error) { }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -35,8 +35,9 @@ const Navbar = () => {
   return (
     <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
       <div
-        className={`${styles.mobileBackdrop} ${isMobileNavOpen ? styles.open : ''
-          }`}
+        className={`${styles.mobileBackdrop} ${
+          isMobileNavOpen ? styles.open : ''
+        }`}
         onClick={() => setIsMobileNavOpen(false)}
         aria-hidden='true'
       />
@@ -52,11 +53,14 @@ const Navbar = () => {
           <Link href='/sessions' onClick={() => setIsMobileNavOpen(false)}>
             Sessions
           </Link>
+          <Link href='/payments' onClick={() => setIsMobileNavOpen(false)}>
+            Payments
+          </Link>
           <Link href='/about-us' onClick={() => setIsMobileNavOpen(false)}>
             About Us
           </Link>
-          <Link href='/payments' onClick={() => setIsMobileNavOpen(false)}>
-            Payments
+          <Link href='/gallery' onClick={() => setIsMobileNavOpen(false)}>
+            Gallery
           </Link>
         </div>
 
@@ -67,20 +71,33 @@ const Navbar = () => {
             <span className={styles.mobileLoading}>Loading...</span>
           ) : user ? (
             <>
-              <span className={styles.mobileUserName}>Welcome, {user.name}!</span>
-              <button onClick={() => {
-                handleLogout();
-                setIsMobileNavOpen(false);
-              }} className={styles.mobileLogoutButton}>
+              <span className={styles.mobileUserName}>
+                Welcome, {user.name}!
+              </span>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMobileNavOpen(false);
+                }}
+                className={styles.mobileLogoutButton}
+              >
                 Log Out
               </button>
             </>
           ) : (
             <>
-              <Link href='/login' className={styles.mobileAuthLink} onClick={() => setIsMobileNavOpen(false)}>
+              <Link
+                href='/login'
+                className={styles.mobileAuthLink}
+                onClick={() => setIsMobileNavOpen(false)}
+              >
                 Log In
               </Link>
-              <Link href='/signup' className={styles.mobileSignupButton} onClick={() => setIsMobileNavOpen(false)}>
+              <Link
+                href='/signup'
+                className={styles.mobileSignupButton}
+                onClick={() => setIsMobileNavOpen(false)}
+              >
                 Sign Up
               </Link>
             </>
@@ -90,8 +107,9 @@ const Navbar = () => {
 
       <div className={styles.inner}>
         <button
-          className={`${styles.hamburger} ${isMobileNavOpen ? styles.open : ''
-            }`}
+          className={`${styles.hamburger} ${
+            isMobileNavOpen ? styles.open : ''
+          }`}
           aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileNavOpen}
           onClick={() => setIsMobileNavOpen((prev) => !prev)}
@@ -119,11 +137,14 @@ const Navbar = () => {
           <Link href='/sessions' className={styles.link}>
             Sessions
           </Link>
+          <Link href='/payments' className={styles.link}>
+            Payments
+          </Link>
           <Link href='/about-us' className={styles.link}>
             About Us
           </Link>
-          <Link href='/payments' className={styles.link}>
-            Payments
+          <Link href='/Gallery' className={styles.link}>
+            Gallery
           </Link>
         </nav>
 
