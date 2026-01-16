@@ -39,14 +39,20 @@ router.post('/', authenticateUser, async (req, res) => {
       where: {
         userId: dbUser.id,
         sessionId: sessionId,
-        status: 'completed',
       },
+      orderBy: { createdAt: 'desc' },
     });
 
-    if (existingPayment) {
+    if (existingPayment?.status === 'completed') {
       return res
         .status(400)
         .json({ error: 'You have already paid for this session' });
+    }
+
+    if (existingPayment?.status === 'pending') {
+      await prisma.payment.delete({
+        where: { id: existingPayment.id },
+      });
     }
 
     const origin =
