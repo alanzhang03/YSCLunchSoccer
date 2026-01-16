@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import styles from './payments.module.scss';
+import CopyToClipboard from '@/components/ui/CopyToClipboard';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -133,7 +134,10 @@ const PaymentsPage = () => {
               Send payment directly via Venmo for a quick and easy transaction.
             </p>
             <div className={styles.venmoInfo}>
-              <span className={styles.venmoHandle}>@ysc_sports</span>
+              <span className={styles.venmoHandle}>
+                @ysc_sports{' '}
+                <CopyToClipboard text={'@ysc_sports'}> </CopyToClipboard>
+              </span>
               <a
                 href='https://venmo.com/ysc_sports'
                 target='_blank'
