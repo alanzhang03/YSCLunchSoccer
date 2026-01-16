@@ -179,6 +179,74 @@ router.get('/session/:sessionId/status', authenticateUser, async (req, res) => {
   }
 });
 
+router.patch('/session/:sessionId/user/:userId/payment-status', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+    const { sessionId, userId } = req.params;
+    const { hasPaid } = req.body; 
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    if (!dbUser.isAdmin) {
+      return res.status(403).json({ error: 'Only admins can update payment status' });
+    }
+
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    const existingPayment = await prisma.payment.findFirst({
+      where: {
+        userId: userId,
+        sessionId: sessionId,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    let payment;
+    if (hasPaid) {
+      if (existingPayment) {
+        payment = await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: { status: 'completed' },
+        });
+      } else {
+        payment = await prisma.payment.create({
+          data: {
+            userId: userId,
+            sessionId: sessionId,
+            status: 'completed',
+            amount: 0, 
+            stripeCheckoutId: `manual-${Date.now()}`, 
+          },
+        });
+      }
+    } else {
+      if (existingPayment && existingPayment.status === 'completed') {
+        payment = await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: { status: 'pending' },
+        });
+      }
+    }
+
+    res.json({ success: true, payment });
+  } catch (error) {
+    console.error('Error updating payment status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 router.get(
   '/session/:sessionId/all-statuses',
   authenticateUser,

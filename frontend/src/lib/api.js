@@ -236,7 +236,6 @@ export async function lockTeams(sessionId, teams, numOfTeams) {
   return response.json();
 }
 
-
 export async function createCheckoutSession(priceId, sessionId, quantity = 1) {
   const response = await fetch(`${API_BASE_URL}/checkout`, {
     method: 'POST',
@@ -256,14 +255,17 @@ export async function createCheckoutSession(priceId, sessionId, quantity = 1) {
 }
 
 export async function getSessionPaymentStatus(sessionId) {
-  const response = await fetch(`${API_BASE_URL}/checkout/session/${sessionId}/status`, {
-    method: 'GET',
-    credentials: 'include',
-    cache: 'no-store',
-    headers: {
-      'Cache-Control': 'no-cache',
-    },
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/checkout/session/${sessionId}/status`,
+    {
+      method: 'GET',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+    }
+  );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -273,15 +275,39 @@ export async function getSessionPaymentStatus(sessionId) {
   return response.json();
 }
 
+export async function updateUserPaymentStatus(sessionId, userId, hasPaid) {
+  const response = await fetch(
+    `${API_BASE_URL}/checkout/session/${sessionId}/user/${userId}/payment-status`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ hasPaid }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to update payment status');
+  }
+
+  return response.json();
+}
+
 export async function getAllSessionPaymentStatuses(sessionId) {
-  const response = await fetch(`${API_BASE_URL}/checkout/session/${sessionId}/all-statuses`, {
-    method: 'GET',
-    credentials: 'include',
-    cache: 'no-store',
-    headers: {
-      'Cache-Control': 'no-cache',
-    },
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/checkout/session/${sessionId}/all-statuses`,
+    {
+      method: 'GET',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+    }
+  );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

@@ -12,6 +12,7 @@ import {
   getSessionPaymentStatus,
   createCheckoutSession,
   getAllSessionPaymentStatuses,
+  updateUserPaymentStatus,
 } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -406,6 +407,36 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
   };
 
+  const handleTogglePaymentStatus = async (userId, currentStatus) => {
+    if (!isAdmin) return;
+
+    const newStatus = !currentStatus;
+    const statusText = newStatus ? 'paid' : 'unpaid';
+
+    const confirmed = window.confirm(
+      `Are you sure you want to mark this user as ${statusText}?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await updateUserPaymentStatus(sessionData.id, userId, newStatus);
+
+      setAllPaymentStatuses((prev) => ({
+        ...prev,
+        [userId]: newStatus,
+      }));
+      if (onAttendanceUpdate) {
+        setTimeout(() => {
+          onAttendanceUpdate();
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      alert(error.message || 'Failed to update payment status');
+    }
+  };
+
   const renderAttendanceList = (attendances, section) => {
     if (!attendances || attendances.length === 0) return null;
 
@@ -448,8 +479,14 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
                   className={
                     userHasPaid ? styles.userPaidBadge : styles.userUnpaidBadge
                   }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTogglePaymentStatus(attendance.userId, userHasPaid);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                  title='Click to toggle payment status'
                 >
-                  {userHasPaid ? 'Paid' : 'Not paid'}
+                  {userHasPaid ? 'Paid ✓' : 'Not paid ✗'}
                 </span>
               )}
             </div>
