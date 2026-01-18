@@ -48,6 +48,16 @@ export default function Home() {
           <motion.p className={styles.subtitle} variants={itemVariants}>
             Join your friends for lunchtime soccer sessions
           </motion.p>
+          <motion.a
+            href='https://www.google.com/maps/place/YSC+Sports/@40.0773687,-75.4039779,1694m/data=!3m2!1e3!4b1!4m6!3m5!1s0x89c6945bbbf66627:0xc51da4623125fd8e!8m2!3d40.0773687!4d-75.4039779!16s%2Fg%2F1txnqdnh?entry=ttu&g_ep=EgoyMDI2MDExMy4wIKXMDSoASAFQAw%3D%3D'
+            target='_blank'
+            rel='noopener noreferrer'
+            className={styles.location}
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+          >
+            📍 224 County Line Rd, Wayne, PA
+          </motion.a>
           {!loading && user && (
             <motion.p
               className={styles.welcomeMessage}
@@ -118,24 +128,24 @@ export default function Home() {
           <motion.div className={styles.feature} variants={itemVariants}>
             <h2>Play together.</h2>
             <p>
-              Join your friends for lunchtime soccer. RSVP to sessions, see who&apos;s
-              playing, and get ready for kickoff.
+              Join your friends for lunchtime soccer. RSVP to sessions, see
+              who&apos;s playing, and get ready for kickoff.
             </p>
           </motion.div>
 
           <motion.div className={styles.feature} variants={itemVariants}>
             <h2>Stay organized.</h2>
             <p>
-              Automatic team formation. Real-time attendance tracking. Everything
-              you need, all in one place.
+              Teams get sorted automatically. See who's showing up in real-time.
+              No more group chat chaos.
             </p>
           </motion.div>
 
           <motion.div className={styles.feature} variants={itemVariants}>
             <h2>Build community.</h2>
             <p>
-              Connect with fellow players. Make new friends. Strengthen bonds
-              through the beautiful game.
+              Meet new people. Make new friends. Strengthen bonds through the
+              beautiful game.
             </p>
           </motion.div>
         </motion.div>

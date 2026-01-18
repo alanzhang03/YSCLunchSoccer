@@ -1,17 +1,17 @@
 .upcomingSessionsContainer {
   width: 100%;
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
+  max-width: 600px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
+  border-radius: 14px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 
   h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
     color: #fff;
     text-align: center;
   }
@@ -65,7 +65,7 @@
   }
 
   .sessionContent {
-    padding: 1.25rem;
+    padding: 1rem;
   }
 
   .sessionHeader {
@@ -98,14 +98,14 @@
   }
 
   .sessionDate {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #fff;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
   }
 
   .sessionTime {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.7);
   }
 }
