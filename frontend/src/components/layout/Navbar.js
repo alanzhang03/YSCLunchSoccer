@@ -143,7 +143,7 @@ const Navbar = () => {
           <Link href='/about-us' className={styles.link}>
             About Us
           </Link>
-          <Link href='/Gallery' className={styles.link}>
+          <Link href='/gallery' className={styles.link}>
             Gallery
           </Link>
         </nav>

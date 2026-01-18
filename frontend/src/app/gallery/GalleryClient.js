@@ -46,8 +46,8 @@ export default function GalleryClient({ images }) {
         <motion.div
           className={styles.gallery}
           variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+          initial='hidden'
+          animate='visible'
         >
           {images.map((img, index) => (
             <motion.div
@@ -56,7 +56,9 @@ export default function GalleryClient({ images }) {
               variants={itemVariants}
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              onClick={() => setSelectedImage({ src: `/gallery/${img}`, index })}
+              onClick={() =>
+                setSelectedImage({ src: `/gallery/${img}`, index })
+              }
             >
               <Image
                 src={`/gallery/${img}`}
@@ -90,7 +92,7 @@ export default function GalleryClient({ images }) {
                 <button
                   className={styles.closeButton}
                   onClick={() => setSelectedImage(null)}
-                  aria-label="Close"
+                  aria-label='Close'
                 >
                   ×
                 </button>
