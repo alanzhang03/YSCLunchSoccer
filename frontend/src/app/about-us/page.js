@@ -117,7 +117,10 @@ const AboutUsPage = () => {
 
             <motion.div className={styles.faqItem} variants={cardVariants}>
               <h3>What should I bring?</h3>
-              <p>Just bring your enthusiasm and appropriate athletic wear!</p>
+              <p>
+                Just bring water, cleats, and a dark and white shirt!
+                (Preferably not Gray)
+              </p>
             </motion.div>
 
             <motion.div className={styles.faqItem} variants={cardVariants}>
@@ -133,6 +136,14 @@ const AboutUsPage = () => {
               <p>
                 Absolutely! Just make sure they sign up and RSVP for the
                 session.
+              </p>
+            </motion.div>
+
+            <motion.div className={styles.faqItem} variants={cardVariants}>
+              <h3>How much does it cost?</h3>
+              <p>
+                Each session is $5. You can pay with cash, Venmo, or on this
+                site using credit card or Apple Pay.
               </p>
             </motion.div>
           </div>
