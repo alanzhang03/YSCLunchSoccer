@@ -51,6 +51,15 @@ const testimonials = [
     text: 'Great facility for indoor and outdoor soccer!',
     avatar: '/testimonials/MoovementINC.png',
   },
+  {
+    id: 5,
+    name: 'Jerry DeRosa',
+    role: 'Local Guide',
+    rating: 5,
+    date: 'A month ago',
+    text: 'Great place to work on your soccer skills, nice facilities for both indoor and outdoor practices and games. Lots of leagues!',
+    avatar: '/testimonials/jerry.png',
+  },
 ];
 
 const duplicatedTestimonials = [
