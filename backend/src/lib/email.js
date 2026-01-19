@@ -7,12 +7,6 @@ export async function sendPasswordResetEmail(email, resetLink) {
 
   const fromEmail = process.env.EMAIL_FROM;
 
-  if (!fromEmail) {
-    const error = new Error('EMAIL_FROM environment variable must be set');
-    console.error('[EMAIL] Configuration error:', error.message);
-    throw error;
-  }
-
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <h2 style="color: #1f73b7;">Reset Your Password</h2>
@@ -95,7 +89,7 @@ This link will expire in 1 hour. If you didn't request a password reset, you can
       }
 
       const error = new Error(
-        `SendGrid API error: ${response.status} ${response.statusText}`
+        `SendGrid API error: ${response.status} ${response.statusText}`,
       );
       error.status = response.status;
       error.details = errorDetails;
@@ -105,6 +99,110 @@ This link will expire in 1 hour. If you didn't request a password reset, you can
     return true;
   } catch (error) {
     console.error('[EMAIL] Error sending password reset email:', error.message);
+    if (error.details) {
+      console.error('[EMAIL] SendGrid error details:', error.details);
+    }
+    throw error;
+  }
+}
+
+export async function sendContactFormEmail(senderName, senderEmail, message) {
+  if (!process.env.SENDGRID_API_KEY) {
+    const error = new Error('SendGrid API key not set (SENDGRID_API_KEY)');
+    console.error('[EMAIL] Configuration error:', error.message);
+    throw error;
+  }
+
+  const fromEmail = process.env.EMAIL_FROM;
+  const adminEmail = process.env.CONTACT_EMAIL || fromEmail;
+
+  if (!fromEmail) {
+    const error = new Error('EMAIL_FROM environment variable must be set');
+    console.error('[EMAIL] Configuration error:', error.message);
+    throw error;
+  }
+
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2 style="color: #1f73b7;">New Contact Form Submission</h2>
+      <p><strong>From:</strong> ${senderName} (${senderEmail})</p>
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+      <p><strong>Message:</strong></p>
+      <p style="white-space: pre-wrap;">${message}</p>
+    </div>
+  `;
+
+  const textContent = `
+New Contact Form Submission - YSC Lunch Soccer
+
+From: ${senderName} (${senderEmail})
+
+Message:
+${message}
+  `;
+
+  const sendGridUrl = 'https://api.sendgrid.com/v3/mail/send';
+  const sendGridPayload = {
+    personalizations: [
+      {
+        to: [{ email: adminEmail }],
+        subject: `Contact Form: Message from ${senderName}`,
+      },
+    ],
+    from: {
+      email: fromEmail,
+      name: 'YSC Lunch Soccer',
+    },
+    reply_to: {
+      email: senderEmail,
+      name: senderName,
+    },
+    content: [
+      {
+        type: 'text/plain',
+        value: textContent.trim(),
+      },
+      {
+        type: 'text/html',
+        value: htmlContent.trim(),
+      },
+    ],
+    categories: ['contact-form'],
+    custom_args: {
+      type: 'contact_form',
+    },
+  };
+
+  try {
+    const response = await fetch(sendGridUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sendGridPayload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = { message: errorText };
+      }
+
+      const error = new Error(
+        `SendGrid API error: ${response.status} ${response.statusText}`,
+      );
+      error.status = response.status;
+      error.details = errorDetails;
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('[EMAIL] Error sending contact form email:', error.message);
     if (error.details) {
       console.error('[EMAIL] SendGrid error details:', error.details);
     }

@@ -3,7 +3,7 @@ import prisma from '../db/client.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { supabaseAdmin } from '../lib/supabase.js';
-import { sendPasswordResetEmail } from '../lib/email.js';
+import { sendPasswordResetEmail, sendContactFormEmail } from '../lib/email.js';
 
 const router = Router();
 
@@ -70,7 +70,7 @@ function setAuthCookies(res, accessToken, refreshToken, rememberMe = false) {
     isProduction
   ) {
     console.warn(
-      'WARNING: sameSite: "none" requires secure: true in production!'
+      'WARNING: sameSite: "none" requires secure: true in production!',
     );
     cookieOptions.secure = true;
   }
@@ -148,6 +148,26 @@ function clearAuthCookies(res) {
   res.clearCookie('sb_remember_me', cookieOptions);
 }
 
+router.post('/contact', async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    await sendContactFormEmail(name, email, message);
+
+    return res.json({ message: 'Message sent successfully' });
+  } catch (error) {
+    console.error('Contact form Error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+});
+
 router.post('/signup', async (req, res) => {
   try {
     const { phoneNum, email, name, password, skill } = req.body;
@@ -184,7 +204,7 @@ router.post('/signup', async (req, res) => {
 
     if (orphanedAuthUser) {
       console.log(
-        `Found orphaned Supabase Auth user for ${email}, deleting...`
+        `Found orphaned Supabase Auth user for ${email}, deleting...`,
       );
       await supabaseAdmin.auth.admin.deleteUser(orphanedAuthUser.id);
     }
@@ -239,7 +259,7 @@ router.post('/signup', async (req, res) => {
       res,
       signInData.session.access_token,
       signInData.session.refresh_token,
-      false
+      false,
     );
 
     return res.status(201).json({ user });
@@ -301,7 +321,7 @@ router.post('/login', async (req, res) => {
     if (signInError || !signInData?.session) {
       const isPasswordValid = await bcrypt.compare(
         password,
-        user.password || ''
+        user.password || '',
       );
 
       if (!isPasswordValid) {
@@ -327,7 +347,7 @@ router.post('/login', async (req, res) => {
         res,
         signInData.session.access_token,
         signInData.session.refresh_token,
-        rememberMe === true
+        rememberMe === true,
       );
     } catch (cookieError) {
       console.error('Cookie setting error:', cookieError);
@@ -391,12 +411,12 @@ router.get('/me', async (req, res) => {
             res,
             newSession.access_token,
             newSession.refresh_token,
-            rememberMe
+            rememberMe,
           );
           token = newSession.access_token;
 
           const userResult = await supabaseAdmin.auth.getUser(
-            newSession.access_token
+            newSession.access_token,
           );
           supabaseUser = userResult.data?.user;
           error = userResult.error;
@@ -465,7 +485,7 @@ router.post('/refresh', async (req, res) => {
       res,
       newSession.access_token,
       newSession.refresh_token,
-      rememberMe
+      rememberMe,
     );
 
     return res.json({ message: 'Token refreshed successfully' });
@@ -520,7 +540,7 @@ router.post('/forgot-password', async (req, res) => {
     const token = jwt.sign(
       { email: user.email, type: 'password-reset' },
       jwtSecret,
-      { expiresIn: '1h' }
+      { expiresIn: '1h' },
     );
 
     const frontendUrl = (
@@ -531,7 +551,7 @@ router.post('/forgot-password', async (req, res) => {
     sendPasswordResetEmail(user.email, resetLink).catch((emailError) => {
       console.error(
         '[PASSWORD RESET] Error sending password reset email:',
-        emailError.message
+        emailError.message,
       );
     });
 

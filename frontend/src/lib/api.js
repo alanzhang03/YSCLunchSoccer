@@ -88,7 +88,7 @@ export async function getSessionAttendances(sessionId) {
     `${API_BASE_URL}/sessions/${sessionId}/attendances`,
     {
       credentials: 'include',
-    }
+    },
   );
   if (!response.ok) {
     throw new Error('Failed to fetch attendances');
@@ -162,7 +162,7 @@ export async function deleteAttendances(sessionId, attendanceIds) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ attendanceIds }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -183,7 +183,7 @@ export async function updateShowTeams(sessionId, showTeams) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ showTeams }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -204,7 +204,7 @@ export async function updateTeamsLocked(sessionId, teamsLocked) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ teamsLocked }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -225,7 +225,7 @@ export async function lockTeams(sessionId, teams, numOfTeams) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ teams, numOfTeams }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -264,7 +264,7 @@ export async function getSessionPaymentStatus(sessionId) {
       headers: {
         'Cache-Control': 'no-cache',
       },
-    }
+    },
   );
 
   if (!response.ok) {
@@ -285,7 +285,7 @@ export async function updateUserPaymentStatus(sessionId, userId, hasPaid) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ hasPaid }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -306,12 +306,30 @@ export async function getAllSessionPaymentStatuses(sessionId) {
       headers: {
         'Cache-Control': 'no-cache',
       },
-    }
+    },
   );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error || 'Failed to fetch all payment statuses');
+  }
+
+  return response.json();
+}
+
+export async function sendEmail({ name, email, message }) {
+  const response = await fetch(`${API_BASE_URL}/auth/contact`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name, email, message }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to send message');
   }
 
   return response.json();

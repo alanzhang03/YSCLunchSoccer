@@ -72,6 +72,9 @@ const Footer = () => {
           <div className={styles.linksGroup}>
             <h3 className={styles.linksTitle}>Questions & Concerns</h3>
             <nav className={styles.links}>
+              <Link href='/about-us#contact' className={styles.link}>
+                Contact Form
+              </Link>
               <a href='mailto:ysclunchsoccer@gmail.com' className={styles.link}>
                 ysclunchsoccer@gmail.com
               </a>

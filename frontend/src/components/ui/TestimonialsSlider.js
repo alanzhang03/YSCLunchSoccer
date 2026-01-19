@@ -53,7 +53,11 @@ const testimonials = [
   },
 ];
 
-const duplicatedTestimonials = [...testimonials, ...testimonials];
+const duplicatedTestimonials = [
+  ...testimonials,
+  ...testimonials,
+  ...testimonials,
+];
 
 const SCROLL_SPEED = 20;
 
@@ -119,12 +123,7 @@ export default function TestimonialsSlider() {
       <div className={styles.header}>
         <h2>What Players Say</h2>
         <div className={styles.googleBadge}>
-          <Image
-            src="/logos/Google.svg"
-            alt="Google"
-            width={20}
-            height={20}
-          />
+          <Image src='/logos/Google.svg' alt='Google' width={20} height={20} />
           <span>Google Reviews</span>
         </div>
       </div>

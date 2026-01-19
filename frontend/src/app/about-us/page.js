@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './aboutus.module.scss';
+import ContactForm from '@/components/ui/ContactForm';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -193,6 +194,10 @@ const AboutUsPage = () => {
               Have questions, suggestions, or want to learn more? We&apos;d love
               to hear from you!
             </p>
+            <div id='contact'>
+              <ContactForm />
+            </div>
+
             <div className={styles.contactInfo}>
               <a href='mailto:ysclunchsoccer@gmail.com' className={styles.link}>
                 ysclunchsoccer@gmail.com
