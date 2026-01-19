@@ -54,9 +54,10 @@ const AboutUsPage = () => {
           <motion.h1 className={styles.title} variants={itemVariants}>
             About YSC Lunch Soccer
           </motion.h1>
-          <motion.p className={styles.subtitle} variants={itemVariants}>
-            Bringing the community together through the beautiful game
-          </motion.p>
+          <motion.p
+            className={styles.subtitle}
+            variants={itemVariants}
+          ></motion.p>
         </motion.div>
 
         <motion.section
