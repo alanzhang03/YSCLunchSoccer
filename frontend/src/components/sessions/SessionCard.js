@@ -22,7 +22,6 @@ import { DUMMY_USERS } from '@/lib/constants';
 const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   const { user } = useAuth();
   // const router = useRouter();
-  const [paymentOn, setPaymentOn] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [yesCount, setYesCount] = useState(0);
@@ -629,41 +628,40 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           </a>
         </div>
       )}
-      {user &&
-        paymentOn(
-          <div className={styles.paymentSection}>
-            {isLoadingPayment ? (
-              <div className={styles.paymentLoading}>
-                Checking payment status...
+      {user && (
+        <div className={styles.paymentSection}>
+          {isLoadingPayment ? (
+            <div className={styles.paymentLoading}>
+              Checking payment status...
+            </div>
+          ) : hasPaid ? (
+            <div className={styles.paymentStatus}>
+              <span className={styles.paidBadge}>Paid</span>
+              <span className={styles.paidText}>
+                You have paid for this session
+              </span>
+            </div>
+          ) : (
+            <>
+              <button
+                className={styles.payButton}
+                onClick={handlePayment}
+                disabled={isPaymentProcessing}
+              >
+                {isPaymentProcessing ? 'Processing...' : 'Pay for Session'}
+              </button>
+              <div className={styles.stripeBadge}>
+                <Image
+                  src='/logos/Powered by Stripe - blurple.svg'
+                  alt='Powered by Stripe'
+                  width={80}
+                  height={18}
+                />
               </div>
-            ) : hasPaid ? (
-              <div className={styles.paymentStatus}>
-                <span className={styles.paidBadge}>Paid</span>
-                <span className={styles.paidText}>
-                  You have paid for this session
-                </span>
-              </div>
-            ) : (
-              <>
-                <button
-                  className={styles.payButton}
-                  onClick={handlePayment}
-                  disabled={isPaymentProcessing}
-                >
-                  {isPaymentProcessing ? 'Processing...' : 'Pay for Session'}
-                </button>
-                <div className={styles.stripeBadge}>
-                  <Image
-                    src='/logos/Powered by Stripe - blurple.svg'
-                    alt='Powered by Stripe'
-                    width={80}
-                    height={18}
-                  />
-                </div>
-              </>
-            )}
-          </div>,
-        )}
+            </>
+          )}
+        </div>
+      )}
     </Card>
   );
 };
