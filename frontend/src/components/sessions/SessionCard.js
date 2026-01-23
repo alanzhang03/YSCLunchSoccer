@@ -22,6 +22,7 @@ import { DUMMY_USERS } from '@/lib/constants';
 const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   const { user } = useAuth();
   // const router = useRouter();
+  const [paymentOn, setPaymentOn] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [yesCount, setYesCount] = useState(0);
@@ -63,13 +64,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   useEffect(() => {
     if (sessionData?.attendances) {
       const count = sessionData.attendances.filter(
-        (a) => a.status === 'yes'
+        (a) => a.status === 'yes',
       ).length;
       setYesCount(count);
 
       if (user && sessionData.attendances) {
         const userAttendance = sessionData.attendances.find(
-          (a) => a.userId === user.id
+          (a) => a.userId === user.id,
         );
         if (userAttendance) {
           if (optimisticStatus) {
@@ -100,13 +101,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       try {
         setIsLoadingPayment(true);
         const { hasPaid: paidStatus } = await getSessionPaymentStatus(
-          sessionData.id
+          sessionData.id,
         );
         setHasPaid(paidStatus);
 
         if (isAdmin) {
           const { paymentStatusMap } = await getAllSessionPaymentStatuses(
-            sessionData.id
+            sessionData.id,
           );
           setAllPaymentStatuses(paymentStatusMap);
         }
@@ -127,7 +128,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       setIsPaymentProcessing(true);
       const { url } = await createCheckoutSession(
         STRIPE_PRICE_ID,
-        sessionData.id
+        sessionData.id,
       );
       window.location.href = url;
     } catch (error) {
@@ -149,7 +150,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       sessionDate = new Date(
         parseInt(year),
         parseInt(month) - 1,
-        parseInt(day)
+        parseInt(day),
       );
     } else {
       sessionDate = new Date(session.date);
@@ -184,14 +185,14 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     const sessionDateOnly = new Date(
       sessionDate.getFullYear(),
       sessionDate.getMonth(),
-      sessionDate.getDate()
+      sessionDate.getDate(),
     );
 
     const isToday = sessionDateOnly.getTime() === today.getTime();
     const isTomorrow = sessionDateOnly.getTime() === tomorrow.getTime();
 
     const daysDiff = Math.ceil(
-      (sessionDateOnly.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+      (sessionDateOnly.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     let relativeDate = null;
@@ -292,13 +293,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
 
     const yesAttendances = sessionData.attendances.filter(
-      (a) => a.status === 'yes'
+      (a) => a.status === 'yes',
     );
     const noAttendances = sessionData.attendances.filter(
-      (a) => a.status === 'no'
+      (a) => a.status === 'no',
     );
     const maybeAttendances = sessionData.attendances.filter(
-      (a) => a.status === 'maybe'
+      (a) => a.status === 'maybe',
     );
 
     return {
@@ -354,7 +355,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     if (!isAdmin || !sessionData?.id) return;
 
     const confirmed = window.confirm(
-      'Are you sure you want to delete this session? This action cannot be undone.'
+      'Are you sure you want to delete this session? This action cannot be undone.',
     );
 
     if (!confirmed) return;
@@ -381,7 +382,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     const confirmed = window.confirm(
       `Are you sure you want to remove ${count} ${
         count === 1 ? 'attendee' : 'attendees'
-      }? This action cannot be undone.`
+      }? This action cannot be undone.`,
     );
 
     if (!confirmed) return;
@@ -414,7 +415,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     const statusText = newStatus ? 'paid' : 'unpaid';
 
     const confirmed = window.confirm(
-      `Are you sure you want to mark this user as ${statusText}?`
+      `Are you sure you want to mark this user as ${statusText}?`,
     );
 
     if (!confirmed) return;
@@ -628,40 +629,41 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           </a>
         </div>
       )}
-      {user && (
-        <div className={styles.paymentSection}>
-          {isLoadingPayment ? (
-            <div className={styles.paymentLoading}>
-              Checking payment status...
-            </div>
-          ) : hasPaid ? (
-            <div className={styles.paymentStatus}>
-              <span className={styles.paidBadge}>Paid</span>
-              <span className={styles.paidText}>
-                You have paid for this session
-              </span>
-            </div>
-          ) : (
-            <>
-              <button
-                className={styles.payButton}
-                onClick={handlePayment}
-                disabled={isPaymentProcessing}
-              >
-                {isPaymentProcessing ? 'Processing...' : 'Pay for Session'}
-              </button>
-              <div className={styles.stripeBadge}>
-                <Image
-                  src='/logos/Powered by Stripe - blurple.svg'
-                  alt='Powered by Stripe'
-                  width={80}
-                  height={18}
-                />
+      {user &&
+        paymentOn(
+          <div className={styles.paymentSection}>
+            {isLoadingPayment ? (
+              <div className={styles.paymentLoading}>
+                Checking payment status...
               </div>
-            </>
-          )}
-        </div>
-      )}
+            ) : hasPaid ? (
+              <div className={styles.paymentStatus}>
+                <span className={styles.paidBadge}>Paid</span>
+                <span className={styles.paidText}>
+                  You have paid for this session
+                </span>
+              </div>
+            ) : (
+              <>
+                <button
+                  className={styles.payButton}
+                  onClick={handlePayment}
+                  disabled={isPaymentProcessing}
+                >
+                  {isPaymentProcessing ? 'Processing...' : 'Pay for Session'}
+                </button>
+                <div className={styles.stripeBadge}>
+                  <Image
+                    src='/logos/Powered by Stripe - blurple.svg'
+                    alt='Powered by Stripe'
+                    width={80}
+                    height={18}
+                  />
+                </div>
+              </>
+            )}
+          </div>,
+        )}
     </Card>
   );
 };
