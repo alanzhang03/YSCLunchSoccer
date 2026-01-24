@@ -36,7 +36,7 @@ export function getUpcomingSessions(count = 8) {
         id: Date.now() + sessions.length,
         date: formatDate(copy),
         weekday: day_of_week === 1 ? 'Monday' : 'Friday',
-        time: '11:30 AM - 1:05 PM EST',
+        time: '11:20 AM - 1:05 PM EST',
         available: '0/100',
         today: isToday,
         tomorrow: isTomorrow,

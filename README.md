@@ -69,7 +69,7 @@ YSCLunchSoccer/
 
 Sessions are automatically generated:
 
-- **Schedule**: Every Monday and Friday at 11:30 AM - 1:05 PM EST
+- **Schedule**: Every Monday and Friday at 11:20 AM - 1:05 PM EST
 - **Auto-generation**: Runs every Friday at midnight via cron job
 - **Maintenance**: Old sessions are automatically deleted
 - **Capacity**: Maintains 6 upcoming sessions at all times

@@ -71,6 +71,10 @@ const PaymentsPage = () => {
           <motion.p className={styles.subtitle} variants={itemVariants}>
             Choose your preferred payment method
           </motion.p>
+          <motion.p className={styles.subtitle} variants={itemVariants}>
+            (Payments are not fully set up at the moment. Please pay in person
+            or via Venmo.)
+          </motion.p>
         </motion.div>
 
         <motion.div

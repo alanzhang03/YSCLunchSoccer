@@ -37,7 +37,7 @@ async function main() {
         sessions.push({
           date: new Date(currentDate),
           dayOfWeek: dayOfWeek === 1 ? 'Monday' : 'Friday',
-          startTime: '11:30 AM',
+          startTime: '11:20 AM',
           endTime: '1:05 PM',
           timezone: 'EST',
         });

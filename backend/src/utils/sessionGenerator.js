@@ -102,7 +102,7 @@ export async function sessionGenerator() {
                   : dayOfWeek === 3
                     ? 'Wednesday'
                     : 'Friday',
-              startTime: '11:30 AM',
+              startTime: '11:20 AM',
               endTime: '1:05 PM',
               timezone: 'EST',
             },
