@@ -22,12 +22,12 @@ async function main() {
             gte: new Date(
               currentDate.getFullYear(),
               currentDate.getMonth(),
-              currentDate.getDate()
+              currentDate.getDate(),
             ),
             lt: new Date(
               currentDate.getFullYear(),
               currentDate.getMonth(),
-              currentDate.getDate() + 1
+              currentDate.getDate() + 1,
             ),
           },
         },
@@ -37,7 +37,7 @@ async function main() {
         sessions.push({
           date: new Date(currentDate),
           dayOfWeek: dayOfWeek === 1 ? 'Monday' : 'Friday',
-          startTime: '11:45 AM',
+          startTime: '11:30 AM',
           endTime: '1:05 PM',
           timezone: 'EST',
         });

@@ -9,7 +9,7 @@ async function resetSessions() {
     const startDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
     let currentDate = new Date(startDate);
     let sessionsCreated = 0;
@@ -21,7 +21,7 @@ async function resetSessions() {
         const dateToCheck = new Date(
           currentDate.getFullYear(),
           currentDate.getMonth(),
-          currentDate.getDate()
+          currentDate.getDate(),
         );
         await prisma.session.create({
           data: {
@@ -30,9 +30,9 @@ async function resetSessions() {
               dayOfWeek === 1
                 ? 'Monday'
                 : dayOfWeek === 3
-                ? 'Wednesday'
-                : 'Friday',
-            startTime: '11:45 AM',
+                  ? 'Wednesday'
+                  : 'Friday',
+            startTime: '11:30 AM',
             endTime: '1:05 PM',
             timezone: 'EST',
           },

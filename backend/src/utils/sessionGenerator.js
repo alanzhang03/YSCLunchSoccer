@@ -17,7 +17,7 @@ async function waitForDatabaseConnection(maxRetries = 5, delayMs = 2000) {
     }
     if (i < maxRetries - 1) {
       console.log(
-        `⏳ Waiting for database connection... (attempt ${i + 1}/${maxRetries})`
+        `⏳ Waiting for database connection... (attempt ${i + 1}/${maxRetries})`,
       );
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
@@ -30,7 +30,7 @@ export async function sessionGenerator() {
     const isConnected = await waitForDatabaseConnection();
     if (!isConnected) {
       throw new Error(
-        '❌ Cannot connect to database. Please check your database connection and try again.'
+        '❌ Cannot connect to database. Please check your database connection and try again.',
       );
     }
 
@@ -38,7 +38,7 @@ export async function sessionGenerator() {
     const formattedDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
 
     const deleteSessions = await prisma.session.deleteMany({
@@ -67,7 +67,7 @@ export async function sessionGenerator() {
       startDate = new Date(
         latestDate.getFullYear(),
         latestDate.getMonth(),
-        latestDate.getDate() + 1
+        latestDate.getDate() + 1,
       );
     }
 
@@ -81,7 +81,7 @@ export async function sessionGenerator() {
         const dateToCheck = new Date(
           currentDate.getFullYear(),
           currentDate.getMonth(),
-          currentDate.getDate()
+          currentDate.getDate(),
         );
 
         const existingSession = await prisma.session.findFirst({
@@ -100,9 +100,9 @@ export async function sessionGenerator() {
                 dayOfWeek === 1
                   ? 'Monday'
                   : dayOfWeek === 3
-                  ? 'Wednesday'
-                  : 'Friday',
-              startTime: '11:45 AM',
+                    ? 'Wednesday'
+                    : 'Friday',
+              startTime: '11:30 AM',
               endTime: '1:05 PM',
               timezone: 'EST',
             },
@@ -116,7 +116,7 @@ export async function sessionGenerator() {
     console.log(
       `✅ Session generation complete. Created ${sessionsCreated} new session(s). Total future sessions: ${
         currSessions.length + sessionsCreated
-      }`
+      }`,
     );
   } catch (error) {
     if (error.message?.includes('database')) {
@@ -127,7 +127,7 @@ export async function sessionGenerator() {
         '\n  1. Your database server is running',
         '\n  2. Your DATABASE_URL environment variable is correct',
         '\n  3. Your network connection is stable',
-        '\n  4. Your database credentials are valid'
+        '\n  4. Your database credentials are valid',
       );
     } else {
       console.error('❌ Error in session generation:', error.message || error);
