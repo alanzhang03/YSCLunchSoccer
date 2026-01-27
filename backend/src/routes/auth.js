@@ -535,8 +535,7 @@ router.post('/forgot-password', async (req, res) => {
       });
     }
 
-    const jwtSecret =
-      process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+    const jwtSecret = process.env.JWT_SECRET;
     const token = jwt.sign(
       { email: user.email, type: 'password-reset' },
       jwtSecret,
