@@ -17,6 +17,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { DUMMY_USERS } from '@/lib/constants';
+import { AddToCalendarButton } from 'add-to-calendar-button-react';
 // import { useRouter } from "next/router";
 
 const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
@@ -437,6 +438,30 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
   };
 
+  const getCalendarEventData = () => {
+    if (!sessionData?.date || !sessionData?.startTime || !sessionData?.endTime) {
+      return null;
+    }
+
+    const [startHours, startMins] = sessionData.startTime.replace(' AM', '').split(':');
+    const [endHours, endMins] = sessionData.endTime.replace(' PM', '').split(':');
+
+    const formattedStartTime = `${(startHours === '12' ? '00' : startHours.padStart(2, '0'))}:${startMins}`;
+    const formattedEndTime = `${(endHours === '12' ? '12' : (parseInt(endHours) + 12))}:${endMins}`;
+
+    return {
+      name: 'YSC Lunch Soccer',
+      description: 'YSC lunch time soccer session',
+      startDate: sessionData.date.split('T')[0],
+      startTime: formattedStartTime,
+      endTime: formattedEndTime,
+      timeZone: 'America/New_York',
+      location: 'YSC Sports: 24 County Line Rd, Wayne, PA 19087',
+    };
+  };
+
+  const calendarData = getCalendarEventData();
+
   const renderAttendanceList = (attendances, section) => {
     if (!attendances || attendances.length === 0) return null;
 
@@ -621,6 +646,22 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         disabled={isSubmitting || !user}
         yesDisabled={yesCount >= maxAttendance && currentStatus !== 'yes'}
       />
+      {calendarData && (
+        <div className={styles.calendarButtonWrapper}>
+          <AddToCalendarButton
+            name={calendarData.name}
+            description={calendarData.description}
+            startDate={calendarData.startDate}
+            startTime={calendarData.startTime}
+            endTime={calendarData.endTime}
+            timeZone={calendarData.timeZone}
+            location={calendarData.location}
+            options={['Apple', 'Google', 'Outlook.com', 'Yahoo']}
+            buttonStyle="round"
+            lightMode="bodyScheme"
+          />
+        </div>
+      )}
       {!user && (
         <div className={styles.loginPrompt}>
           <a href='/login' className={styles.loginLink}>
