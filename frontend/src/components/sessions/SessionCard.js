@@ -646,22 +646,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         disabled={isSubmitting || !user}
         yesDisabled={yesCount >= maxAttendance && currentStatus !== 'yes'}
       />
-      {calendarData && (
-        <div className={styles.calendarButtonWrapper}>
-          <AddToCalendarButton
-            name={calendarData.name}
-            description={calendarData.description}
-            startDate={calendarData.startDate}
-            startTime={calendarData.startTime}
-            endTime={calendarData.endTime}
-            timeZone={calendarData.timeZone}
-            location={calendarData.location}
-            options={['Apple', 'Google', 'Outlook.com', 'Yahoo']}
-            buttonStyle="round"
-            lightMode="bodyScheme"
-          />
-        </div>
-      )}
+
       {!user && (
         <div className={styles.loginPrompt}>
           <a href='/login' className={styles.loginLink}>
@@ -704,6 +689,23 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
               </div>
             </>
           )}
+        </div>
+      )}
+      {calendarData && (
+        <div className={styles.calendarButtonWrapper}>
+          <AddToCalendarButton
+            name={calendarData.name}
+            description={calendarData.description}
+            startDate={calendarData.startDate}
+            startTime={calendarData.startTime}
+            endTime={calendarData.endTime}
+            timeZone={calendarData.timeZone}
+            location={calendarData.location}
+            options={['Apple', 'Google', 'Outlook.com', 'Yahoo']}
+            buttonStyle="round"
+            lightMode="bodyScheme"
+            size='1'
+          />
         </div>
       )}
     </Card>
