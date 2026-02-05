@@ -499,12 +499,13 @@
       }
 
       .adminControls {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
       }
 
       .inputGroup {
+        grid-column: 1 / -1;
         width: 100%;
         justify-content: space-between;
       }
@@ -514,9 +515,20 @@
         max-width: 120px;
       }
 
-      .showTeamsButton,
+      .showTeamsButton {
+        grid-column: 1 / 2;
+        padding: 0.65rem 0.75rem;
+        font-size: 0.875rem;
+      }
+
       .randomizeButton {
-        width: 100%;
+        grid-column: 2 / 3;
+        padding: 0.65rem 0.75rem;
+        font-size: 0.875rem;
+      }
+
+      .lockStatus {
+        grid-column: 1 / -1;
       }
     }
 
@@ -538,6 +550,40 @@
     }
     .teamCard {
       min-height: 250px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .displayTeamsContainer {
+    .header {
+      .adminControls {
+        gap: 0.4rem;
+
+        .showTeamsButton,
+        .randomizeButton {
+          padding: 0.55rem 0.6rem;
+          font-size: 0.8125rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 421px) {
+  .displayTeamsContainer {
+    padding: 1rem;
+
+    .header {
+      .adminControls {
+        gap: 0.35rem;
+
+        .showTeamsButton,
+        .randomizeButton {
+          padding: 0.5rem 0.5rem;
+          font-size: 0.75rem;
+        }
+      }
     }
   }
 }
