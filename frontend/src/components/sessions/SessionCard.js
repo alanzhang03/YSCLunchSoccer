@@ -176,7 +176,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
   }, [sessionData, user, optimisticStatus]);
 
-  // Check payment status on mount
   useEffect(() => {
     const checkPaymentStatus = async () => {
       if (!user || !sessionData?.id) return;
