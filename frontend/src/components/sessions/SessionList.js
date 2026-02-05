@@ -18,6 +18,7 @@ const SessionList = ({ passedData }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [filter, setFilter] = useState('thisWeek');
   const [sortBy, setSortBy] = useState('date');
+  const [wordFilter, setWordFilter] = useState('this week')
   const { user } = useAuth();
   // const data = getUpcomingSessions(8);
   const isAdmin = user?.isAdmin || false;
@@ -198,6 +199,24 @@ const SessionList = ({ passedData }) => {
 
     return { totalSessions, upcomingSessions, userRSVPs, totalAttendees };
   }, [filteredAndSortedSessions, user]);
+  // RSVP to all selected sessions:
+  const filterSessionsAlreadyAttending = () => {
+    const nonAttendingSessions = []
+    filteredAndSortedSessions.forEach(session => {
+      if (!session.attendances.some((attendance) => attendance.userId === user?.id)) {
+        nonAttendingSessions.push(session)
+      }
+    })
+    return nonAttendingSessions
+  }
+  const nonAttendingSessions = filterSessionsAlreadyAttending()
+  console.log(`Non-Attending Sessions: ${nonAttendingSessions}`)
+
+  const handleFilterClick = (time, words) => {
+    setFilter(time)
+    setWordFilter(words)
+
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -323,7 +342,7 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'today' ? styles.active : ''
             }`}
-            onClick={() => setFilter('today')}
+            onClick={() => handleFilterClick('today', 'today')}
           >
             Today
           </button>
@@ -331,7 +350,7 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'thisWeek' ? styles.active : ''
             }`}
-            onClick={() => setFilter('thisWeek')}
+            onClick={() => handleFilterClick('thisWeek, this week')}
           >
             This Week
           </button>
@@ -339,7 +358,7 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'nextWeek' ? styles.active : ''
             }`}
-            onClick={() => setFilter('nextWeek')}
+            onClick={() => handleFilterClick('nextWeek', 'next week')}
           >
             Next Week
           </button>
@@ -347,11 +366,14 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'thisMonth' ? styles.active : ''
             }`}
-            onClick={() => setFilter('thisMonth')}
+            onClick={() => handleFilterClick('thisMonth', 'this month')}
           >
             This Month
           </button>
         </div>
+        {user && (
+          <button onClick={() => RSVPToAllUpcomingSessions()}>RSVP to upcoming sessions {wordFilter} ({nonAttendingSessions.length})</button>
+        )}
         <div className={styles.sortControls}>
           <label className={styles.sortLabel}>Sort by:</label>
           <select
