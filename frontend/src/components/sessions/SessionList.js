@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import styles from './SessionList.module.scss';
 import SessionCard from './SessionCard';
 import { getUpcomingSessions } from '@/lib/sessions';
-import { getSessions, createSession } from '@/lib/api';
+import { getSessions, createSession, attendMultipleSessions } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import AddSessionModal from './AddSessionModal';
 import { FcCalendar, FcCheckmark } from "react-icons/fc";
@@ -18,6 +18,8 @@ const SessionList = ({ passedData }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [filter, setFilter] = useState('thisWeek');
   const [sortBy, setSortBy] = useState('date');
+  const [wordFilter, setWordFilter] = useState('this week')
+  const [dayFilter, setDayFilter] = useState('all')
   const { user } = useAuth();
   // const data = getUpcomingSessions(8);
   const isAdmin = user?.isAdmin || false;
@@ -145,6 +147,10 @@ const SessionList = ({ passedData }) => {
         return sessionDate >= today && sessionDate < nextMonth;
       });
     }
+    if (dayFilter !== 'all') {
+      filtered = filtered.filter((session) => session.dayOfWeek === dayFilter);
+    }
+
     filtered.sort((a, b) => {
       if (sortBy === 'date') {
         return new Date(a.date) - new Date(b.date);
@@ -159,7 +165,7 @@ const SessionList = ({ passedData }) => {
     });
 
     return filtered;
-  }, [sessions, filter, sortBy]);
+  }, [sessions, filter, sortBy, dayFilter]);
 
   const stats = useMemo(() => {
     const filteredSessions = filteredAndSortedSessions;
@@ -198,6 +204,35 @@ const SessionList = ({ passedData }) => {
 
     return { totalSessions, upcomingSessions, userRSVPs, totalAttendees };
   }, [filteredAndSortedSessions, user]);
+
+  const handleFilterClick = (time, words) => {
+    setFilter(time)
+    setWordFilter(words)
+  }
+  const filterSessionsAlreadyAttending = () => {
+    const nonAttendingSessions = []
+    filteredAndSortedSessions.forEach(session => {
+      if (!session.attendances.some((attendance) => attendance.userId === user?.id)) {
+        nonAttendingSessions.push(session)
+      }
+    })
+    return nonAttendingSessions
+  }
+  const nonAttendingSessions = filterSessionsAlreadyAttending()
+
+  const RSVPToAllUpcomingSessions = async () => {
+    if (nonAttendingSessions.length === 0) return;
+    try {
+      setIsSubmitting(true);
+      const sessionIds = nonAttendingSessions.map((s) => s.id);
+      await attendMultipleSessions(sessionIds, 'yes');
+      await fetchSessions(false);
+    } catch (err) {
+      setError(err.message || 'Failed to RSVP to sessions');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -323,7 +358,7 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'today' ? styles.active : ''
             }`}
-            onClick={() => setFilter('today')}
+            onClick={() => handleFilterClick('today', 'today')}
           >
             Today
           </button>
@@ -331,7 +366,7 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'thisWeek' ? styles.active : ''
             }`}
-            onClick={() => setFilter('thisWeek')}
+            onClick={() => handleFilterClick('thisWeek', 'this week')}
           >
             This Week
           </button>
@@ -339,7 +374,7 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'nextWeek' ? styles.active : ''
             }`}
-            onClick={() => setFilter('nextWeek')}
+            onClick={() => handleFilterClick('nextWeek', 'next week')}
           >
             Next Week
           </button>
@@ -347,11 +382,34 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'thisMonth' ? styles.active : ''
             }`}
-            onClick={() => setFilter('thisMonth')}
+            onClick={() => handleFilterClick('thisMonth', 'this month')}
           >
             This Month
           </button>
+          <select
+            className={styles.dayFilterSelect}
+            value={dayFilter}
+            onChange={(e) => setDayFilter(e.target.value)}
+          >
+            <option value="all">All Days</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
         </div>
+        {user && (
+          <button
+            className={styles.rsvpAllButton}
+            onClick={() => RSVPToAllUpcomingSessions()}
+            disabled={isSubmitting || nonAttendingSessions.length === 0}
+          >
+            {isSubmitting ? 'RSVPing...' : `RSVP to upcoming sessions ${wordFilter} (${nonAttendingSessions.length})`}
+          </button>
+        )}
         <div className={styles.sortControls}>
           <label className={styles.sortLabel}>Sort by:</label>
           <select
