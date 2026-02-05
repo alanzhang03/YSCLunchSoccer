@@ -1,266 +1,50 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
-import React from 'react';
 import { motion } from 'framer-motion';
 import styles from './SessionList.module.scss';
 import SessionCard from './SessionCard';
-import { getUpcomingSessions } from '@/lib/sessions';
-import { getSessions, createSession, attendMultipleSessions } from '@/lib/api';
-import { useAuth } from '@/contexts/AuthContext';
 import AddSessionModal from './AddSessionModal';
-import { FcCalendar, FcCheckmark } from "react-icons/fc";
+import StatsBar from './StatsBar';
+import SessionControls from './SessionControls';
+import { containerVariants, cardVariants } from './animationVariants';
+import { useSessions } from '@/hooks/useSessions';
+import { useSessionFilters } from '@/hooks/useSessionFilters';
+import { useAuth } from '@/contexts/AuthContext';
 
-const SessionList = ({ passedData }) => {
-  const [sessions, setSessions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showAddSession, setShowAddSession] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [filter, setFilter] = useState('thisWeek');
-  const [sortBy, setSortBy] = useState('date');
-  const [wordFilter, setWordFilter] = useState('this week')
-  const [dayFilter, setDayFilter] = useState('all')
+const SessionList = () => {
   const { user } = useAuth();
-  // const data = getUpcomingSessions(8);
   const isAdmin = user?.isAdmin || false;
 
-  const handleNewSession = async (sessionData) => {
-    try {
-      setIsSubmitting(true);
-      setError(null);
-      await createSession({
-        date: sessionData.date,
-        dayOfWeek: sessionData.dayOfWeek,
-        startTime: sessionData.startTime,
-        endTime: sessionData.endTime,
-        timezone: sessionData.timezone || 'EST',
-      });
-      await fetchSessions(false);
-      setShowAddSession(false);
-    } catch (err) {
-      setError(err.message || 'Failed to create session');
-      console.error('Error creating session:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    sessions,
+    loading,
+    error,
+    isSubmitting,
+    fetchSessions,
+    updateSession,
+    handleNewSession,
+    showAddSession,
+    setShowAddSession,
+    rsvpToSessions,
+  } = useSessions(user?.id);
 
-  const fetchSessions = async (showLoading = true) => {
-    try {
-      if (showLoading) {
-        setLoading(true);
-      }
-      const data = await getSessions();
-      setSessions(data || []);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-      setSessions([]);
-    } finally {
-      if (showLoading) {
-        setLoading(false);
-      }
-    }
-  };
+  const {
+    filter,
+    setFilter,
+    sortBy,
+    setSortBy,
+    dayFilter,
+    setDayFilter,
+    wordFilter,
+    handleFilterClick,
+    filteredAndSortedSessions,
+    stats,
+    nonAttendingSessions,
+  } = useSessionFilters(sessions, user?.id);
 
-  const updateSession = async (sessionId) => {
-    try {
-      const data = await getSessions();
-      setSessions((prevSessions) =>
-        prevSessions.map((session) => {
-          if (session.id === sessionId) {
-            const updated = data.find((s) => s.id === sessionId);
-            return updated || session;
-          }
-          return session;
-        })
-      );
-    } catch (err) {}
-  };
-
-  useEffect(() => {
-    fetchSessions();
-  }, []);
-
-  useEffect(() => {
-    if (loading) return;
-
-    const interval = setInterval(() => {
-      fetchSessions(false);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [loading]);
-
-  useEffect(() => {
-    if (!loading && sessions.length > 0) {
-      fetchSessions(false);
-    }
-  }, [user?.id]);
-
-  const filteredAndSortedSessions = useMemo(() => {
-    let filtered = [...sessions];
-
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const nextWeek = new Date(today);
-    nextWeek.setDate(nextWeek.getDate() + 7);
-    const nextMonth = new Date(today);
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-
-    const parseSessionDate = (session) => {
-      if (
-        typeof session.date === 'string' &&
-        session.date.match(/^\d{4}-\d{2}-\d{2}/)
-      ) {
-        const [year, month, day] = session.date.split('T')[0].split('-');
-        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      }
-      return new Date(session.date);
-    };
-
-    if (filter === 'today') {
-      filtered = filtered.filter((session) => {
-        const sessionDate = parseSessionDate(session);
-        const sessionDateOnly = new Date(
-          sessionDate.getFullYear(),
-          sessionDate.getMonth(),
-          sessionDate.getDate()
-        );
-        return sessionDateOnly.getTime() === today.getTime();
-      });
-    } else if (filter === 'thisWeek') {
-      filtered = filtered.filter((session) => {
-        const sessionDate = parseSessionDate(session);
-        return sessionDate >= today && sessionDate < nextWeek;
-      });
-    } else if (filter === 'nextWeek') {
-      filtered = filtered.filter((session) => {
-        const sessionDate = parseSessionDate(session);
-        return sessionDate >= nextWeek && sessionDate < nextMonth;
-      });
-    } else if (filter === 'thisMonth') {
-      filtered = filtered.filter((session) => {
-        const sessionDate = parseSessionDate(session);
-        return sessionDate >= today && sessionDate < nextMonth;
-      });
-    }
-    if (dayFilter !== 'all') {
-      filtered = filtered.filter((session) => session.dayOfWeek === dayFilter);
-    }
-
-    filtered.sort((a, b) => {
-      if (sortBy === 'date') {
-        return new Date(a.date) - new Date(b.date);
-      } else if (sortBy === 'attendance') {
-        const aCount =
-          a.attendances?.filter((at) => at.status === 'yes').length || 0;
-        const bCount =
-          b.attendances?.filter((at) => at.status === 'yes').length || 0;
-        return bCount - aCount;
-      }
-      return 0;
-    });
-
-    return filtered;
-  }, [sessions, filter, sortBy, dayFilter]);
-
-  const stats = useMemo(() => {
-    const filteredSessions = filteredAndSortedSessions;
-
-    const totalSessions = filteredSessions.length;
-
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    const upcomingSessions = filteredSessions.filter((s) => {
-      let sessionDate;
-      if (
-        typeof s.date === 'string' &&
-        s.date.match(/^\d{4}-\d{2}-\d{2}/)
-      ) {
-        const [year, month, day] = s.date.split('T')[0].split('-');
-        sessionDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      } else {
-        sessionDate = new Date(s.date);
-      }
-      return sessionDate >= today;
-    }).length;
-
-    const userRSVPs = filteredSessions.filter((s) => {
-      if (!user || !s.attendances) return false;
-      return s.attendances.some(
-        (a) => a.userId === user.id && a.status === 'yes'
-      );
-    }).length;
-
-    const totalAttendees = filteredSessions.reduce((sum, s) => {
-      return (
-        sum + (s.attendances?.filter((a) => a.status === 'yes').length || 0)
-      );
-    }, 0);
-
-    return { totalSessions, upcomingSessions, userRSVPs, totalAttendees };
-  }, [filteredAndSortedSessions, user]);
-
-  const handleFilterClick = (time, words) => {
-    setFilter(time)
-    setWordFilter(words)
-  }
-  const filterSessionsAlreadyAttending = () => {
-    const nonAttendingSessions = []
-    filteredAndSortedSessions.forEach(session => {
-      if (!session.attendances.some((attendance) => attendance.userId === user?.id)) {
-        nonAttendingSessions.push(session)
-      }
-    })
-    return nonAttendingSessions
-  }
-  const nonAttendingSessions = filterSessionsAlreadyAttending()
-
-  const RSVPToAllUpcomingSessions = async () => {
+  const handleRSVPAll = () => {
     if (nonAttendingSessions.length === 0) return;
-    try {
-      setIsSubmitting(true);
-      const sessionIds = nonAttendingSessions.map((s) => s.id);
-      await attendMultipleSessions(sessionIds, 'yes');
-      await fetchSessions(false);
-    } catch (err) {
-      setError(err.message || 'Failed to RSVP to sessions');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-        when: 'beforeChildren',
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.98,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-        ease: [0.4, 0, 0.2, 1],
-      },
-    },
+    const sessionIds = nonAttendingSessions.map((s) => s.id);
+    rsvpToSessions(sessionIds);
   };
 
   if (loading)
@@ -274,6 +58,7 @@ const SessionList = ({ passedData }) => {
         <p>Loading sessions...</p>
       </motion.div>
     );
+
   if (error)
     return (
       <motion.div
@@ -315,122 +100,24 @@ const SessionList = ({ passedData }) => {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={styles.statsBar}
-      >
-        <div className={styles.statItem}>
-          <span className={styles.statIcon}><FcCalendar/></span>
-          <span className={styles.statValue}>{stats.upcomingSessions}</span>
-          <span className={styles.statLabel}>Upcoming</span>
-        </div>
-        <div className={styles.statDivider}></div>
-        <div className={styles.statItem}>
-          <span className={styles.statIcon}><FcCheckmark /></span>
-          <span className={styles.statValue}>{stats.userRSVPs}</span>
-          <span className={styles.statLabel}>Your RSVPs</span>
-        </div>
-        <div className={styles.statDivider}></div>
-        <div className={styles.statItem}>
-          <span className={styles.statIcon}>👥</span>
-          <span className={styles.statValue}>{stats.totalAttendees}</span>
-          <span className={styles.statLabel}>Total Attendees</span>
-        </div>
-      </motion.div>
+      <StatsBar stats={stats} />
 
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className={styles.controlsBar}
-      >
-        <div className={styles.filters}>
-          <button
-            className={`${styles.filterButton} ${
-              filter === 'all' ? styles.active : ''
-            }`}
-            onClick={() => setFilter('all')}
-          >
-            All Sessions
-          </button>
-          <button
-            className={`${styles.filterButton} ${
-              filter === 'today' ? styles.active : ''
-            }`}
-            onClick={() => handleFilterClick('today', 'today')}
-          >
-            Today
-          </button>
-          <button
-            className={`${styles.filterButton} ${
-              filter === 'thisWeek' ? styles.active : ''
-            }`}
-            onClick={() => handleFilterClick('thisWeek', 'this week')}
-          >
-            This Week
-          </button>
-          <button
-            className={`${styles.filterButton} ${
-              filter === 'nextWeek' ? styles.active : ''
-            }`}
-            onClick={() => handleFilterClick('nextWeek', 'next week')}
-          >
-            Next Week
-          </button>
-          <button
-            className={`${styles.filterButton} ${
-              filter === 'thisMonth' ? styles.active : ''
-            }`}
-            onClick={() => handleFilterClick('thisMonth', 'this month')}
-          >
-            This Month
-          </button>
-          <select
-            className={styles.dayFilterSelect}
-            value={dayFilter}
-            onChange={(e) => setDayFilter(e.target.value)}
-          >
-            <option value="all">All Days</option>
-            <option value="Monday">Monday</option>
-            <option value="Tuesday">Tuesday</option>
-            <option value="Wednesday">Wednesday</option>
-            <option value="Thursday">Thursday</option>
-            <option value="Friday">Friday</option>
-            <option value="Saturday">Saturday</option>
-            <option value="Sunday">Sunday</option>
-          </select>
-        </div>
-        {user && (
-          <button
-            className={styles.rsvpAllButton}
-            onClick={() => RSVPToAllUpcomingSessions()}
-            disabled={isSubmitting || nonAttendingSessions.length === 0}
-          >
-            {isSubmitting ? 'RSVPing...' : `RSVP to upcoming sessions ${wordFilter} (${nonAttendingSessions.length})`}
-          </button>
-        )}
-        <div className={styles.sortControls}>
-          <label className={styles.sortLabel}>Sort by:</label>
-          <select
-            className={styles.sortSelect}
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value='date'>Date</option>
-            <option value='attendance'>Attendance</option>
-          </select>
-        </div>
-        {isAdmin && (
-          <button
-            className={styles.addSessionButton}
-            onClick={() => setShowAddSession(true)}
-          >
-            <span className={styles.addIcon}>+</span>
-            <span>Add Session</span>
-          </button>
-        )}
-      </motion.div>
+      <SessionControls
+        filter={filter}
+        onFilterClick={handleFilterClick}
+        onFilterChange={setFilter}
+        dayFilter={dayFilter}
+        onDayFilterChange={setDayFilter}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        user={user}
+        isAdmin={isAdmin}
+        isSubmitting={isSubmitting}
+        wordFilter={wordFilter}
+        nonAttendingCount={nonAttendingSessions.length}
+        onRSVPAll={handleRSVPAll}
+        onAddSession={() => setShowAddSession(true)}
+      />
 
       {showAddSession && (
         <AddSessionModal
@@ -466,7 +153,7 @@ const SessionList = ({ passedData }) => {
           animate='visible'
           key={`sessions-${filteredAndSortedSessions.length}-${filter}-${sortBy}`}
         >
-          {filteredAndSortedSessions.map((session, index) => (
+          {filteredAndSortedSessions.map((session) => (
             <motion.div
               key={session.id}
               variants={cardVariants}
@@ -475,7 +162,7 @@ const SessionList = ({ passedData }) => {
               <SessionCard
                 sessionData={session}
                 onAttendanceUpdate={() => updateSession(session.id)}
-                onDelete={async (sessionId) => {
+                onDelete={async () => {
                   await fetchSessions(false);
                 }}
               />
