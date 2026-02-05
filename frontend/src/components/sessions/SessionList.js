@@ -19,6 +19,7 @@ const SessionList = ({ passedData }) => {
   const [filter, setFilter] = useState('thisWeek');
   const [sortBy, setSortBy] = useState('date');
   const [wordFilter, setWordFilter] = useState('this week')
+  const [dayFilter, setDayFilter] = useState('all')
   const { user } = useAuth();
   // const data = getUpcomingSessions(8);
   const isAdmin = user?.isAdmin || false;
@@ -146,6 +147,10 @@ const SessionList = ({ passedData }) => {
         return sessionDate >= today && sessionDate < nextMonth;
       });
     }
+    if (dayFilter !== 'all') {
+      filtered = filtered.filter((session) => session.dayOfWeek === dayFilter);
+    }
+
     filtered.sort((a, b) => {
       if (sortBy === 'date') {
         return new Date(a.date) - new Date(b.date);
@@ -160,7 +165,7 @@ const SessionList = ({ passedData }) => {
     });
 
     return filtered;
-  }, [sessions, filter, sortBy]);
+  }, [sessions, filter, sortBy, dayFilter]);
 
   const stats = useMemo(() => {
     const filteredSessions = filteredAndSortedSessions;
@@ -381,6 +386,20 @@ const SessionList = ({ passedData }) => {
           >
             This Month
           </button>
+          <select
+            className={styles.dayFilterSelect}
+            value={dayFilter}
+            onChange={(e) => setDayFilter(e.target.value)}
+          >
+            <option value="all">All Days</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
         </div>
         {user && (
           <button

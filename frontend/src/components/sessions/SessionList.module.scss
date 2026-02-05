@@ -146,6 +146,33 @@
     }
   }
 
+  .dayFilterSelect {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+
+    &:hover {
+      border-color: #1f73b7;
+      color: #1f73b7;
+      background: #f8fafc;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(31, 115, 183, 0.1);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #1f73b7;
+      box-shadow: 0 0 0 2px rgba(31, 115, 183, 0.15);
+    }
+  }
+
   .sortControls {
     display: flex;
     align-items: center;
@@ -183,23 +210,22 @@
   }
 
   .rsvpAllButton {
-    padding: 0.625rem 1.25rem;
-    background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
-    color: white;
-    border: none;
+    padding: 0.5rem 1rem;
+    background: white;
+    color: #1f73b7;
+    border: 1.5px solid #1f73b7;
     border-radius: 8px;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(31, 115, 183, 0.15);
     font-family: inherit;
     white-space: nowrap;
 
     &:hover:not(:disabled) {
-      background: linear-gradient(135deg, #1a5f99 0%, #2a6fa0 100%);
+      background: #f0f7ff;
       transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(31, 115, 183, 0.25);
+      box-shadow: 0 2px 6px rgba(31, 115, 183, 0.15);
     }
 
     &:active:not(:disabled) {
@@ -208,7 +234,7 @@
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 2px rgba(31, 115, 183, 0.2);
+      box-shadow: 0 0 0 2px rgba(31, 115, 183, 0.15);
     }
 
     &:disabled {
@@ -227,7 +253,8 @@
     }
 
     .rsvpAllButton {
-      width: 100%;
+      width: auto;
+      align-self: center;
     }
 
     .sortControls {
