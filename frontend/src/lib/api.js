@@ -67,6 +67,24 @@ export async function attendSession(sessionId, status) {
   return response.json();
 }
 
+export async function attendMultipleSessions(sessionIds, status) {
+  const response = await fetch(`${API_BASE_URL}/sessions/rsvp-multiple`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sessionIds, status }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to RSVP to multiple sessions');
+  }
+
+  return response.json();
+}
+
 export async function getSessionById(sessionId) {
   const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}`, {
     method: 'GET',

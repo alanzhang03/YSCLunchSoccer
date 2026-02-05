@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import styles from './SessionList.module.scss';
 import SessionCard from './SessionCard';
 import { getUpcomingSessions } from '@/lib/sessions';
-import { getSessions, createSession } from '@/lib/api';
+import { getSessions, createSession, attendMultipleSessions } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import AddSessionModal from './AddSessionModal';
 import { FcCalendar, FcCheckmark } from "react-icons/fc";
@@ -199,7 +199,11 @@ const SessionList = ({ passedData }) => {
 
     return { totalSessions, upcomingSessions, userRSVPs, totalAttendees };
   }, [filteredAndSortedSessions, user]);
-  // RSVP to all selected sessions:
+
+  const handleFilterClick = (time, words) => {
+    setFilter(time)
+    setWordFilter(words)
+  }
   const filterSessionsAlreadyAttending = () => {
     const nonAttendingSessions = []
     filteredAndSortedSessions.forEach(session => {
@@ -210,12 +214,19 @@ const SessionList = ({ passedData }) => {
     return nonAttendingSessions
   }
   const nonAttendingSessions = filterSessionsAlreadyAttending()
-  console.log(`Non-Attending Sessions: ${nonAttendingSessions}`)
 
-  const handleFilterClick = (time, words) => {
-    setFilter(time)
-    setWordFilter(words)
-
+  const RSVPToAllUpcomingSessions = async () => {
+    if (nonAttendingSessions.length === 0) return;
+    try {
+      setIsSubmitting(true);
+      const sessionIds = nonAttendingSessions.map((s) => s.id);
+      await attendMultipleSessions(sessionIds, 'yes');
+      await fetchSessions(false);
+    } catch (err) {
+      setError(err.message || 'Failed to RSVP to sessions');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const containerVariants = {
@@ -350,7 +361,7 @@ const SessionList = ({ passedData }) => {
             className={`${styles.filterButton} ${
               filter === 'thisWeek' ? styles.active : ''
             }`}
-            onClick={() => handleFilterClick('thisWeek, this week')}
+            onClick={() => handleFilterClick('thisWeek', 'this week')}
           >
             This Week
           </button>
@@ -372,7 +383,13 @@ const SessionList = ({ passedData }) => {
           </button>
         </div>
         {user && (
-          <button onClick={() => RSVPToAllUpcomingSessions()}>RSVP to upcoming sessions {wordFilter} ({nonAttendingSessions.length})</button>
+          <button
+            className={styles.rsvpAllButton}
+            onClick={() => RSVPToAllUpcomingSessions()}
+            disabled={isSubmitting || nonAttendingSessions.length === 0}
+          >
+            {isSubmitting ? 'RSVPing...' : `RSVP to upcoming sessions ${wordFilter} (${nonAttendingSessions.length})`}
+          </button>
         )}
         <div className={styles.sortControls}>
           <label className={styles.sortLabel}>Sort by:</label>

@@ -129,6 +129,67 @@ router.post('/', authenticateUser, async (req, res) => {
   }
 });
 
+router.post('/rsvp-multiple', authenticateUser, async (req, res) => {
+  try {
+    const supabaseUser = req.user;
+
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id},
+    })
+
+    if (!dbUser) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    const { sessionIds, status } = req.body;
+
+    const sessions = await prisma.session.findMany({
+      where: { id: { in: sessionIds } },
+    });
+
+    const attendances = await prisma.$transaction(async (tx) => {
+      const results = [];
+
+      for (const sessionId of sessionIds) {
+        let existing = await tx.attendance.findFirst({
+          where: { sessionId, userId: dbUser.id },
+        });
+
+        if (!existing) {
+          const nullUserAttendance = await tx.attendance.findFirst({
+            where: { sessionId, userId: null },
+          });
+          if (nullUserAttendance) {
+            existing = nullUserAttendance;
+          }
+        }
+
+        let attendance;
+        if (existing) {
+          attendance = await tx.attendance.update({
+            where: { id: existing.id },
+            data: { status, userId: dbUser.id },
+            include: { user: { select: { id: true, name: true, email: true } } },
+          });
+        } else {
+          attendance = await tx.attendance.create({
+            data: { sessionId, userId: dbUser.id, status },
+            include: { user: { select: { id: true, name: true, email: true } } },
+          });
+        }
+
+        results.push(attendance);
+      }
+
+      return results;
+    });
+
+    res.json({ success: true, attendances });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/sessionsByUser', authenticateUser, async (req, res) => {
   try {
     const supabaseUser = req.user;
