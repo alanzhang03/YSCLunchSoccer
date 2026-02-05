@@ -90,7 +90,7 @@ const PaymentsPage = () => {
           >
             <div className={styles.cardIcon}>
               <Image
-                src='/logos/Stripe wordmark - Blurple.svg'
+                src='/logos/stripeWatermark.svg'
                 alt='Stripe'
                 width={60}
                 height={25}
@@ -111,7 +111,7 @@ const PaymentsPage = () => {
             </button>
             <div className={styles.stripeBadge}>
               <Image
-                src='/logos/Powered by Stripe - blurple.svg'
+                src='/logos/poweredByStripe.svg'
                 alt='Powered by Stripe'
                 width={119}
                 height={26}
