@@ -127,7 +127,8 @@
         }
 
         .stripeButton {
-          width: 100%;
+          width: auto;
+          max-width: 280px;
           padding: 1rem 2rem;
           font-size: 1.0625rem;
           font-weight: 600;
@@ -181,7 +182,8 @@
           }
 
           .venmoButton {
-            width: 100%;
+            width: auto;
+            max-width: 280px;
             display: inline-block;
             padding: 1rem 2rem;
             font-size: 1.0625rem;
@@ -265,6 +267,7 @@
           .venmoInfo .venmoButton {
             padding: 0.875rem 1.5rem;
             font-size: 1rem;
+            max-width: 100%;
           }
 
           .venmoInfo .venmoHandle {

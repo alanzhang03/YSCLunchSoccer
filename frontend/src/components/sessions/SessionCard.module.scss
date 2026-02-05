@@ -777,3 +777,15 @@
     }
   }
 }
+
+.calendarButtonWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: .5rem;
+  transition: all 0.4s ease;
+
+  &:hover {
+    transform: scale(1.025);
+  }
+
+}
