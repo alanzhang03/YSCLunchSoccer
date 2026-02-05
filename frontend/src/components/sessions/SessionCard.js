@@ -1,66 +1,148 @@
 'use client';
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './SessionCard.module.scss';
 import Card from '../ui/Card';
 import AttendanceButton from './AttendanceButton';
+import AttendanceSection from './AttendanceSection';
+import PaymentSection from './PaymentSection';
 import {
   attendSession,
   deleteSession,
-  deleteAttendances,
   getSessionPaymentStatus,
   createCheckoutSession,
   getAllSessionPaymentStatuses,
   updateUserPaymentStatus,
 } from '@/lib/api';
 import Link from 'next/link';
-import Image from 'next/image';
-import { DUMMY_USERS } from '@/lib/constants';
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
-// import { useRouter } from "next/router";
+
+const MAX_ATTENDANCE = 45;
+const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
+
+const transformSessionData = (session, yesCount) => {
+  if (!session) return null;
+
+  let sessionDate;
+  if (
+    typeof session.date === 'string' &&
+    session.date.match(/^\d{4}-\d{2}-\d{2}/)
+  ) {
+    const [year, month, day] = session.date.split('T')[0].split('-');
+    sessionDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  } else {
+    sessionDate = new Date(session.date);
+  }
+
+  if (isNaN(sessionDate.getTime())) {
+    console.error('Invalid date for session:', session);
+    return null;
+  }
+
+  const weekday = session.dayOfWeek
+    ? session.dayOfWeek.toUpperCase()
+    : sessionDate
+        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toUpperCase();
+
+  const formattedDate = sessionDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const sessionDateOnly = new Date(
+    sessionDate.getFullYear(),
+    sessionDate.getMonth(),
+    sessionDate.getDate(),
+  );
+
+  const isToday = sessionDateOnly.getTime() === today.getTime();
+  const isTomorrow = sessionDateOnly.getTime() === tomorrow.getTime();
+
+  const daysDiff = Math.ceil(
+    (sessionDateOnly.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  let relativeDate = null;
+  if (isToday) {
+    relativeDate = 'Today';
+  } else if (isTomorrow) {
+    relativeDate = 'Tomorrow';
+  } else if (daysDiff > 0 && daysDiff <= 7) {
+    relativeDate = `In ${daysDiff} ${daysDiff === 1 ? 'day' : 'days'}`;
+  } else if (daysDiff > 7 && daysDiff <= 14) {
+    const weeks = Math.floor(daysDiff / 7);
+    relativeDate = `In ${weeks} ${weeks === 1 ? 'week' : 'weeks'}`;
+  }
+
+  return {
+    date: formattedDate,
+    weekday,
+    time,
+    available: `${yesCount}/${MAX_ATTENDANCE}`,
+    today: isToday,
+    tomorrow: isTomorrow,
+    relativeDate,
+    daysUntil: daysDiff,
+    teamsLocked: session.teamsLocked,
+  };
+};
+
+const getCalendarEventData = (sessionData) => {
+  if (!sessionData?.date || !sessionData?.startTime || !sessionData?.endTime) {
+    return null;
+  }
+
+  const [startHours, startMins] = sessionData.startTime.replace(' AM', '').split(':');
+  const [endHours, endMins] = sessionData.endTime.replace(' PM', '').split(':');
+
+  const formattedStartTime = `${(startHours === '12' ? '00' : startHours.padStart(2, '0'))}:${startMins}`;
+  const formattedEndTime = `${(endHours === '12' ? '12' : (parseInt(endHours) + 12))}:${endMins}`;
+
+  return {
+    name: 'YSC Lunch Soccer',
+    description: 'YSC lunch time soccer session',
+    startDate: sessionData.date.split('T')[0],
+    startTime: formattedStartTime,
+    endTime: formattedEndTime,
+    timeZone: 'America/New_York',
+    location: 'YSC Sports: 24 County Line Rd, Wayne, PA 19087',
+  };
+};
+
+const getStatusMessage = (user, currentStatus) => {
+  if (!user || !currentStatus) return null;
+  const messages = {
+    yes: "You're attending!",
+    no: "You can't make it",
+    maybe: "You're a maybe",
+  };
+  return messages[currentStatus];
+};
 
 const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   const { user } = useAuth();
-  // const router = useRouter();
+  const isAdmin = user?.isAdmin || false;
+
   const [currentStatus, setCurrentStatus] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [yesCount, setYesCount] = useState(0);
   const [optimisticStatus, setOptimisticStatus] = useState(null);
-  const [expandedSections, setExpandedSections] = useState({
-    yes: false,
-    maybe: false,
-    no: false,
-  });
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isRemoveMode, setIsRemoveMode] = useState(false);
-  const [selectedAttendanceIds, setSelectedAttendanceIds] = useState(new Set());
-  const [isDeletingAttendances, setIsDeletingAttendances] = useState(false);
+
   const [hasPaid, setHasPaid] = useState(false);
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [allPaymentStatuses, setAllPaymentStatuses] = useState({});
 
-  const maxAttendance = 45;
-  const isAdmin = user?.isAdmin || false;
-  // main
-  // const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
-
-  // test1
-  // const STRIPE_PRICE_ID = 'price_1SpwqERf4ipOc26aXS2u5tuu';
-  // test2
-  const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
-
-  const toggleSelectAttendance = (attendanceId) => {
-    setSelectedAttendanceIds((prev) => {
-      const next = new Set(prev);
-      next.has(attendanceId)
-        ? next.delete(attendanceId)
-        : next.add(attendanceId);
-      return next;
-    });
-  };
-
+  const [isDeleting, setIsDeleting] = useState(false);
   useEffect(() => {
     if (sessionData?.attendances) {
       const count = sessionData.attendances.filter(
@@ -94,6 +176,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
   }, [sessionData, user, optimisticStatus]);
 
+  // Check payment status on mount
   useEffect(() => {
     const checkPaymentStatus = async () => {
       if (!user || !sessionData?.id) return;
@@ -121,121 +204,19 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     checkPaymentStatus();
   }, [sessionData?.id, user, isAdmin]);
 
-  const handlePayment = async () => {
-    if (!sessionData?.id || isPaymentProcessing) return;
-
-    try {
-      setIsPaymentProcessing(true);
-      const { url } = await createCheckoutSession(
-        STRIPE_PRICE_ID,
-        sessionData.id,
-      );
-      window.location.href = url;
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert(error.message || 'Failed to initiate payment');
-      setIsPaymentProcessing(false);
-    }
-  };
-
-  const transformSessionData = (session) => {
-    if (!session) return null;
-
-    let sessionDate;
-    if (
-      typeof session.date === 'string' &&
-      session.date.match(/^\d{4}-\d{2}-\d{2}/)
-    ) {
-      const [year, month, day] = session.date.split('T')[0].split('-');
-      sessionDate = new Date(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-      );
-    } else {
-      sessionDate = new Date(session.date);
-    }
-
-    if (isNaN(sessionDate.getTime())) {
-      console.error('Invalid date for session:', session);
-      return null;
-    }
-
-    const weekday = session.dayOfWeek
-      ? session.dayOfWeek.toUpperCase()
-      : sessionDate
-          .toLocaleDateString('en-US', {
-            weekday: 'long',
-          })
-          .toUpperCase();
-
-    const formattedDate = sessionDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
-    const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
-
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const sessionDateOnly = new Date(
-      sessionDate.getFullYear(),
-      sessionDate.getMonth(),
-      sessionDate.getDate(),
-    );
-
-    const isToday = sessionDateOnly.getTime() === today.getTime();
-    const isTomorrow = sessionDateOnly.getTime() === tomorrow.getTime();
-
-    const daysDiff = Math.ceil(
-      (sessionDateOnly.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-    );
-
-    let relativeDate = null;
-    if (isToday) {
-      relativeDate = 'Today';
-    } else if (isTomorrow) {
-      relativeDate = 'Tomorrow';
-    } else if (daysDiff > 0 && daysDiff <= 7) {
-      relativeDate = `In ${daysDiff} ${daysDiff === 1 ? 'day' : 'days'}`;
-    } else if (daysDiff > 7 && daysDiff <= 14) {
-      const weeks = Math.floor(daysDiff / 7);
-      relativeDate = `In ${weeks} ${weeks === 1 ? 'week' : 'weeks'}`;
-    }
-
-    return {
-      date: formattedDate,
-      weekday: weekday,
-      time: time,
-      available: `${yesCount}/${maxAttendance}`,
-      today: isToday,
-      tomorrow: isTomorrow,
-      relativeDate: relativeDate,
-      daysUntil: daysDiff,
-      teamsLocked: session.teamsLocked,
-    };
-  };
-
-  const transformedData = transformSessionData(sessionData);
-
   const handleAttendance = async (status) => {
     if (!sessionData || isSubmitting || !user) return;
 
     if (
       status === 'yes' &&
       currentStatus !== 'yes' &&
-      yesCount >= maxAttendance
+      yesCount >= MAX_ATTENDANCE
     ) {
-      alert(`This session is full. Maximum capacity is ${maxAttendance}.`);
+      alert(`This session is full. Maximum capacity is ${MAX_ATTENDANCE}.`);
       return;
     }
 
     setIsSubmitting(true);
-
     const previousStatus = currentStatus;
 
     setOptimisticStatus(status);
@@ -249,11 +230,8 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
 
     try {
       await attendSession(sessionData.id, status);
-
       setTimeout(() => {
-        if (onAttendanceUpdate) {
-          onAttendanceUpdate();
-        }
+        if (onAttendanceUpdate) onAttendanceUpdate();
       }, 100);
     } catch (error) {
       setOptimisticStatus(null);
@@ -269,86 +247,41 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
   };
 
-  if (!transformedData) {
-    return <div>Loading session...</div>;
-  }
+  const handlePayment = async () => {
+    if (!sessionData?.id || isPaymentProcessing) return;
 
-  const getStatusMessage = () => {
-    if (!user) return null;
-    if (!currentStatus) return null;
-
-    const messages = {
-      yes: "You're attending!",
-      no: "You can't make it",
-      maybe: "You're a maybe",
-    };
-    return messages[currentStatus];
-  };
-
-  const statusMessage = getStatusMessage();
-
-  const getAttendanceList = () => {
-    if (!sessionData?.attendances || sessionData.attendances.length === 0) {
-      return null;
+    try {
+      setIsPaymentProcessing(true);
+      const { url } = await createCheckoutSession(STRIPE_PRICE_ID, sessionData.id);
+      window.location.href = url;
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert(error.message || 'Failed to initiate payment');
+      setIsPaymentProcessing(false);
     }
-
-    const yesAttendances = sessionData.attendances.filter(
-      (a) => a.status === 'yes',
-    );
-    const noAttendances = sessionData.attendances.filter(
-      (a) => a.status === 'no',
-    );
-    const maybeAttendances = sessionData.attendances.filter(
-      (a) => a.status === 'maybe',
-    );
-
-    return {
-      yes: yesAttendances,
-      no: noAttendances,
-      maybe: maybeAttendances,
-    };
   };
 
-  const USE_DUMMY_DATA = false;
+  const handleTogglePaymentStatus = async (userId, currentPaymentStatus) => {
+    if (!isAdmin) return;
 
-  const generateDummyAttendances = () => {
-    const dummyYes = DUMMY_USERS.slice(0, 10).map((user, index) => ({
-      id: `dummy-yes-${index + 1}`,
-      userId: user.id,
-      user: user,
-      status: 'yes',
-    }));
+    const newStatus = !currentPaymentStatus;
+    const statusText = newStatus ? 'paid' : 'unpaid';
 
-    const dummyMaybe = DUMMY_USERS.slice(8, 14).map((user, index) => ({
-      id: `dummy-maybe-${index + 1}`,
-      userId: user.id,
-      user: user,
-      status: 'maybe',
-    }));
+    const confirmed = window.confirm(
+      `Are you sure you want to mark this user as ${statusText}?`,
+    );
+    if (!confirmed) return;
 
-    const dummyNo = DUMMY_USERS.slice(12, 18).map((user, index) => ({
-      id: `dummy-no-${index + 1}`,
-      userId: user.id,
-      user: user,
-      status: 'no',
-    }));
-
-    return {
-      yes: dummyYes,
-      maybe: dummyMaybe,
-      no: dummyNo,
-    };
-  };
-
-  const attendanceList = USE_DUMMY_DATA
-    ? generateDummyAttendances()
-    : getAttendanceList();
-
-  const toggleSection = (section) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
+    try {
+      await updateUserPaymentStatus(sessionData.id, userId, newStatus);
+      setAllPaymentStatuses((prev) => ({ ...prev, [userId]: newStatus }));
+      if (onAttendanceUpdate) {
+        setTimeout(() => onAttendanceUpdate(), 100);
+      }
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      alert(error.message || 'Failed to update payment status');
+    }
   };
 
   const handleDelete = async () => {
@@ -357,15 +290,12 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     const confirmed = window.confirm(
       'Are you sure you want to delete this session? This action cannot be undone.',
     );
-
     if (!confirmed) return;
 
     try {
       setIsDeleting(true);
       await deleteSession(sessionData.id);
-      if (onDelete) {
-        onDelete(sessionData.id);
-      }
+      if (onDelete) onDelete(sessionData.id);
     } catch (error) {
       console.error('Error deleting session:', error);
       alert('Failed to delete session. Please try again.');
@@ -374,161 +304,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
     }
   };
 
-  const handleDeleteSelected = async () => {
-    if (!isAdmin || !sessionData?.id || selectedAttendanceIds.size === 0)
-      return;
+  const transformedData = transformSessionData(sessionData, yesCount);
+  const calendarData = getCalendarEventData(sessionData);
+  const statusMessage = getStatusMessage(user, currentStatus);
 
-    const count = selectedAttendanceIds.size;
-    const confirmed = window.confirm(
-      `Are you sure you want to remove ${count} ${
-        count === 1 ? 'attendee' : 'attendees'
-      }? This action cannot be undone.`,
-    );
-
-    if (!confirmed) return;
-
-    try {
-      setIsDeletingAttendances(true);
-      const attendanceIdsArray = Array.from(selectedAttendanceIds);
-      await deleteAttendances(sessionData.id, attendanceIdsArray);
-
-      setSelectedAttendanceIds(new Set());
-      setIsRemoveMode(false);
-
-      if (onAttendanceUpdate) {
-        setTimeout(() => {
-          onAttendanceUpdate();
-        }, 100);
-      }
-    } catch (error) {
-      console.error('Error deleting attendances:', error);
-      alert(error.message || 'Failed to delete attendees. Please try again.');
-    } finally {
-      setIsDeletingAttendances(false);
-    }
-  };
-
-  const handleTogglePaymentStatus = async (userId, currentStatus) => {
-    if (!isAdmin) return;
-
-    const newStatus = !currentStatus;
-    const statusText = newStatus ? 'paid' : 'unpaid';
-
-    const confirmed = window.confirm(
-      `Are you sure you want to mark this user as ${statusText}?`,
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await updateUserPaymentStatus(sessionData.id, userId, newStatus);
-
-      setAllPaymentStatuses((prev) => ({
-        ...prev,
-        [userId]: newStatus,
-      }));
-      if (onAttendanceUpdate) {
-        setTimeout(() => {
-          onAttendanceUpdate();
-        }, 100);
-      }
-    } catch (error) {
-      console.error('Error updating payment status:', error);
-      alert(error.message || 'Failed to update payment status');
-    }
-  };
-
-  const getCalendarEventData = () => {
-    if (!sessionData?.date || !sessionData?.startTime || !sessionData?.endTime) {
-      return null;
-    }
-
-    const [startHours, startMins] = sessionData.startTime.replace(' AM', '').split(':');
-    const [endHours, endMins] = sessionData.endTime.replace(' PM', '').split(':');
-
-    const formattedStartTime = `${(startHours === '12' ? '00' : startHours.padStart(2, '0'))}:${startMins}`;
-    const formattedEndTime = `${(endHours === '12' ? '12' : (parseInt(endHours) + 12))}:${endMins}`;
-
-    return {
-      name: 'YSC Lunch Soccer',
-      description: 'YSC lunch time soccer session',
-      startDate: sessionData.date.split('T')[0],
-      startTime: formattedStartTime,
-      endTime: formattedEndTime,
-      timeZone: 'America/New_York',
-      location: 'YSC Sports: 24 County Line Rd, Wayne, PA 19087',
-    };
-  };
-
-  const calendarData = getCalendarEventData();
-
-  const renderAttendanceList = (attendances, section) => {
-    if (!attendances || attendances.length === 0) return null;
-
-    const shouldTruncate = attendances.length > 3;
-    const isExpanded = expandedSections[section];
-    const displayCount = shouldTruncate && !isExpanded ? 3 : attendances.length;
-    const displayedAttendances = attendances.slice(0, displayCount);
-    const remainingCount = attendances.length - displayCount;
-
-    return (
-      <>
-        {displayedAttendances.map((attendance) => {
-          const userHasPaid = isAdmin && allPaymentStatuses[attendance.userId];
-
-          return (
-            <div
-              key={attendance.id}
-              className={`${styles.attendanceItem} ${
-                isRemoveMode && selectedAttendanceIds.has(attendance.id)
-                  ? styles.selected
-                  : ''
-              } ${isRemoveMode ? styles.clickable : ''}`}
-              onClick={() =>
-                isRemoveMode && toggleSelectAttendance(attendance.id)
-              }
-            >
-              {isRemoveMode && (
-                <input
-                  type='checkbox'
-                  checked={selectedAttendanceIds.has(attendance.id)}
-                  readOnly
-                />
-              )}
-
-              <span className={styles.attendeeName}>
-                {attendance.user?.name ?? `User ${attendance.userId}`}
-              </span>
-              {isAdmin && (
-                <span
-                  className={
-                    userHasPaid ? styles.userPaidBadge : styles.userUnpaidBadge
-                  }
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleTogglePaymentStatus(attendance.userId, userHasPaid);
-                  }}
-                  style={{ cursor: 'pointer' }}
-                  title='Click to toggle payment status'
-                >
-                  {userHasPaid ? 'Paid ✓' : 'Not paid ✗'}
-                </span>
-              )}
-            </div>
-          );
-        })}
-        {shouldTruncate && (
-          <button
-            className={styles.viewMoreButton}
-            onClick={() => toggleSection(section)}
-            type='button'
-          >
-            {isExpanded ? `View Less` : `View More (${remainingCount} more)`}
-          </button>
-        )}
-      </>
-    );
-  };
+  if (!transformedData) {
+    return <div>Loading session...</div>;
+  }
 
   return (
     <Card sessionData={transformedData} sessionId={sessionData.id}>
@@ -557,94 +339,22 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           <span className={styles.arrow}>→</span>
         </Link>
       )}
-      {attendanceList && !transformedData.teamsLocked && (
-        <div className={styles.attendanceList}>
-          <div className={styles.attendeRemoveCont}>
-            <h3 className={styles.attendanceListTitle}>
-              Attendees (
-              {USE_DUMMY_DATA
-                ? attendanceList?.yes.length
-                : attendanceList.yes.length || 0}
-              )
-            </h3>
-            {isAdmin && (
-              <div className={styles.removeControls}>
-                {isRemoveMode && selectedAttendanceIds.size > 0 && (
-                  <button
-                    className={styles.deleteSelectedButton}
-                    onClick={handleDeleteSelected}
-                    disabled={isDeletingAttendances}
-                    type='button'
-                  >
-                    {isDeletingAttendances
-                      ? 'Deleting...'
-                      : `Delete Selected (${selectedAttendanceIds.size})`}
-                  </button>
-                )}
-                <button
-                  className={styles.removeAttendesButton}
-                  onClick={() => {
-                    setIsRemoveMode((prev) => !prev);
-                    setSelectedAttendanceIds(new Set());
-                  }}
-                  type='button'
-                >
-                  {isRemoveMode ? 'Cancel' : 'Remove Attendees'}
-                </button>
-              </div>
-            )}
-          </div>
 
-          {attendanceList.yes.length > 0 && (
-            <div className={styles.attendanceGroup}>
-              <div className={styles.attendanceGroupHeader}>
-                <span className={styles.statusBadgeYes}>
-                  Yes ({attendanceList.yes.length})
-                </span>
-              </div>
-              <div className={styles.attendanceNames}>
-                {renderAttendanceList(attendanceList.yes, 'yes')}
-              </div>
-            </div>
-          )}
-
-          {attendanceList.maybe.length > 0 && (
-            <div className={styles.attendanceGroup}>
-              <div className={styles.attendanceGroupHeader}>
-                <span className={styles.statusBadgeMaybe}>
-                  Maybe ({attendanceList.maybe.length})
-                </span>
-              </div>
-              <div className={styles.attendanceNames}>
-                {renderAttendanceList(attendanceList.maybe, 'maybe')}
-              </div>
-            </div>
-          )}
-
-          {attendanceList.no.length > 0 && (
-            <div className={styles.attendanceGroup}>
-              <div className={styles.attendanceGroupHeader}>
-                <span className={styles.statusBadgeNo}>
-                  Can&apos;t Make It ({attendanceList.no.length})
-                </span>
-              </div>
-              <div className={styles.attendanceNames}>
-                {renderAttendanceList(attendanceList.no, 'no')}
-              </div>
-            </div>
-          )}
-
-          {!USE_DUMMY_DATA && sessionData.attendances?.length === 0 && (
-            <div className={styles.noAttendances}>No RSVPs yet</div>
-          )}
-        </div>
+      {!transformedData.teamsLocked && (
+        <AttendanceSection
+          sessionData={sessionData}
+          isAdmin={isAdmin}
+          allPaymentStatuses={allPaymentStatuses}
+          onTogglePaymentStatus={handleTogglePaymentStatus}
+          onAttendanceUpdate={onAttendanceUpdate}
+        />
       )}
 
       <AttendanceButton
         onSend={handleAttendance}
         currentStatus={currentStatus}
         disabled={isSubmitting || !user}
-        yesDisabled={yesCount >= maxAttendance && currentStatus !== 'yes'}
+        yesDisabled={yesCount >= MAX_ATTENDANCE && currentStatus !== 'yes'}
       />
 
       {!user && (
@@ -654,59 +364,16 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           </a>
         </div>
       )}
+
       {user && (
-        <div className={styles.paymentSection}>
-          {isLoadingPayment ? (
-            <div className={styles.paymentLoading}>
-              Checking payment status...
-            </div>
-          ) : hasPaid ? (
-            <div className={styles.paymentStatus}>
-              <span className={styles.paidBadge}>Paid</span>
-              <span className={styles.paidText}>
-                You have paid for this session
-              </span>
-            </div>
-          ) : (
-            <>
-              <button
-                className={styles.payButton}
-                onClick={handlePayment}
-                disabled={isPaymentProcessing}
-              >
-                {isPaymentProcessing ? (
-                  'Processing...'
-                ) : (
-                  <>
-                    <svg
-                      className={styles.stripeIcon}
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M13.479 9.883c-1.626-.604-2.512-1.067-2.512-1.803 0-.622.511-.977 1.423-.977 1.667 0 3.379.642 4.558 1.22l.666-4.111c-.935-.446-2.847-1.177-5.49-1.177-1.87 0-3.425.489-4.536 1.401-1.155.954-1.757 2.334-1.757 4 0 3.023 1.847 4.312 4.847 5.403 1.936.711 2.512 1.289 2.512 2.067 0 .889-.8 1.378-2.269 1.378-1.867 0-4.047-.867-5.692-1.867l-.711 4.178c1.289.622 3.22 1.489 6.003 1.489 2.025 0 3.58-.511 4.714-1.489 1.178-.978 1.803-2.423 1.803-4.223 0-2.936-1.847-4.356-5.047-5.489z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    Pay for Session
-                  </>
-                )}
-              </button>
-              <div className={styles.stripeBadge}>
-                <Image
-                  src='/logos/poweredByStripe.svg'
-                  alt='Powered by Stripe'
-                  width={120}
-                  height={32}
-                />
-              </div>
-            </>
-          )}
-        </div>
+        <PaymentSection
+          hasPaid={hasPaid}
+          isLoadingPayment={isLoadingPayment}
+          isPaymentProcessing={isPaymentProcessing}
+          onPayment={handlePayment}
+        />
       )}
+
       {calendarData && (
         <div className={styles.calendarButtonWrapper}>
           <AddToCalendarButton
