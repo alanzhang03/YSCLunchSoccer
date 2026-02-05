@@ -695,9 +695,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
                   </>
                 )}
               </button>
-              <span className={styles.notSetUp}>
-                (not set up yet, please use Venmo or cash)
-              </span>
               <div className={styles.stripeBadge}>
                 <Image
                   src='/logos/poweredByStripe.svg'
