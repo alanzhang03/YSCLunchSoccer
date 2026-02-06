@@ -15,7 +15,6 @@ import {
   updateUserPaymentStatus,
 } from '@/lib/api';
 import Link from 'next/link';
-import { AddToCalendarButton } from 'add-to-calendar-button-react';
 
 const MAX_ATTENDANCE = 45;
 const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
@@ -93,28 +92,6 @@ const transformSessionData = (session, yesCount) => {
     relativeDate,
     daysUntil: daysDiff,
     teamsLocked: session.teamsLocked,
-  };
-};
-
-const getCalendarEventData = (sessionData) => {
-  if (!sessionData?.date || !sessionData?.startTime || !sessionData?.endTime) {
-    return null;
-  }
-
-  const [startHours, startMins] = sessionData.startTime.replace(' AM', '').split(':');
-  const [endHours, endMins] = sessionData.endTime.replace(' PM', '').split(':');
-
-  const formattedStartTime = `${(startHours === '12' ? '00' : startHours.padStart(2, '0'))}:${startMins}`;
-  const formattedEndTime = `${(endHours === '12' ? '12' : (parseInt(endHours) + 12))}:${endMins}`;
-
-  return {
-    name: 'YSC Lunch Soccer',
-    description: 'YSC lunch time soccer session',
-    startDate: sessionData.date.split('T')[0],
-    startTime: formattedStartTime,
-    endTime: formattedEndTime,
-    timeZone: 'America/New_York',
-    location: 'YSC Sports: 24 County Line Rd, Wayne, PA 19087',
   };
 };
 
@@ -304,7 +281,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   };
 
   const transformedData = transformSessionData(sessionData, yesCount);
-  const calendarData = getCalendarEventData(sessionData);
   const statusMessage = getStatusMessage(user, currentStatus);
 
   if (!transformedData) {
@@ -312,7 +288,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   }
 
   return (
-    <Card sessionData={transformedData} sessionId={sessionData.id}>
+    <Card sessionData={transformedData} sessionId={sessionData.id} rawSessionData={sessionData}>
       {isAdmin && (
         <button
           className={styles.deleteButton}
@@ -373,23 +349,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         />
       )}
 
-      {calendarData && (
-        <div className={styles.calendarButtonWrapper}>
-          <AddToCalendarButton
-            name={calendarData.name}
-            description={calendarData.description}
-            startDate={calendarData.startDate}
-            startTime={calendarData.startTime}
-            endTime={calendarData.endTime}
-            timeZone={calendarData.timeZone}
-            location={calendarData.location}
-            options={['Apple', 'Google', 'Outlook.com', 'Yahoo']}
-            buttonStyle="round"
-            lightMode="bodyScheme"
-            size='1'
-          />
-        </div>
-      )}
     </Card>
   );
 };
