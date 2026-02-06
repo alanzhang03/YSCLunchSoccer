@@ -156,11 +156,6 @@
       display: flex;
       align-items: center;
       gap: 0.375rem;
-
-      &::before {
-        content: '🕐';
-        font-size: 0.875rem;
-      }
     }
   }
 
