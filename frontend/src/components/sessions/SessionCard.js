@@ -228,7 +228,10 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
 
     try {
       setIsPaymentProcessing(true);
-      const { url } = await createCheckoutSession(STRIPE_PRICE_ID, sessionData.id);
+      const { url } = await createCheckoutSession(
+        STRIPE_PRICE_ID,
+        sessionData.id,
+      );
       window.location.href = url;
     } catch (error) {
       console.error('Payment error:', error);
@@ -288,7 +291,11 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   }
 
   return (
-    <Card sessionData={transformedData} sessionId={sessionData.id} rawSessionData={sessionData}>
+    <Card
+      sessionData={transformedData}
+      sessionId={sessionData.id}
+      rawSessionData={sessionData}
+    >
       {isAdmin && (
         <button
           className={styles.deleteButton}
@@ -340,15 +347,14 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         </div>
       )}
 
-      {user && (
+      {/* {user && (
         <PaymentSection
           hasPaid={hasPaid}
           isLoadingPayment={isLoadingPayment}
           isPaymentProcessing={isPaymentProcessing}
           onPayment={handlePayment}
         />
-      )}
-
+      )} */}
     </Card>
   );
 };
