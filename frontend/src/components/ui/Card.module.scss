@@ -12,7 +12,7 @@
   box-sizing: border-box;
   min-width: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 
   &::before {
     content: '';
