@@ -158,7 +158,7 @@ const TeamDisplay = ({ sessionId }) => {
       return;
     }
     const value = parseInt(e.target.value);
-    if (!isNaN(value) && value >= 2 && value <= 5) {
+    if (!isNaN(value) && value >= 2 && value <= 6) {
       setCustomNumTeams(value);
       setNumOfTeams(value);
     } else if (e.target.value === '') {
@@ -537,10 +537,10 @@ const TeamDisplay = ({ sessionId }) => {
                   onChange={handleNumOfTeamChange}
                   type='number'
                   min='2'
-                  max='5'
+                  max='6'
                   required
                   className={styles.numTeamsInput}
-                  placeholder='2-4'
+                  placeholder='2-6'
                   disabled={teamsLocked}
                   title={
                     teamsLocked

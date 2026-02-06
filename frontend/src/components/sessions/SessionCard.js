@@ -16,7 +16,7 @@ import {
 } from '@/lib/api';
 import Link from 'next/link';
 
-const MAX_ATTENDANCE = 45;
+const MAX_ATTENDANCE = 50;
 const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
 
 const transformSessionData = (session, yesCount) => {
