@@ -22,8 +22,10 @@
     right: 0;
     height: 3px;
     background: linear-gradient(90deg, #1f73b7 0%, #3282b8 100%);
-    opacity: 0;
-    transition: opacity 0.25s ease;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
   }
 
   &::after {
@@ -33,7 +35,11 @@
     left: -100%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at center, rgba(31, 115, 183, 0.03) 0%, transparent 70%);
+    background: radial-gradient(
+      circle at center,
+      rgba(31, 115, 183, 0.03) 0%,
+      transparent 70%
+    );
     opacity: 0;
     transition: opacity 0.25s ease;
     pointer-events: none;
@@ -45,7 +51,7 @@
     border-color: #cbd5e1;
 
     &::before {
-      opacity: 1;
+      transform: scaleX(1);
     }
 
     &::after {
@@ -233,12 +239,11 @@
 }
 
 .calendarButtonWrapper {
-  margin-top: .5rem;
-  margin-bottom: .5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
   transition: all 0.4s ease;
 
   &:hover {
     transform: scale(1.025);
   }
-
 }
