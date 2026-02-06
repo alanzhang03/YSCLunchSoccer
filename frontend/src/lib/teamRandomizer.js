@@ -90,10 +90,14 @@ export function fillTeamsRoundRobin(lockedTeams, newPlayers, numOfTeams) {
     return playerId && !existingPlayerIds.has(playerId);
   });
 
-  playersToAdd.forEach((player, index) => {
-    const teamIndex = index % numOfTeams;
-    teams[teamIndex].push(player);
+  playersToAdd.forEach((player) => {
+    let smallestIndex = 0;
+    for (let i = 1; i < teams.length; i++) {
+      if (teams[i].length < teams[smallestIndex].length) {
+        smallestIndex = i;
+      }
+    }
+    teams[smallestIndex].push(player);
   });
-
   return teams;
 }

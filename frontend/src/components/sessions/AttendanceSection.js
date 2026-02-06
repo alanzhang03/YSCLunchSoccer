@@ -2,8 +2,40 @@
 import { useState } from 'react';
 import styles from './SessionCard.module.scss';
 import { deleteAttendances } from '@/lib/api';
+import { DUMMY_USERS } from '@/lib/constants';
+
+const USE_DUMMY_DATA = false;
+
+const generateDummyAttendances = () => {
+  const dummyYes = DUMMY_USERS.slice(0, 10).map((user, index) => ({
+    id: `dummy-yes-${index + 1}`,
+    userId: user.id,
+    user: user,
+    status: 'yes',
+  }));
+
+  const dummyMaybe = DUMMY_USERS.slice(8, 14).map((user, index) => ({
+    id: `dummy-maybe-${index + 1}`,
+    userId: user.id,
+    user: user,
+    status: 'maybe',
+  }));
+
+  const dummyNo = DUMMY_USERS.slice(12, 18).map((user, index) => ({
+    id: `dummy-no-${index + 1}`,
+    userId: user.id,
+    user: user,
+    status: 'no',
+  }));
+
+  return { yes: dummyYes, maybe: dummyMaybe, no: dummyNo };
+};
 
 const getAttendanceList = (sessionData) => {
+  if (USE_DUMMY_DATA) {
+    return generateDummyAttendances();
+  }
+
   if (!sessionData?.attendances || sessionData.attendances.length === 0) {
     return null;
   }
@@ -153,7 +185,7 @@ const AttendanceSection = ({
   };
 
   if (!attendanceList) {
-    if (sessionData.attendances?.length === 0) {
+    if (!USE_DUMMY_DATA && sessionData.attendances?.length === 0) {
       return (
         <div className={styles.attendanceList}>
           <div className={styles.noAttendances}>No RSVPs yet</div>

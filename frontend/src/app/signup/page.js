@@ -125,8 +125,8 @@ const Page = () => {
                 />
               </div>
               <p className={styles.skillHint}>
-                1 = Beginner, 3 = Casual pickup player, 5 = Solid pickup
-                player, 7 = Strong club-level player, 10 = Elite (former or
+                1 = Beginner, 5 = Casual pickup player, 7 = Solid pickup
+                player, 10 = Elite (former or
                 current semi-pro / pro)
               </p>
             </div>

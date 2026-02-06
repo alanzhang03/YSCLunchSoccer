@@ -68,7 +68,6 @@ export const DUMMY_ATTENDEES = [
 ];
 
 export const DUMMY_USERS = [
-  { id: 1, name: 'Peepee' },
   { id: 2, name: 'Sarah Johnson' },
   { id: 3, name: 'Michael Chen' },
   { id: 4, name: 'Emily Rodriguez' },
