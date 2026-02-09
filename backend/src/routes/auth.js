@@ -646,4 +646,107 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+router.put('/update-profile', async (req, res) => {
+  try {
+    const token = req.cookies?.sb_access_token;
+
+    if (!token) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const {
+      data: { user: supabaseUser },
+      error: authError,
+    } = await supabaseAdmin.auth.getUser(token);
+
+    if (authError || !supabaseUser) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+
+    const { name, email, phone, skill } = req.body;
+
+    if (!name || !email || !phone) {
+      return res
+        .status(400)
+        .json({ error: 'Name, email, and phone are required' });
+    }
+
+    const skillNumber =
+      skill !== undefined && skill !== null && skill !== ''
+        ? parseInt(skill, 10)
+        : undefined;
+
+    if (
+      skillNumber !== undefined &&
+      (isNaN(skillNumber) || skillNumber < 1 || skillNumber > 10)
+    ) {
+      return res
+        .status(400)
+        .json({ error: 'Skill level must be between 1 and 10' });
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: { supabaseUserId: supabaseUser.id },
+    });
+
+    if (!currentUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (email !== currentUser.email) {
+      const emailExists = await prisma.user.findUnique({ where: { email } });
+      if (emailExists) {
+        return res.status(409).json({ error: 'Email is already in use' });
+      }
+    }
+
+    if (phone !== currentUser.phone) {
+      const phoneExists = await prisma.user.findUnique({ where: { phone } });
+      if (phoneExists) {
+        return res
+          .status(409)
+          .json({ error: 'Phone number is already in use' });
+      }
+    }
+
+    if (email !== currentUser.email) {
+      const { error: updateError } =
+        await supabaseAdmin.auth.admin.updateUserById(supabaseUser.id, {
+          email,
+        });
+      if (updateError) {
+        return res.status(400).json({ error: 'Failed to update email' });
+      }
+    }
+
+    const updateData = { name, email, phone };
+    if (skillNumber !== undefined) {
+      updateData.skill = skillNumber;
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: currentUser.id },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        name: true,
+        skill: true,
+        isAdmin: true,
+        createdAt: true,
+      },
+    });
+
+    return res.json({ user: updatedUser });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+});
+
 export default router;
