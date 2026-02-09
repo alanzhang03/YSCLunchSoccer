@@ -74,6 +74,13 @@ const Navbar = () => {
               <span className={styles.mobileUserName}>
                 Welcome, {user.name}!
               </span>
+              <Link
+                href='/my-profile'
+                className={styles.mobileViewProfile}
+                onClick={() => setIsMobileNavOpen(false)}
+              >
+                View Profile
+              </Link>
               <button
                 onClick={() => {
                   handleLogout();
@@ -154,6 +161,9 @@ const Navbar = () => {
           ) : user ? (
             <>
               <span className={styles.userName}>Welcome, {user.name}!</span>
+              <Link href='/my-profile' className={styles.viewProfileLink}>
+                View Profile
+              </Link>
               <button onClick={handleLogout} className={styles.logoutButton}>
                 Log Out
               </button>

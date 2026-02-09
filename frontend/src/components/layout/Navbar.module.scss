@@ -18,7 +18,7 @@
   }
 
   .inner {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 1rem 1.5rem;
     display: flex;
@@ -37,7 +37,9 @@
     background: rgba(0, 0, 0, 0.4);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
     z-index: 999;
 
     &.open {
@@ -150,6 +152,17 @@
       &:hover {
         background: rgba(220, 38, 38, 0.08);
         color: #dc2626;
+      }
+    }
+
+    .mobileViewProfile {
+      color: #1f73b7;
+      border: 1px solid rgba(31, 115, 183, 0.2);
+      background: transparent;
+
+      &:hover {
+        background: rgba(31, 115, 183, 0.08);
+        border-color: rgba(31, 115, 183, 0.3);
       }
     }
   }
@@ -333,6 +346,27 @@
       &:hover {
         background-color: rgba(220, 38, 38, 0.06);
         border-color: rgba(220, 38, 38, 0.3);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+
+    .viewProfileLink {
+      font-size: 0.9375rem;
+      color: #1f73b7;
+      text-decoration: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid rgba(31, 115, 183, 0.2);
+      background-color: transparent;
+      transition: all 0.2s ease;
+      font-weight: 500;
+
+      &:hover {
+        background-color: rgba(31, 115, 183, 0.06);
+        border-color: rgba(31, 115, 183, 0.3);
       }
 
       &:active {

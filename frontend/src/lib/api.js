@@ -352,3 +352,21 @@ export async function sendEmail({ name, email, message }) {
 
   return response.json();
 }
+
+export async function adjustPersonalInfo({ name, email, phone, skill }) {
+  const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name, email, phone, skill }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to update profile info');
+  }
+
+  return response.json();
+}
