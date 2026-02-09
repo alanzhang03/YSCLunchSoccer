@@ -296,17 +296,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       sessionId={sessionData.id}
       rawSessionData={sessionData}
     >
-      {isAdmin && (
-        <button
-          className={styles.deleteButton}
-          onClick={handleDelete}
-          disabled={isDeleting}
-          type='button'
-          title='Delete session'
-        >
-          {isDeleting ? 'Deleting...' : '🗑️'}
-        </button>
-      )}
       {statusMessage && (
         <div className={styles.statusIndicator}>
           <span className={styles.statusText}>{statusMessage}</span>
@@ -355,6 +344,18 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           onPayment={handlePayment}
         />
       )} */}
+
+      {isAdmin && (
+        <button
+          className={styles.deleteButton}
+          onClick={handleDelete}
+          disabled={isDeleting}
+          type='button'
+          title='Delete session'
+        >
+          {isDeleting ? 'Deleting...' : '🗑️'}
+        </button>
+      )}
     </Card>
   );
 };

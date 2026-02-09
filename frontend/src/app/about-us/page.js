@@ -162,7 +162,7 @@ const AboutUsPage = () => {
             <span className={styles.statLabel}>Sessions</span>
           </div>
           <div className={styles.stat}>
-            <span className={styles.statValue}>50+</span>
+            <span className={styles.statValue}>100+</span>
             <span className={styles.statLabel}>Players</span>
           </div>
           <div className={styles.stat}>
