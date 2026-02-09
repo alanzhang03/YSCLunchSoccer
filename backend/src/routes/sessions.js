@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
                 id: true,
                 name: true,
                 email: true,
+                skill: true,
               },
             },
           },
@@ -116,6 +117,7 @@ router.post('/', authenticateUser, async (req, res) => {
                 id: true,
                 name: true,
                 email: true,
+                skill: true,
               },
             },
           },
@@ -169,12 +171,12 @@ router.post('/rsvp-multiple', authenticateUser, async (req, res) => {
           attendance = await tx.attendance.update({
             where: { id: existing.id },
             data: { status, userId: dbUser.id },
-            include: { user: { select: { id: true, name: true, email: true } } },
+            include: { user: { select: { id: true, name: true, email: true, skill: true } } },
           });
         } else {
           attendance = await tx.attendance.create({
             data: { sessionId, userId: dbUser.id, status },
-            include: { user: { select: { id: true, name: true, email: true } } },
+            include: { user: { select: { id: true, name: true, email: true, skill: true } } },
           });
         }
 
@@ -228,6 +230,7 @@ router.get('/sessionsByUser', authenticateUser, async (req, res) => {
                 id: true,
                 name: true,
                 email: true,
+                skill: true,
               },
             },
           },
@@ -372,6 +375,7 @@ router.get('/:id', async (req, res) => {
                 id: true,
                 name: true,
                 email: true,
+                skill: true,
               },
             },
           },

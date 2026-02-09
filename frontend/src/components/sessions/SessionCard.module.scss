@@ -288,6 +288,24 @@
 
         .attendeeName {
           flex: 1;
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+        }
+
+        .skillBadge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: #e0e7ff;
+          color: #4338ca;
+          border: 1px solid #c7d2fe;
+          border-radius: 4px;
+          font-size: 0.5625rem;
+          font-weight: 700;
+          padding: 0.0625rem 0.25rem;
+          min-width: 1.125rem;
+          text-align: center;
         }
 
         .userPaidBadge,

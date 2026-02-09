@@ -152,6 +152,11 @@ const AttendanceSection = ({
 
               <span className={styles.attendeeName}>
                 {attendance.user?.name ?? `User ${attendance.userId}`}
+                {isAdmin && attendance.user?.skill != null && (
+                  <span className={styles.skillBadge}>
+                    {attendance.user.skill}
+                  </span>
+                )}
               </span>
               {isAdmin && (
                 <span
