@@ -2,6 +2,13 @@ import React from 'react';
 import { useState } from 'react';
 import styles from './AddSessionModal.module.scss';
 
+const formatTimeTo12Hour = (time24) => {
+  const [hours, minutes] = time24.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+};
+
 const FIELDS = [
   { name: 'date', label: 'Date', type: 'date' },
   { name: 'dayOfWeek', label: 'Day of the Week', type: 'text' },
@@ -29,7 +36,11 @@ const AddSessionModal = ({ retrieveNewSession, onClose, isSubmitting }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await retrieveNewSession(formData);
+      await retrieveNewSession({
+        ...formData,
+        startTime: formatTimeTo12Hour(formData.startTime),
+        endTime: formatTimeTo12Hour(formData.endTime),
+      });
       setFormData({
         date: '',
         dayOfWeek: '',
