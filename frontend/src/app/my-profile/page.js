@@ -156,6 +156,7 @@ const MyProfilePage = () => {
                 <span className={styles.value}>{user.phone}</span>
               )}
             </div>
+            {/*
             <div className={styles.infoItem}>
               <span className={styles.label}>Skill Level</span>
               {isEditing ? (
@@ -176,6 +177,7 @@ const MyProfilePage = () => {
                 <span className={styles.value}>{user.skill} / 10</span>
               )}
             </div>
+            */}
             {isEditing && (
               <button className={styles.saveButton} onClick={saveInfo}>
                 Save Info
