@@ -370,3 +370,38 @@ export async function adjustPersonalInfo({ name, email, phone, skill }) {
 
   return response.json();
 }
+
+export async function fetchAllUsers() {
+  const response = await fetch(`${API_BASE_URL}/admin/users`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to fetch users');
+  }
+
+  return response.json();
+}
+
+export async function updateUser(userId, data) {
+  const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to update user');
+  }
+
+  return response.json();
+}
