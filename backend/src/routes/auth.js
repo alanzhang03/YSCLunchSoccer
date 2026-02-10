@@ -364,6 +364,7 @@ router.post('/login', async (req, res) => {
       phone: user.phone,
       name: user.name,
       skill: user.skill,
+      isAdmin: user.isAdmin,
       createdAt: user.createdAt,
     };
 

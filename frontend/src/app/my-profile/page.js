@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import styles from './my-profile.module.scss';
 import { adjustPersonalInfo } from '@/lib/api';
+import Link from 'next/link';
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -155,6 +157,12 @@ const MyProfilePage = () => {
               ) : (
                 <span className={styles.value}>{user.phone}</span>
               )}
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.label}>Password</span>
+              <Link href="/reset-password" className={styles.resetPasswordLink}>
+                Reset Password
+              </Link>
             </div>
             {/*
             <div className={styles.infoItem}>
