@@ -11,6 +11,8 @@ import {
 } from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
 import { randomizeTeams, fillTeamsRoundRobin } from '@/lib/teamRandomizer';
+
+const USE_DUMMY_DATA = false;
 import {
   DndContext,
   closestCenter,
@@ -59,8 +61,13 @@ const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
       {...attributes}
       {...listeners}
     >
-      <span className={styles.playerName}>
-        {player.user?.name || player.name}
+      <span className={styles.playerInfo}>
+        <span className={styles.playerName}>
+          {player.user?.name || player.name}
+        </span>
+        {player.user?.skill != null && (
+          <span className={styles.skillBadge}>{player.user.skill}</span>
+        )}
       </span>
       {isAdmin && teamsLocked && <span className={styles.dragHandle}>⋮⋮</span>}
     </li>
@@ -196,9 +203,11 @@ const TeamDisplay = ({ sessionId }) => {
     }
   }, [sessionId]);
 
-  const allAttendances = attendes
-    ? [...attendes, ...DUMMY_ATTENDEES]
-    : DUMMY_ATTENDEES;
+  const allAttendances = USE_DUMMY_DATA
+    ? attendes
+      ? [...attendes, ...DUMMY_ATTENDEES]
+      : DUMMY_ATTENDEES
+    : attendes || [];
 
   const yesAttendances = allAttendances?.filter(
     (attendes) => attendes.status === 'yes'
