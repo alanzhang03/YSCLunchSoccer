@@ -4,14 +4,16 @@ import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './Navbar.module.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+  const isAdmin = user?.isAdmin;
   const handleLogout = async () => {
     try {
       await logout();
@@ -30,6 +32,16 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -81,6 +93,15 @@ const Navbar = () => {
               >
                 View Profile
               </Link>
+              {isAdmin && (
+                <Link
+                  href='/admin-page'
+                  className={styles.mobileViewProfile}
+                  onClick={() => setIsMobileNavOpen(false)}
+                >
+                  Admin page
+                </Link>
+              )}
               <button
                 onClick={() => {
                   handleLogout();
@@ -159,15 +180,59 @@ const Navbar = () => {
           {loading ? (
             <span className={styles.loading}>Loading...</span>
           ) : user ? (
-            <>
-              <span className={styles.userName}>Welcome, {user.name}!</span>
-              <Link href='/my-profile' className={styles.viewProfileLink}>
-                View Profile
-              </Link>
-              <button onClick={handleLogout} className={styles.logoutButton}>
-                Log Out
+            <div className={styles.profileWrapper} ref={profileRef}>
+              <button
+                className={styles.profileTrigger}
+                onClick={() => setIsProfileOpen((prev) => !prev)}
+              >
+                {user.name}
+                <svg
+                  className={`${styles.chevron} ${isProfileOpen ? styles.open : ''}`}
+                  width='12'
+                  height='12'
+                  viewBox='0 0 12 12'
+                  fill='none'
+                >
+                  <path
+                    d='M3 4.5L6 7.5L9 4.5'
+                    stroke='currentColor'
+                    strokeWidth='1.5'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                  />
+                </svg>
               </button>
-            </>
+              {isProfileOpen && (
+                <div className={styles.profileDropdown}>
+                  <Link
+                    href='/my-profile'
+                    className={styles.dropdownLink}
+                    onClick={() => setIsProfileOpen(false)}
+                  >
+                    View Profile
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      href='/admin-page'
+                      className={styles.dropdownLink}
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      Admin Page
+                    </Link>
+                  )}
+                  <div className={styles.dropdownDivider} />
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsProfileOpen(false);
+                    }}
+                    className={styles.dropdownLogout}
+                  >
+                    Log Out
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <Link href='/login' className={styles.loginLink}>
