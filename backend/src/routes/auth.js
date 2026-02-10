@@ -585,7 +585,7 @@ router.post('/reset-password', async (req, res) => {
     }
 
     const jwtSecret =
-      process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+      process.env.JWT_SECRET
     let decoded;
     try {
       decoded = jwt.verify(token, jwtSecret);
