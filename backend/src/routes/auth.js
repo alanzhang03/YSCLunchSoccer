@@ -441,6 +441,8 @@ router.get('/me', async (req, res) => {
         name: true,
         skill: true,
         isAdmin: true,
+        wedGroup: true,
+        ogGroup: true,
         createdAt: true,
       },
     });
@@ -585,8 +587,7 @@ router.post('/reset-password', async (req, res) => {
       });
     }
 
-    const jwtSecret =
-      process.env.JWT_SECRET
+    const jwtSecret = process.env.JWT_SECRET;
     let decoded;
     try {
       decoded = jwt.verify(token, jwtSecret);

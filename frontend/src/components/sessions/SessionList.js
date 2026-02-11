@@ -146,6 +146,13 @@ const SessionList = () => {
   const filteredAndSortedSessions = useMemo(() => {
     let filtered = [...sessions];
 
+    const canSeeWednesday = user?.isAdmin || user?.wedGroup || false;
+    if (!canSeeWednesday) {
+      filtered = filtered.filter(
+        (session) => session.dayOfWeek !== 'Wednesday',
+      );
+    }
+
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const nextWeek = new Date(today);
