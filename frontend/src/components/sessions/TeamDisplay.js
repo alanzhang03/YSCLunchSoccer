@@ -65,9 +65,9 @@ const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
         <span className={styles.playerName}>
           {player.user?.name || player.name}
         </span>
-        {player.user?.skill != null && (
+        {/*player.user?.skill != null && (
           <span className={styles.skillBadge}>{player.user.skill}</span>
-        )}
+        )*/}
       </span>
       {isAdmin && teamsLocked && <span className={styles.dragHandle}>⋮⋮</span>}
     </li>
@@ -155,7 +155,7 @@ const TeamDisplay = ({ sessionId }) => {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   // const attendancesArray = getSessionAttendances(sessionId);
@@ -210,7 +210,7 @@ const TeamDisplay = ({ sessionId }) => {
     : attendes || [];
 
   const yesAttendances = allAttendances?.filter(
-    (attendes) => attendes.status === 'yes'
+    (attendes) => attendes.status === 'yes',
   );
 
   const showTeamsSection = async () => {
@@ -235,7 +235,7 @@ const TeamDisplay = ({ sessionId }) => {
             team.map((player) => ({
               userId: player.user?.id || player.userId,
               attendanceId: player.id,
-            }))
+            })),
           ),
           numOfTeams: numOfTeams,
           lockedAt: new Date().toISOString(),
@@ -293,7 +293,7 @@ const TeamDisplay = ({ sessionId }) => {
             const key = lockedPlayer.userId || lockedPlayer.attendanceId;
             return attendanceMap.get(key);
           })
-          .filter(Boolean)
+          .filter(Boolean),
       );
 
       const lockedPlayerIds = new Set();
@@ -314,7 +314,7 @@ const TeamDisplay = ({ sessionId }) => {
       const teams = fillTeamsRoundRobin(
         reconstructedTeams,
         newPlayers,
-        numTeams
+        numTeams,
       );
       setTeamsArray(teams);
     } else {
@@ -351,7 +351,7 @@ const TeamDisplay = ({ sessionId }) => {
             team.map((player) => ({
               userId: player.user?.id || player.userId,
               attendanceId: player.id,
-            }))
+            })),
           ),
           numOfTeams: numTeams,
           lockedAt: new Date().toISOString(),
@@ -421,7 +421,7 @@ const TeamDisplay = ({ sessionId }) => {
       const targetPlayerId = overPlayerMatch[1];
       for (let i = 0; i < teamsArray.length; i++) {
         const found = teamsArray[i].some(
-          (p) => String(p.id) === String(targetPlayerId)
+          (p) => String(p.id) === String(targetPlayerId),
         );
         if (found) {
           targetTeamIndex = i;
@@ -438,7 +438,7 @@ const TeamDisplay = ({ sessionId }) => {
       if (overPlayerMatch && overPlayerMatch[1] !== playerId) {
         const targetPlayerId = overPlayerMatch[1];
         const targetIndex = team.findIndex(
-          (p) => String(p.id) === String(targetPlayerId)
+          (p) => String(p.id) === String(targetPlayerId),
         );
         if (targetIndex !== -1) {
           team.splice(targetIndex, 0, removed);
@@ -460,7 +460,7 @@ const TeamDisplay = ({ sessionId }) => {
               team.map((p) => ({
                 userId: p.user?.id || p.userId,
                 attendanceId: p.id,
-              }))
+              })),
             ),
             numOfTeams: numOfTeams,
             lockedAt: new Date().toISOString(),
@@ -494,7 +494,7 @@ const TeamDisplay = ({ sessionId }) => {
             team.map((p) => ({
               userId: p.user?.id || p.userId,
               attendanceId: p.id,
-            }))
+            })),
           ),
           numOfTeams: numOfTeams,
           lockedAt: new Date().toISOString(),
