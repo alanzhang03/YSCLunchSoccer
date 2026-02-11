@@ -1,13 +1,28 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
 import { authenticateUser } from '../middleware/auth.js';
+import { supabaseAdmin } from '../lib/supabase.js';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
   try {
+    let dbUser = null;
+    const token = req.cookies?.sb_access_token;
+    if (token) {
+      const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+      if (!error && user) {
+        dbUser = await prisma.user.findUnique({
+          where: { supabaseUserId: user.id },
+        });
+      }
+    }
+
+    const canSeeWednesday = dbUser?.isAdmin || dbUser?.wedGroup || false;
+
     const sessions = await prisma.session.findMany({
       orderBy: { date: 'asc' },
+      where: canSeeWednesday ? {} : { dayOfWeek: { not: 'Wednesday' } },
       include: {
         attendances: {
           where: {

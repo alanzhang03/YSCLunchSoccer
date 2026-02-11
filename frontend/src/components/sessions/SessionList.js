@@ -102,7 +102,7 @@ const SessionList = () => {
             return updated || session;
           }
           return session;
-        })
+        }),
       );
     } catch (err) {}
   };
@@ -159,7 +159,7 @@ const SessionList = () => {
         const sessionDateOnly = new Date(
           sessionDate.getFullYear(),
           sessionDate.getMonth(),
-          sessionDate.getDate()
+          sessionDate.getDate(),
         );
         return sessionDateOnly.getTime() === today.getTime();
       });
@@ -212,7 +212,7 @@ const SessionList = () => {
     const userRSVPs = filteredAndSortedSessions.filter((s) => {
       if (!user?.id || !s.attendances) return false;
       return s.attendances.some(
-        (a) => a.userId === user.id && a.status === 'yes'
+        (a) => a.userId === user.id && a.status === 'yes',
       );
     }).length;
 
@@ -233,7 +233,9 @@ const SessionList = () => {
   const nonAttendingSessions = useMemo(() => {
     return filteredAndSortedSessions.filter(
       (session) =>
-        !session.attendances.some((attendance) => attendance.userId === user?.id)
+        !session.attendances.some(
+          (attendance) => attendance.userId === user?.id,
+        ),
     );
   }, [filteredAndSortedSessions, user?.id]);
 
