@@ -1,17 +1,28 @@
 import styles from './Card.module.scss';
 import Link from 'next/link';
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
+import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { updateSessionTime } from '@/lib/api';
 
 const getCalendarEventData = (rawSessionData) => {
-  if (!rawSessionData?.date || !rawSessionData?.startTime || !rawSessionData?.endTime) {
+  if (
+    !rawSessionData?.date ||
+    !rawSessionData?.startTime ||
+    !rawSessionData?.endTime
+  ) {
     return null;
   }
 
-  const [startHours, startMins] = rawSessionData.startTime.replace(' AM', '').split(':');
-  const [endHours, endMins] = rawSessionData.endTime.replace(' PM', '').split(':');
+  const [startHours, startMins] = rawSessionData.startTime
+    .replace(' AM', '')
+    .split(':');
+  const [endHours, endMins] = rawSessionData.endTime
+    .replace(' PM', '')
+    .split(':');
 
-  const formattedStartTime = `${(startHours === '12' ? '00' : startHours.padStart(2, '0'))}:${startMins}`;
-  const formattedEndTime = `${(endHours === '12' ? '12' : (parseInt(endHours) + 12))}:${endMins}`;
+  const formattedStartTime = `${startHours === '12' ? '00' : startHours.padStart(2, '0')}:${startMins}`;
+  const formattedEndTime = `${endHours === '12' ? '12' : parseInt(endHours) + 12}:${endMins}`;
 
   return {
     name: 'YSC Lunch Soccer',
@@ -24,8 +35,29 @@ const getCalendarEventData = (rawSessionData) => {
   };
 };
 
+const to24Hour = (time12) => {
+  const [timePart, period] = time12.split(' ');
+  let [hours, mins] = timePart.split(':');
+  hours = parseInt(hours);
+  if (period === 'AM' && hours === 12) hours = 0;
+  else if (period === 'PM' && hours !== 12) hours += 12;
+  return `${String(hours).padStart(2, '0')}:${mins}`;
+};
 
-export default function Card({ sessionData, children, sessionId, rawSessionData }) {
+const to12Hour = (time24) => {
+  const [hours, mins] = time24.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${String(mins).padStart(2, '0')} ${period}`;
+};
+
+export default function Card({
+  sessionData,
+  children,
+  sessionId,
+  rawSessionData,
+  onTimeUpdate,
+}) {
   const date = sessionData.date;
   const weekday = sessionData.weekday;
   const time = sessionData.time;
@@ -34,7 +66,38 @@ export default function Card({ sessionData, children, sessionId, rawSessionData 
   const tomorrow = sessionData.tomorrow;
   const relativeDate = sessionData.relativeDate;
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [startTime, setStartTime] = useState(() =>
+    rawSessionData?.startTime ? to24Hour(rawSessionData.startTime) : '',
+  );
+  const [endTime, setEndTime] = useState(() =>
+    rawSessionData?.endTime ? to24Hour(rawSessionData.endTime) : '',
+  );
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin;
+
   const calendarData = getCalendarEventData(rawSessionData);
+
+  const handleCancel = () => {
+    setStartTime(rawSessionData?.startTime ? to24Hour(rawSessionData.startTime) : '');
+    setEndTime(rawSessionData?.endTime ? to24Hour(rawSessionData.endTime) : '');
+    setIsEditing(false);
+  };
+
+  const handleSave = async () => {
+    if (!startTime || !endTime) return;
+    setIsSaving(true);
+    try {
+      await updateSessionTime(sessionId, to12Hour(startTime), to12Hour(endTime));
+      setIsEditing(false);
+      if (onTimeUpdate) onTimeUpdate();
+    } catch (error) {
+      alert('Failed to update time. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className={styles.card}>
@@ -46,8 +109,8 @@ export default function Card({ sessionData, children, sessionId, rawSessionData 
                 today
                   ? styles.today
                   : tomorrow
-                  ? styles.tomorrow
-                  : styles.upcoming
+                    ? styles.tomorrow
+                    : styles.upcoming
               }`}
             >
               {today ? 'Today' : tomorrow ? 'Tomorrow' : relativeDate}
@@ -55,7 +118,45 @@ export default function Card({ sessionData, children, sessionId, rawSessionData 
           )}
           <div className={styles.weekday}>{weekday}</div>
           <div className={styles.date}>{date}</div>
-          <div className={styles.time}>{time}</div>
+          {isEditing ? (
+            <div className={styles.editTimeForm}>
+              <div className={styles.timeInputs}>
+                <input
+                  type='time'
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  disabled={isSaving}
+                />
+                <span>-</span>
+                <input
+                  type='time'
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  disabled={isSaving}
+                />
+              </div>
+              <div className={styles.editTimeActions}>
+                <button onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? 'Saving...' : 'Save'}
+                </button>
+                <button onClick={handleCancel} disabled={isSaving}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.timeContainer}>
+              <div className={styles.time}>{time}</div>
+              {isAdmin && (
+                <button
+                  className={styles.editTimeButton}
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Time
+                </button>
+              )}
+            </div>
+          )}
         </div>
         <div className={styles.availBubble}>{available}</div>
       </div>
@@ -71,8 +172,8 @@ export default function Card({ sessionData, children, sessionId, rawSessionData 
             timeZone={calendarData.timeZone}
             location={calendarData.location}
             options={['Apple', 'Google', 'Outlook.com', 'Yahoo']}
-            buttonStyle="round"
-            lightMode="bodyScheme"
+            buttonStyle='round'
+            lightMode='bodyScheme'
             size='1'
             hideBackground
             forceOverlay

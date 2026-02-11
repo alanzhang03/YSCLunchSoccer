@@ -295,6 +295,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       sessionData={transformedData}
       sessionId={sessionData.id}
       rawSessionData={sessionData}
+      onTimeUpdate={onAttendanceUpdate}
     >
       {statusMessage && (
         <div className={styles.statusIndicator}>
