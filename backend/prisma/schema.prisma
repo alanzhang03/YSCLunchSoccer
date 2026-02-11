@@ -24,6 +24,7 @@ model User {
   skill          Int      @default(5)
   isAdmin        Boolean  @default(false)
   wedGroup       Boolean  @default(false)
+  ogGroup        Boolean  @default(false)
   createdAt      DateTime @default(now())
 
   attendances Attendance[]
