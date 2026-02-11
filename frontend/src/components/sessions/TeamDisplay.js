@@ -65,7 +65,7 @@ const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
         <span className={styles.playerName}>
           {player.user?.name || player.name}
         </span>
-        {player.user?.skill != null && (
+        {isAdmin && player.user?.skill != null && (
           <span className={styles.skillBadge}>{player.user.skill}</span>
         )}
       </span>
