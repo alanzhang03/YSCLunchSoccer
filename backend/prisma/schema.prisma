@@ -23,6 +23,7 @@ model User {
   password       String?
   skill          Int      @default(5)
   isAdmin        Boolean  @default(false)
+  wedGroup       Boolean  @default(false)
   createdAt      DateTime @default(now())
 
   attendances Attendance[]
