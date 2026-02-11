@@ -128,7 +128,7 @@ const SessionList = () => {
     if (loading) return;
     const interval = setInterval(() => {
       fetchSessions(false);
-    }, 10000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [loading, fetchSessions]);
 
