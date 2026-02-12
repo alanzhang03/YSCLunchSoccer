@@ -155,10 +155,20 @@ const SessionList = () => {
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const nextWeek = new Date(today);
-    nextWeek.setDate(nextWeek.getDate() + 7);
-    const nextMonth = new Date(today);
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+
+    const dayOfWeek = today.getDay(); 
+    const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+    const thisWeekEnd = new Date(today);
+    thisWeekEnd.setDate(thisWeekEnd.getDate() + daysUntilMonday);
+
+
+    const nextWeekStart = new Date(thisWeekEnd);
+    const nextWeekEnd = new Date(nextWeekStart);
+    nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
+
+
+    const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
 
     if (filter === 'today') {
       filtered = filtered.filter((session) => {
@@ -173,17 +183,17 @@ const SessionList = () => {
     } else if (filter === 'thisWeek') {
       filtered = filtered.filter((session) => {
         const sessionDate = parseSessionDate(session);
-        return sessionDate >= today && sessionDate < nextWeek;
+        return sessionDate >= today && sessionDate < thisWeekEnd;
       });
     } else if (filter === 'nextWeek') {
       filtered = filtered.filter((session) => {
         const sessionDate = parseSessionDate(session);
-        return sessionDate >= nextWeek && sessionDate < nextMonth;
+        return sessionDate >= nextWeekStart && sessionDate < nextWeekEnd;
       });
     } else if (filter === 'thisMonth') {
       filtered = filtered.filter((session) => {
         const sessionDate = parseSessionDate(session);
-        return sessionDate >= today && sessionDate < nextMonth;
+        return sessionDate >= today && sessionDate < thisMonthEnd;
       });
     }
 
