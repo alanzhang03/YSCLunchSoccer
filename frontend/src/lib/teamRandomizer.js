@@ -30,11 +30,11 @@ export function randomizeTeams(players, numOfTeams) {
 
     if (skillLevel >= 8) {
       tiers.tier5.push(currPlayer);
-    } else if (skillLevel >= 6 && skillLevel < 8) {
+    } else if (skillLevel == 7) {
       tiers.tier4.push(currPlayer);
-    } else if (skillLevel >= 4 && skillLevel < 6) {
+    } else if (skillLevel == 6) {
       tiers.tier3.push(currPlayer);
-    } else if (skillLevel >= 2 && skillLevel < 4) {
+    } else if (skillLevel == 5) {
       tiers.tier2.push(currPlayer);
     } else {
       tiers.tier1.push(currPlayer);
