@@ -68,6 +68,37 @@ export function randomizeTeams(players, numOfTeams) {
   return teams;
 }
 
+export function randomizeOgTeams(players, numOfTeams) {
+  if (numOfTeams < 2) {
+    throw new Error('Number of teams must be at least 2');
+  }
+
+  const ogPlayers = players.filter((p) => p.user?.ogGroup === true);
+  const nonOgPlayers = players.filter((p) => p.user?.ogGroup !== true);
+
+  const idealTeamSize = Math.ceil(players.length / numOfTeams);
+
+  const ogForTwoTeams = ogPlayers.slice(0, idealTeamSize * 2);
+  const ogOverflow = ogPlayers.slice(idealTeamSize * 2);
+
+  const ogTeams = randomizeTeams(ogForTwoTeams, 2);
+
+  const remainingPool = [...nonOgPlayers, ...ogOverflow];
+
+  if (numOfTeams > 2) {
+    const otherTeams = randomizeTeams(remainingPool, numOfTeams - 2);
+    return [...ogTeams, ...otherTeams];
+  }
+
+  const shuffledRemaining = shuffleArray(remainingPool);
+  for (const player of shuffledRemaining) {
+    const smallerTeam = ogTeams[0].length <= ogTeams[1].length ? 0 : 1;
+    ogTeams[smallerTeam].push(player);
+  }
+
+  return ogTeams;
+}
+
 export function fillTeamsRoundRobin(lockedTeams, newPlayers, numOfTeams) {
   if (numOfTeams < 2) {
     throw new Error('Number of teams must be at least 2');
