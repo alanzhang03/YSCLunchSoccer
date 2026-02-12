@@ -61,7 +61,7 @@ export async function refreshToken() {
       `${API_BASE_URL}/auth/refresh`,
       {
         method: 'POST',
-      }
+      },
     );
 
     if (!response.ok) {
@@ -83,7 +83,7 @@ export async function getCurrentUser() {
         const refreshResponse = await refreshToken();
         if (refreshResponse) {
           const retryResponse = await fetchWithCredentials(
-            `${API_BASE_URL}/auth/me`
+            `${API_BASE_URL}/auth/me`,
           );
           if (retryResponse.ok) {
             return retryResponse.json();
@@ -123,7 +123,7 @@ export async function requestPasswordReset(email) {
       {
         method: 'POST',
         body: JSON.stringify({ email }),
-      }
+      },
     );
 
     const data = await response.json();
@@ -145,7 +145,7 @@ export async function resetPassword(token, newPassword) {
       {
         method: 'POST',
         body: JSON.stringify({ token, newPassword }),
-      }
+      },
     );
 
     const data = await response.json();

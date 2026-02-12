@@ -170,7 +170,8 @@ router.post('/contact', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
   try {
-    const { phoneNum, email, name, password, skill } = req.body;
+    const { phoneNum, email: rawEmail, name, password, skill } = req.body;
+    const email = rawEmail?.toLowerCase();
 
     if (!phoneNum || !email || !name || !password) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -290,7 +291,7 @@ router.post('/login', async (req, res) => {
     let user;
     if (isEmail) {
       user = await prisma.user.findUnique({
-        where: { email: identifier },
+        where: { email: identifier.toLowerCase() },
       });
     } else {
       user = await prisma.user.findUnique({
