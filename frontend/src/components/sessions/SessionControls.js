@@ -61,14 +61,14 @@ const SessionControls = ({
           value={dayFilter}
           onChange={(e) => onDayFilterChange(e.target.value)}
         >
-          <option value="all">All Days</option>
-          <option value="Monday">Monday</option>
-          <option value="Tuesday">Tuesday</option>
-          <option value="Wednesday">Wednesday</option>
-          <option value="Thursday">Thursday</option>
-          <option value="Friday">Friday</option>
-          <option value="Saturday">Saturday</option>
-          <option value="Sunday">Sunday</option>
+          <option value='all'>All Days</option>
+          <option value='Monday'>Monday</option>
+          <option value='Tuesday'>Tuesday</option>
+          <option value='Wednesday'>Wednesday</option>
+          <option value='Thursday'>Thursday</option>
+          <option value='Friday'>Friday</option>
+          <option value='Saturday'>Saturday</option>
+          <option value='Sunday'>Sunday</option>
         </select>
       </div>
       {user && (
@@ -77,7 +77,9 @@ const SessionControls = ({
           onClick={onRSVPAll}
           disabled={isSubmitting || nonAttendingCount === 0}
         >
-          {isSubmitting ? 'RSVPing...' : `RSVP to upcoming sessions ${wordFilter} (${nonAttendingCount})`}
+          {isSubmitting
+            ? 'Replying...'
+            : `Reply Yes to upcoming sessions ${wordFilter} (${nonAttendingCount})`}
         </button>
       )}
       <div className={styles.sortControls}>
@@ -92,10 +94,7 @@ const SessionControls = ({
         </select>
       </div>
       {isAdmin && (
-        <button
-          className={styles.addSessionButton}
-          onClick={onAddSession}
-        >
+        <button className={styles.addSessionButton} onClick={onAddSession}>
           <span className={styles.addIcon}>+</span>
           <span>Add Session</span>
         </button>
