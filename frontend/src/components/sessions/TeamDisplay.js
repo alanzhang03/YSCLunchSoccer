@@ -10,7 +10,7 @@ import {
   lockTeams,
 } from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
-import { randomizeTeams, fillTeamsRoundRobin } from '@/lib/teamRandomizer';
+import { randomizeTeams, randomizeOgTeams, fillTeamsRoundRobin } from '@/lib/teamRandomizer';
 
 const USE_DUMMY_DATA = false;
 import {
@@ -337,7 +337,13 @@ const TeamDisplay = ({ sessionId }) => {
       setNumOfTeams(numTeams);
     }
 
-    const teams = randomizeTeams(yesAttendances, numTeams);
+
+    let teams;
+    if (yesAttendances.length > 30) {
+      teams = randomizeOgTeams(yesAttendances, numTeams);
+    } else {
+      teams = randomizeTeams(yesAttendances, numTeams);
+    }
     setTeamsArray(teams);
 
     if (isAdmin) {

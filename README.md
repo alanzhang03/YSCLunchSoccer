@@ -31,7 +31,7 @@ A web application for managing lunchtime soccer sessions, RSVPs, team randomizat
 - **Supabase** - Authentication
 - **Node Cron** - Scheduled tasks (session generation)
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 YSCLunchSoccer/
