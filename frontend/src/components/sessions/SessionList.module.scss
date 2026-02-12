@@ -1,5 +1,9 @@
 .statsBar {
-  display: flex;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: flex;
+  }
   align-items: center;
   justify-content: center;
   gap: 2rem;
@@ -489,7 +493,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(31, 115, 183, 0.03) 0%, rgba(31, 115, 183, 0.08) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(31, 115, 183, 0.03) 0%,
+      rgba(31, 115, 183, 0.08) 100%
+    );
     pointer-events: none;
   }
 

@@ -304,7 +304,7 @@ const SessionList = () => {
 
   return (
     <>
-      <StatsBar stats={stats} />
+      <StatsBar className={styles.statsBar} stats={stats} />
 
       <SessionControls
         filter={filter}
