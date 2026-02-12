@@ -309,7 +309,6 @@ const SessionList = () => {
       <SessionControls
         filter={filter}
         onFilterClick={handleFilterClick}
-        onFilterChange={setFilter}
         dayFilter={dayFilter}
         onDayFilterChange={setDayFilter}
         sortBy={sortBy}

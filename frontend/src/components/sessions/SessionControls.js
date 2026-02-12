@@ -5,7 +5,6 @@ import styles from './SessionList.module.scss';
 const SessionControls = ({
   filter,
   onFilterClick,
-  onFilterChange,
   dayFilter,
   onDayFilterChange,
   sortBy,
@@ -28,7 +27,7 @@ const SessionControls = ({
       <div className={styles.filters}>
         <button
           className={`${styles.filterButton} ${filter === 'all' ? styles.active : ''}`}
-          onClick={() => onFilterChange('all')}
+          onClick={() => onFilterClick('all', '')}
         >
           All Sessions
         </button>
