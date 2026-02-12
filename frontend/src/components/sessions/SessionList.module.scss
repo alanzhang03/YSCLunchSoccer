@@ -250,6 +250,7 @@
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
 
     .filters {
       width: 100%;
@@ -262,24 +263,25 @@
     }
 
     .sortControls {
-      width: 100%;
       justify-content: center;
     }
   }
 
   @media (max-width: 640px) {
-    .filterButton {
-      padding: 0.5rem 1rem;
-      font-size: 0.8125rem;
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
     }
 
-    .sortControls {
-      flex-direction: column;
-      gap: 0.5rem;
+    .filterButton {
+      padding: 0.5rem 0.5rem;
+      font-size: 0.75rem;
+      text-align: center;
+    }
 
-      .sortSelect {
-        width: 100%;
-      }
+    .dayFilterSelect {
+      font-size: 0.75rem;
     }
   }
 }

@@ -23,7 +23,7 @@ const StatsBar = ({ stats }) => {
           <FcCheckmark />
         </span>
         <span className={styles.statValue}>{stats.userRSVPs}</span>
-        <span className={styles.statLabel}>Your RSVPs</span>
+        <span className={styles.statLabel}>Your Replies</span>
       </div>
       <div className={styles.statDivider}></div>
       <div className={styles.statItem}>

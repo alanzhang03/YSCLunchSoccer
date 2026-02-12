@@ -45,7 +45,7 @@ const UpcomingSessions = () => {
       sessionDate = new Date(
         parseInt(year),
         parseInt(month) - 1,
-        parseInt(day)
+        parseInt(day),
       );
     } else {
       sessionDate = new Date(dateString);
@@ -119,7 +119,7 @@ const UpcomingSessions = () => {
       <div className={styles.upcomingSessionsContainer}>
         <h2>Your Upcoming Sessions</h2>
         <p className={styles.empty}>
-          You haven't RSVP'd to any upcoming sessions yet.{' '}
+          You haven't replied yes to any upcoming sessions yet.{' '}
           <Link href='/sessions' className={styles.link}>
             Browse sessions
           </Link>
@@ -135,7 +135,7 @@ const UpcomingSessions = () => {
         {sessions.map((session, index) => {
           const { weekday, formattedDate } = formatDate(
             session.date,
-            session.dayOfWeek
+            session.dayOfWeek,
           );
           const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
           return (

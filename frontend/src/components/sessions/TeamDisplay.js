@@ -10,7 +10,11 @@ import {
   lockTeams,
 } from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
-import { randomizeTeams, randomizeOgTeams, fillTeamsRoundRobin } from '@/lib/teamRandomizer';
+import {
+  randomizeTeams,
+  randomizeOgTeams,
+  fillTeamsRoundRobin,
+} from '@/lib/teamRandomizer';
 
 const USE_DUMMY_DATA = false;
 import {
@@ -337,7 +341,6 @@ const TeamDisplay = ({ sessionId }) => {
       setNumOfTeams(numTeams);
     }
 
-
     let teams;
     if (yesAttendances.length > 30) {
       teams = randomizeOgTeams(yesAttendances, numTeams);
@@ -594,7 +597,7 @@ const TeamDisplay = ({ sessionId }) => {
           <div className={styles.emptyState}>
             <p>
               No players attending yet. Teams will appear here once players
-              RSVP.
+              reply.
             </p>
           </div>
         ) : showTeams ? (
