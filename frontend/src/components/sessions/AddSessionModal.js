@@ -9,9 +9,10 @@ const formatTimeTo12Hour = (time24) => {
   return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
 };
 
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 const FIELDS = [
   { name: 'date', label: 'Date', type: 'date' },
-  { name: 'dayOfWeek', label: 'Day of the Week', type: 'text' },
   { name: 'startTime', label: 'Start Time', type: 'time' },
   { name: 'endTime', label: 'End Time', type: 'time' },
 ];
@@ -27,10 +28,14 @@ const AddSessionModal = ({ retrieveNewSession, onClose, isSubmitting }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      if (name === 'date' && value) {
+        const [year, month, day] = value.split('-').map(Number);
+        updated.dayOfWeek = DAYS[new Date(year, month - 1, day).getDay()];
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {

@@ -156,17 +156,14 @@ const SessionList = () => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-
-    const dayOfWeek = today.getDay(); 
+    const dayOfWeek = today.getDay();
     const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
     const thisWeekEnd = new Date(today);
     thisWeekEnd.setDate(thisWeekEnd.getDate() + daysUntilMonday);
 
-
     const nextWeekStart = new Date(thisWeekEnd);
     const nextWeekEnd = new Date(nextWeekStart);
     nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
-
 
     const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
 
@@ -296,7 +293,6 @@ const SessionList = () => {
         animate={{ opacity: 1 }}
         className={styles.empty}
       >
-        <div className={styles.emptyIcon}>⚽</div>
         <p className={styles.emptyTitle}>No sessions found</p>
         <p className={styles.emptySubtext}>
           Sessions will appear here once they're created.
@@ -346,7 +342,6 @@ const SessionList = () => {
           animate={{ opacity: 1 }}
           className={styles.empty}
         >
-          <div className={styles.emptyIcon}>🔍</div>
           <p className={styles.emptyTitle}>No sessions match your filter</p>
           <p className={styles.emptySubtext}>
             Try adjusting your filter settings to see more sessions.
