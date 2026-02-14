@@ -54,7 +54,6 @@ const SessionList = () => {
 
   const [filter, setFilter] = useState('thisWeek');
   const [sortBy, setSortBy] = useState('date');
-  const [wordFilter, setWordFilter] = useState('this week');
   const [dayFilter, setDayFilter] = useState('all');
 
   const fetchSessions = useCallback(async (showLoading = true) => {
@@ -138,9 +137,8 @@ const SessionList = () => {
     }
   }, [user?.id]);
 
-  const handleFilterClick = (time, words) => {
+  const handleFilterClick = (time) => {
     setFilter(time);
-    setWordFilter(words);
   };
 
   const filteredAndSortedSessions = useMemo(() => {
@@ -322,7 +320,6 @@ const SessionList = () => {
         user={user}
         isAdmin={isAdmin}
         isSubmitting={isSubmitting}
-        wordFilter={wordFilter}
         nonAttendingCount={nonAttendingSessions.length}
         onRSVPAll={handleRSVPAll}
         onAddSession={() => setShowAddSession(true)}
