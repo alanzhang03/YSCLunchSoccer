@@ -342,7 +342,7 @@ const TeamDisplay = ({ sessionId }) => {
     }
 
     let teams;
-    if (yesAttendances.length > 30) {
+    if (yesAttendances.length > 30 || numTeams >= 4) {
       teams = randomizeOgTeams(yesAttendances, numTeams);
     } else {
       teams = randomizeTeams(yesAttendances, numTeams);
