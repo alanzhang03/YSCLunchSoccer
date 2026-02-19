@@ -333,9 +333,9 @@ const TeamDisplay = ({ sessionId }) => {
       numTeams = customNumTeams;
     } else {
       numTeams = 2;
-      if (yesAttendances.length >= 23 && yesAttendances.length <= 28) {
+      if (yesAttendances.length >= 23 && yesAttendances.length <= 31) {
         numTeams = 3;
-      } else if (yesAttendances.length > 28) {
+      } else if (yesAttendances.length > 31) {
         numTeams = 4;
       }
       setNumOfTeams(numTeams);
