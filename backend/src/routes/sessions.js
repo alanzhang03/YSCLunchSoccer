@@ -86,7 +86,7 @@ router.post('/', authenticateUser, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can create sessions' });
     }
 
-    const { date, dayOfWeek, startTime, endTime, timezone = 'EST' } = req.body;
+    const { date, dayOfWeek, startTime, endTime, timezone = 'EST', group = '' } = req.body;
 
     if (!date || !dayOfWeek || !startTime || !endTime) {
       return res.status(400).json({
@@ -103,6 +103,7 @@ router.post('/', authenticateUser, async (req, res) => {
         startTime,
         endTime,
         timezone,
+        group,
       },
       include: {
         attendances: {

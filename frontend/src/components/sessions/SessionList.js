@@ -80,6 +80,7 @@ const SessionList = () => {
         startTime: sessionData.startTime,
         endTime: sessionData.endTime,
         timezone: sessionData.timezone || 'EST',
+        group: sessionData.group || '',
       });
       await fetchSessions(false);
       setShowAddSession(false);
@@ -144,11 +145,13 @@ const SessionList = () => {
   const filteredAndSortedSessions = useMemo(() => {
     let filtered = [...sessions];
 
-    const canSeeWednesday = user?.isAdmin || user?.wedGroup || false;
-    if (!canSeeWednesday) {
-      filtered = filtered.filter(
-        (session) => session.dayOfWeek !== 'Wednesday',
-      );
+    if (!user?.isAdmin) {
+      filtered = filtered.filter((session) => {
+        if (!session.group || session.group === '') return true;
+        if (session.group === 'wedGroup') return user?.wedGroup;
+        if (session.group === 'ogGroup') return user?.ogGroup;
+        return false;
+      });
     }
 
     const now = new Date();
@@ -210,7 +213,7 @@ const SessionList = () => {
     });
 
     return filtered;
-  }, [sessions, filter, sortBy, dayFilter]);
+  }, [sessions, filter, sortBy, dayFilter, user?.isAdmin, user?.ogGroup, user?.wedGroup]);
 
   const stats = useMemo(() => {
     const now = new Date();
