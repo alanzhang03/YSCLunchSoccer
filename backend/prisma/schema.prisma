@@ -39,6 +39,7 @@ model Session {
   startTime   String
   endTime     String
   timezone    String   @default("EST")
+  group       String   @default("")
   showTeams   Boolean  @default(false)
   teamsLocked Boolean  @default(false)
   lockedTeams Json?

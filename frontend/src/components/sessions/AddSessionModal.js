@@ -24,6 +24,7 @@ const AddSessionModal = ({ retrieveNewSession, onClose, isSubmitting }) => {
     startTime: '',
     endTime: '',
     timezone: 'EST',
+    group: '',
   });
 
   const handleChange = (e) => {
@@ -33,6 +34,9 @@ const AddSessionModal = ({ retrieveNewSession, onClose, isSubmitting }) => {
       if (name === 'date' && value) {
         const [year, month, day] = value.split('-').map(Number);
         updated.dayOfWeek = DAYS[new Date(year, month - 1, day).getDay()];
+      }
+      else if (name === 'group' && value) {
+        updated.group = value
       }
       return updated;
     });
@@ -99,6 +103,20 @@ const AddSessionModal = ({ retrieveNewSession, onClose, isSubmitting }) => {
               <option value='EDT'>EDT</option>
               <option value='PST'>PST</option>
               <option value='PDT'>PDT</option>
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor='group'>Select Group</label>
+            <select
+              id='group'
+              name='group'
+              value={formData.group}
+              onChange={handleChange}
+              disabled={isSubmitting}
+            >
+              <option value=''>Everyone</option>
+              <option value='wedGroup'>Wednesday Group</option>
+              <option value='ogGroup'>OG Group</option>
             </select>
           </div>
           <div className={styles.formActions}>
