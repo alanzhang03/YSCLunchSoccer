@@ -77,6 +77,7 @@ export function randomizeOgTeams(players, numOfTeams) {
   const nonOgPlayers = players.filter((p) => p.user?.ogGroup !== true);
 
   const idealTeamSize = Math.ceil(players.length / numOfTeams);
+  ogPlayers.sort((a, b) => b.user?.skill - a.user?.skill);
 
   const ogForTwoTeams = ogPlayers.slice(0, idealTeamSize * 2);
   const ogOverflow = ogPlayers.slice(idealTeamSize * 2);
