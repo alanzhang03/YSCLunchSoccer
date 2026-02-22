@@ -91,11 +91,17 @@ const AboutUsPage = () => {
 
             <motion.div className={styles.step} variants={cardVariants}>
               <div className={styles.stepNumber}>3</div>
-              <h3>Play & Enjoy</h3>
+              <h3>Check</h3>
               <p>
-                Show up, lace up, and have fun playing the beautiful game with
-                great people.
+                Check what team you are on and what color you'll be wearing the
+                day of the session.
               </p>
+            </motion.div>
+
+            <motion.div className={styles.step} variants={cardVariants}>
+              <div className={styles.stepNumber}>4</div>
+              <h3>Play & Enjoy</h3>
+              <p>Show up, lace up, and have fun!</p>
             </motion.div>
           </div>
         </motion.section>
@@ -127,15 +133,15 @@ const AboutUsPage = () => {
             <motion.div className={styles.faqItem} variants={cardVariants}>
               <h3>How are teams formed?</h3>
               <p>
-                Teams are balanced based on RSVPs to ensure fair and competitive
-                games.
+                Teams are balanced based on individuals skill levels to ensure
+                fair and competitive games.
               </p>
             </motion.div>
 
             <motion.div className={styles.faqItem} variants={cardVariants}>
               <h3>Can I bring friends?</h3>
               <p>
-                Absolutely! Just make sure they sign up and RSVP for the
+                Absolutely! Just make sure they sign up and reply yes for the
                 session.
               </p>
             </motion.div>

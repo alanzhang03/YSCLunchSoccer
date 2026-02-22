@@ -143,10 +143,7 @@ export default function Home() {
 
           <motion.div className={styles.feature} variants={itemVariants}>
             <h2>Build community.</h2>
-            <p>
-              Meet new people. Make new friends. Strengthen bonds through the
-              beautiful game.
-            </p>
+            <p>Meet new people. Make new friends. Have fun!</p>
           </motion.div>
         </motion.div>
 
