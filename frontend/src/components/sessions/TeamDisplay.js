@@ -16,7 +16,7 @@ import {
   fillTeamsRoundRobin,
 } from '@/lib/teamRandomizer';
 
-const USE_DUMMY_DATA = false;
+const USE_DUMMY_DATA = true;
 import {
   DndContext,
   closestCenter,
@@ -69,9 +69,9 @@ const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
         <span className={styles.playerName}>
           {player.user?.name || player.name}
         </span>
-        {/*player.user?.skill != null && (
+        {isAdmin && player.user?.skill != null && (
           <span className={styles.skillBadge}>{player.user.skill}</span>
-        )*/}
+        )}
       </span>
       {isAdmin && teamsLocked && <span className={styles.dragHandle}>⋮⋮</span>}
     </li>
