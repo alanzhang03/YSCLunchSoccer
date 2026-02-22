@@ -16,7 +16,7 @@ import {
   fillTeamsRoundRobin,
 } from '@/lib/teamRandomizer';
 
-const USE_DUMMY_DATA = true;
+const USE_DUMMY_DATA = false;
 import {
   DndContext,
   closestCenter,
