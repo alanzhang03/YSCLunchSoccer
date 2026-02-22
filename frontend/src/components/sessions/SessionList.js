@@ -46,13 +46,20 @@ const SessionList = () => {
   const { user } = useAuth();
   const isAdmin = user?.isAdmin || false;
 
+  let currentFilter = 'thisWeek';
+
+  const todayDayOfWeek = new Date().getDay();
+  if (todayDayOfWeek === 6 || todayDayOfWeek === 0) {
+    currentFilter = 'nextWeek';
+  }
+
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAddSession, setShowAddSession] = useState(false);
 
-  const [filter, setFilter] = useState('thisWeek');
+  const [filter, setFilter] = useState(currentFilter);
   const [sortBy, setSortBy] = useState('date');
   const [dayFilter, setDayFilter] = useState('all');
 
@@ -213,7 +220,15 @@ const SessionList = () => {
     });
 
     return filtered;
-  }, [sessions, filter, sortBy, dayFilter, user?.isAdmin, user?.ogGroup, user?.wedGroup]);
+  }, [
+    sessions,
+    filter,
+    sortBy,
+    dayFilter,
+    user?.isAdmin,
+    user?.ogGroup,
+    user?.wedGroup,
+  ]);
 
   const stats = useMemo(() => {
     const now = new Date();
