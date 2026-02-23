@@ -105,6 +105,7 @@ export async function sessionGenerator() {
               startTime: '11:20 AM',
               endTime: '1:05 PM',
               timezone: 'EST',
+              group: dayOfWeek === 3 ? 'wedGroup' : '',
             },
           });
           sessionsCreated++;
