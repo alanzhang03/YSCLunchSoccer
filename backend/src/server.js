@@ -21,6 +21,7 @@ const allowedOrigins = [
   process.env.PRODUCTION_URL,
   'https://ysclunchsoccer.com',
   'https://www.ysclunchsoccer.com',
+  'http://localhost:3000',
 ].filter(Boolean);
 
 app.use(
