@@ -141,6 +141,7 @@ const TeamDisplay = ({ sessionId }) => {
   const [teamsLocked, setTeamsLocked] = useState(false);
   const [lockedTeamsData, setLockedTeamsData] = useState(null);
   const [activeId, setActiveId] = useState(null);
+  const [randomizeByCore, setRandomizeByCore] = useState(false);
 
   const isAdmin = user?.isAdmin || false;
   const teamColors = ['Black', 'White', 'Red', 'Blue', 'Yellow'];
@@ -342,7 +343,7 @@ const TeamDisplay = ({ sessionId }) => {
     }
 
     let teams;
-    if (yesAttendances.length > 30 || numTeams >= 4) {
+    if (randomizeByCore) {
       teams = randomizeOgTeams(yesAttendances, numTeams);
     } else {
       teams = randomizeTeams(yesAttendances, numTeams);
@@ -573,12 +574,6 @@ const TeamDisplay = ({ sessionId }) => {
               >
                 {showTeams ? 'Hide Teams' : 'Show Teams'}
               </button>
-              <button
-                className={styles.randomizeButton}
-                onClick={handleRandomizeTeams}
-              >
-                Randomize Teams
-              </button>
               <div className={styles.lockStatus}>
                 <button
                   className={`${styles.lockBadge} ${
@@ -588,6 +583,22 @@ const TeamDisplay = ({ sessionId }) => {
                 >
                   {teamsLocked ? '🔒 Teams Locked' : '🔓 Teams Unlocked'}
                 </button>
+              </div>
+              <div className={styles.randomizeGroup}>
+                <button
+                  className={styles.randomizeButton}
+                  onClick={handleRandomizeTeams}
+                >
+                  Randomize Teams
+                </button>
+                <select
+                  className={styles.randomizeByBar}
+                  value={randomizeByCore ? 'coreRandom' : 'default'}
+                  onChange={(e) => setRandomizeByCore(e.target.value === 'coreRandom')}
+                >
+                  <option value='default'>Default</option>
+                  <option value='coreRandom'>OG Group Priority</option>
+                </select>
               </div>
             </div>
           )}

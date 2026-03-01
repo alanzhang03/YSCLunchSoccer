@@ -73,9 +73,9 @@
       background: #10b981;
       color: white;
       border: none;
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.25rem;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -95,9 +95,9 @@
       background: #1f73b7;
       color: white;
       border: none;
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.25rem;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -113,6 +113,61 @@
       }
     }
 
+    .randomizeGroup {
+      display: flex;
+      align-items: stretch;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #1f73b7;
+
+      .randomizeButton {
+        flex: 2;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        white-space: nowrap;
+        padding: 0.5rem 1.75rem;
+        font-size: 1rem;
+
+        &:hover {
+          box-shadow: none;
+        }
+      }
+
+      .randomizeByBar {
+        flex: 1;
+        padding: 0.5rem 2rem 0.5rem 0.75rem;
+        border: none;
+        border-left: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: white;
+        background-color: #1f73b7;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        transition: background-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          background-color: #1a63a0;
+        }
+
+        &:hover {
+          background-color: #3282b8;
+        }
+
+        option {
+          background-color: white;
+          color: #1f2937;
+        }
+      }
+    }
+
     .lockStatus {
       display: flex;
       align-items: center;
@@ -122,9 +177,9 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.875rem;
       border-radius: 8px;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 600;
       white-space: nowrap;
       transition: all 0.2s ease;
@@ -524,7 +579,6 @@
 
       .inputGroup {
         grid-column: 1 / -1;
-        width: 100%;
         justify-content: space-between;
       }
 
@@ -535,18 +589,23 @@
 
       .showTeamsButton {
         grid-column: 1 / 2;
-        padding: 0.65rem 0.75rem;
-        font-size: 0.875rem;
-      }
-
-      .randomizeButton {
-        grid-column: 2 / 3;
-        padding: 0.65rem 0.75rem;
-        font-size: 0.875rem;
       }
 
       .lockStatus {
+        grid-column: 2 / 3;
+
+        .lockBadge {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      .randomizeGroup {
         grid-column: 1 / -1;
+
+        .randomizeByBar {
+          font-size: 0.8rem;
+        }
       }
     }
 
