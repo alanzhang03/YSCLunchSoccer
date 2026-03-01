@@ -161,6 +161,9 @@ const UpcomingSessions = () => {
                   </div>
                   <div className={styles.sessionDate}>{formattedDate}</div>
                   <div className={styles.sessionTime}>{time}</div>
+                  <div className={styles.attendanceCount}>
+                    {session._count?.attendances ?? 0} attending
+                  </div>
                 </div>
               </Link>
             </motion.div>

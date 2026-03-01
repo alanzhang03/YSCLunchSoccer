@@ -244,6 +244,13 @@ router.get('/sessionsByUser', authenticateUser, async (req, res) => {
             },
           },
         },
+        _count: {
+          select: {
+            attendances: {
+              where: { status: 'yes' },
+            },
+          },
+        },
       },
     });
     res.json(sessions);
