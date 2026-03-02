@@ -34,7 +34,7 @@ export function randomizeTeams(players, numOfTeams) {
       tiers.tier4.push(currPlayer);
     } else if (skillLevel == 6) {
       tiers.tier3.push(currPlayer);
-    } else if (skillLevel == 5) {
+    } else if (skillLevel == 5 || skillLevel == 4) {
       tiers.tier2.push(currPlayer);
     } else {
       tiers.tier1.push(currPlayer);
