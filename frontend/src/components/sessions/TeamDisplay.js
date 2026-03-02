@@ -340,6 +340,7 @@ const TeamDisplay = ({ sessionId }) => {
         numTeams = 4;
       }
       setNumOfTeams(numTeams);
+      setShowTeams(true);
     }
 
     let teams;
@@ -594,7 +595,9 @@ const TeamDisplay = ({ sessionId }) => {
                 <select
                   className={styles.randomizeByBar}
                   value={randomizeByCore ? 'coreRandom' : 'default'}
-                  onChange={(e) => setRandomizeByCore(e.target.value === 'coreRandom')}
+                  onChange={(e) =>
+                    setRandomizeByCore(e.target.value === 'coreRandom')
+                  }
                 >
                   <option value='default'>Default</option>
                   <option value='coreRandom'>OG Group Priority</option>
