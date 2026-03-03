@@ -22,6 +22,7 @@ export function randomizeTeams(players, numOfTeams) {
     tier3: [],
     tier2: [],
     tier1: [],
+    tier0: [],
   };
 
   for (let i = 0; i < players.length; i++) {
@@ -34,10 +35,12 @@ export function randomizeTeams(players, numOfTeams) {
       tiers.tier4.push(currPlayer);
     } else if (skillLevel == 6) {
       tiers.tier3.push(currPlayer);
-    } else if (skillLevel == 5 || skillLevel == 4) {
+    } else if (skillLevel == 5) {
       tiers.tier2.push(currPlayer);
-    } else {
+    } else if (skillLevel == 4) {
       tiers.tier1.push(currPlayer);
+    } else {
+      tiers.tier0.push(currPlayer);
     }
   }
   const allTiers = [
@@ -46,6 +49,7 @@ export function randomizeTeams(players, numOfTeams) {
     shuffleArray(tiers.tier3),
     shuffleArray(tiers.tier2),
     shuffleArray(tiers.tier1),
+    shuffleArray(tiers.tier0),
   ];
 
   let playerIndex = 0;
