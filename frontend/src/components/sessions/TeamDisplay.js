@@ -208,6 +208,19 @@ const TeamDisplay = ({ sessionId }) => {
     }
   }, [sessionId]);
 
+  useEffect(() => {
+    if (!sessionId) return;
+    const interval = setInterval(async () => {
+      try {
+        const attendancesResult = await getSessionAttendances(sessionId);
+        setAttendes(attendancesResult.attendances);
+      } catch (err) {
+        console.error('Failed to poll attendances:', err);
+      }
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [sessionId]);
+
   const allAttendances = USE_DUMMY_DATA
     ? attendes
       ? [...attendes, ...DUMMY_ATTENDEES]
@@ -262,7 +275,7 @@ const TeamDisplay = ({ sessionId }) => {
     }
   };
 
-  const calculateTeams = () => {
+  const calculateTeams = async () => {
     if (!yesAttendances || yesAttendances.length === 0) {
       setTeamsArray([]);
       return;
@@ -323,6 +336,25 @@ const TeamDisplay = ({ sessionId }) => {
         numTeams,
       );
       setTeamsArray(teams);
+
+      if (newPlayers.length > 0 && isAdmin) {
+        try {
+          await lockTeams(sessionId, teams, numTeams);
+          const lockedData = {
+            teams: teams.map((team) =>
+              team.map((player) => ({
+                userId: player.user?.id || player.userId,
+                attendanceId: player.id,
+              })),
+            ),
+            numOfTeams: numTeams,
+            lockedAt: new Date().toISOString(),
+          };
+          setLockedTeamsData(lockedData);
+        } catch (err) {
+          console.error('Failed to auto-save new player:', err);
+        }
+      }
     } else {
       const teams = randomizeTeams(yesAttendances, numTeams);
       setTeamsArray(teams);
