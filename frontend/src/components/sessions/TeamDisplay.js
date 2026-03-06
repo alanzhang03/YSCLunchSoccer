@@ -36,7 +36,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
+const DraggablePlayer = ({ player, isAdmin }) => {
   const {
     attributes,
     listeners,
@@ -46,7 +46,7 @@ const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
     isDragging: isDraggingItem,
   } = useSortable({
     id: `player-${player.id}`,
-    disabled: !isAdmin || !teamsLocked,
+    disabled: !isAdmin,
   });
 
   const style = {
@@ -60,7 +60,7 @@ const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
       ref={setNodeRef}
       style={style}
       className={`${styles.playerItem} ${
-        isAdmin && teamsLocked ? styles.draggable : ''
+        isAdmin ? styles.draggable : ''
       } ${isDraggingItem ? styles.dragging : ''}`}
       {...attributes}
       {...listeners}
@@ -73,7 +73,7 @@ const DraggablePlayer = ({ player, isAdmin, teamsLocked }) => {
           <span className={styles.skillBadge}>{player.user.skill}</span>
         )}
       </span>
-      {isAdmin && teamsLocked && <span className={styles.dragHandle}>⋮⋮</span>}
+      {isAdmin && <span className={styles.dragHandle}>⋮⋮</span>}
     </li>
   );
 };
@@ -88,7 +88,7 @@ const DroppableTeam = ({
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `team-${teamIndex}`,
-    disabled: !isAdmin || !teamsLocked,
+    disabled: !isAdmin,
   });
 
   const playerIds = players.map((p) => `player-${p.id}`);
@@ -388,7 +388,7 @@ const TeamDisplay = ({ sessionId }) => {
     const { active, over } = event;
     setActiveId(null);
 
-    if (!over || !isAdmin || !showTeams || !teamsLocked) {
+    if (!over || !isAdmin || !showTeams) {
       return;
     }
 
@@ -464,7 +464,7 @@ const TeamDisplay = ({ sessionId }) => {
       newTeams[sourceTeamIndex] = team;
       setTeamsArray(newTeams);
 
-      if (isAdmin && teamsLocked) {
+      if (isAdmin) {
         try {
           await lockTeams(sessionId, newTeams, numOfTeams);
           const lockedData = {
