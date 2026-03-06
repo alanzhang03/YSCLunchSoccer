@@ -232,7 +232,7 @@ const TeamDisplay = ({ sessionId }) => {
   const toggleTeamsLocked = async () => {
     const newTeamsLocked = !teamsLocked;
 
-    if (newTeamsLocked && !lockedTeamsData && teamsArray.length > 0) {
+    if (newTeamsLocked && teamsArray.length > 0) {
       try {
         await lockTeams(sessionId, teamsArray, numOfTeams);
         const lockedData = {
@@ -271,8 +271,9 @@ const TeamDisplay = ({ sessionId }) => {
     let numTeams;
     if (customNumTeams !== null) {
       numTeams = customNumTeams;
-    } else if (teamsLocked && lockedTeamsData?.numOfTeams) {
+    } else if (lockedTeamsData?.numOfTeams) {
       numTeams = lockedTeamsData.numOfTeams;
+      setNumOfTeams(numTeams);
     } else {
       numTeams = 2;
       if (yesAttendances.length >= 23 && yesAttendances.length <= 28) {
@@ -283,7 +284,7 @@ const TeamDisplay = ({ sessionId }) => {
       setNumOfTeams(numTeams);
     }
 
-    if (teamsLocked && lockedTeamsData?.teams) {
+    if (lockedTeamsData?.teams) {
       const attendanceMap = new Map();
       yesAttendances.forEach((attendance) => {
         const key = attendance.user?.id || attendance.userId || attendance.id;
