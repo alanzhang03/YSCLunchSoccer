@@ -154,5 +154,4 @@ This project is private and proprietary.
 - Alan Zhang
 
 ---
-
 Made for the YSC community
