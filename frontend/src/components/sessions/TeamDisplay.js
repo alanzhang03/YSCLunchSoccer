@@ -163,8 +163,6 @@ const TeamDisplay = ({ sessionId }) => {
     }),
   );
 
-  // const attendancesArray = getSessionAttendances(sessionId);
-
   function handleNumOfTeamChange(e) {
     if (teamsLocked) {
       return;
@@ -207,6 +205,8 @@ const TeamDisplay = ({ sessionId }) => {
       fetchData();
     }
   }, [sessionId]);
+
+  console.log(attendes);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -406,6 +406,10 @@ const TeamDisplay = ({ sessionId }) => {
         setError(err.message || 'Failed to lock teams');
       }
     }
+  };
+
+  const handleSendText = () => {
+    console.log('testing');
   };
 
   useEffect(() => {
@@ -618,6 +622,7 @@ const TeamDisplay = ({ sessionId }) => {
                   {teamsLocked ? '🔒 Teams Locked' : '🔓 Teams Unlocked'}
                 </button>
               </div>
+              <button onClick={handleSendText}>Send Text Message</button>
               <div className={styles.randomizeGroup}>
                 <button
                   className={styles.randomizeButton}
