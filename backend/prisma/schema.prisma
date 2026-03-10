@@ -21,6 +21,7 @@ model User {
   phone          String   @unique
   name           String
   password       String?
+  smsOptIn       Boolean  @default(false)
   skill          Int      @default(5)
   isAdmin        Boolean  @default(false)
   wedGroup       Boolean  @default(false)
