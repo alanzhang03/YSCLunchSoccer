@@ -37,7 +37,14 @@ router.post('/:sessionId/send', authenticateUser, async (req, res) => {
         const filteredAttendances = attendances.filter((a) => a.user && a.status === 'yes' && a.user.smsOptIn === true)
 
         const recipients = filteredAttendances.map((a) => a.user)
-        await sendSms(recipients, gamedayMessage(session))
+        const { teams } = req.body;
+        for (const recipient of recipients) {
+            const team = teams.find(t => t.playerIds.includes(recipient.id));
+            if (!team) continue;
+            const teammates = team.playerNames.filter(name => name !== recipient.name);
+            const message = gamedayMessage(session, { teamColor: team.color, teammates });
+            await sendSms([recipient], message);
+        }
 
         res.json(filteredAttendances)
 

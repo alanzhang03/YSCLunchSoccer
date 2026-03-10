@@ -427,10 +427,12 @@ export async function updateUser(userId, data) {
   return response.json();
 }
 
-export async function sendSmsToAttendees(sessionId) {
+export async function sendSmsToAttendees(sessionId, teams) {
   const response = await fetch(`${API_BASE_URL}/sms/${sessionId}/send`, {
     method: 'POST',
     credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ teams }),
   });
 
   if (!response.ok) {

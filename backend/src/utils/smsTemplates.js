@@ -1,3 +1,3 @@
-export function gamedayMessage(session) {
-    return `YSC Lunch Soccer reminder! You're confirmed for ${session.dayOfWeek} ${session.startTime}–${session.endTime} ${session.timezone}. See you there!`;
+export function gamedayMessage(session, { teamColor, teammates }) {
+    return `YSC Lunch Soccer! You're on ${teamColor} with ${teammates.join(', ')}. See you ${session.dayOfWeek} ${session.startTime}!`
 }

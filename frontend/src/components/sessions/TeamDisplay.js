@@ -409,7 +409,12 @@ const TeamDisplay = ({ sessionId }) => {
 
   const handleSendText = async () => {
     try {
-      const result = await sendSmsToAttendees(sessionId)
+      const teamsPayload = teamsArray.map((team, i) => ({
+        color: teamColors[i],
+        playerIds: team.map(p => p.user?.id || p.userId),
+        playerNames: team.map(p => p.user?.name || p.name),
+      }));
+      const result = await sendSmsToAttendees(sessionId, teamsPayload)
       alert(`Message Sent!`);
     } catch (err) {
       alert(`Failed to send messages: ${err.message}`)
