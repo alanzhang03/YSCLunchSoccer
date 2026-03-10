@@ -18,7 +18,7 @@ router.post('/:sessionId/send', authenticateUser, async (req, res) => {
         }
 
         if (!dbUser.isAdmin) {
-            return res.status(403).json({ error: 'Only admins can delete sessions' });
+            return res.status(403).json({ error: 'Only admins can send SMS' });
         }
         const sessionId = req.params.sessionId
         const session = await prisma.session.findUnique({
@@ -26,6 +26,8 @@ router.post('/:sessionId/send', authenticateUser, async (req, res) => {
                 id: sessionId,
             }
         })
+        if (!session) return res.status(404).json({ error: 'Session not found' });
+
         const attendances = await prisma.attendance.findMany({
             where: { sessionId: sessionId },
             include: {

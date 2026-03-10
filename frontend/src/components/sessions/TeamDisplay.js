@@ -8,6 +8,7 @@ import {
   updateShowTeams,
   updateTeamsLocked,
   lockTeams,
+  sendSmsToAttendees
 } from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
 import {
@@ -59,9 +60,8 @@ const DraggablePlayer = ({ player, isAdmin }) => {
     <li
       ref={setNodeRef}
       style={style}
-      className={`${styles.playerItem} ${
-        isAdmin ? styles.draggable : ''
-      } ${isDraggingItem ? styles.dragging : ''}`}
+      className={`${styles.playerItem} ${isAdmin ? styles.draggable : ''
+        } ${isDraggingItem ? styles.dragging : ''}`}
       {...attributes}
       {...listeners}
     >
@@ -96,9 +96,8 @@ const DroppableTeam = ({
   return (
     <div
       ref={setNodeRef}
-      className={`${styles.teamCard} ${isOver ? styles.teamOver : ''} ${
-        isOver ? styles.teamOverPulse : ''
-      }`}
+      className={`${styles.teamCard} ${isOver ? styles.teamOver : ''} ${isOver ? styles.teamOverPulse : ''
+        }`}
     >
       {isOver && (
         <div className={styles.dropIndicator}>
@@ -408,8 +407,14 @@ const TeamDisplay = ({ sessionId }) => {
     }
   };
 
-  const handleSendText = () => {
-    console.log('testing');
+  const handleSendText = async () => {
+    try {
+      const result = await sendSmsToAttendees(sessionId)
+      alert(`Message Sent!`);
+    } catch (err) {
+      alert(`Failed to send messages: ${err.message}`)
+
+    }
   };
 
   useEffect(() => {
@@ -560,13 +565,13 @@ const TeamDisplay = ({ sessionId }) => {
   };
   const activePlayer = activeId
     ? (() => {
-        const playerId = activeId.toString().replace('player-', '');
-        for (const team of teamsArray) {
-          const player = team.find((p) => String(p.id) === String(playerId));
-          if (player) return player;
-        }
-        return null;
-      })()
+      const playerId = activeId.toString().replace('player-', '');
+      for (const team of teamsArray) {
+        const player = team.find((p) => String(p.id) === String(playerId));
+        if (player) return player;
+      }
+      return null;
+    })()
     : null;
 
   if (loading) {
@@ -614,9 +619,8 @@ const TeamDisplay = ({ sessionId }) => {
               </button>
               <div className={styles.lockStatus}>
                 <button
-                  className={`${styles.lockBadge} ${
-                    teamsLocked ? styles.locked : styles.unlocked
-                  }`}
+                  className={`${styles.lockBadge} ${teamsLocked ? styles.locked : styles.unlocked
+                    }`}
                   onClick={toggleTeamsLocked}
                 >
                   {teamsLocked ? '🔒 Teams Locked' : '🔓 Teams Unlocked'}
