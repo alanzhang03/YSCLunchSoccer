@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
 import { authenticateUser, loadDbUser } from '../middleware/auth.js';
+import { getSession } from '../utils/getSession.js';
 
 const router = Router();
 
@@ -8,13 +9,8 @@ router.get('/:sessionId', async (req, res) => {
   try {
     const { sessionId } = req.params;
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const messages = await prisma.message.findMany({
       where: { sessionId },
@@ -49,13 +45,8 @@ router.post('/', authenticateUser, loadDbUser, async (req, res) => {
         .json({ error: 'Session ID and message content are required' });
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const message = await prisma.message.create({
       data: {

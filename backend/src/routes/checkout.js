@@ -2,6 +2,7 @@ import { Router } from 'express';
 import Stripe from 'stripe';
 import prisma from '../db/client.js';
 import { authenticateUser, loadDbUser, requireAdmin } from '../middleware/auth.js';
+import { getSession } from '../utils/getSession.js';
 
 const router = Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -19,13 +20,8 @@ router.post('/', authenticateUser, loadDbUser, async (req, res) => {
       return res.status(400).json({ error: 'sessionId is required' });
     }
 
-    const dbSession = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!dbSession) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const dbSession = await getSession(sessionId);
+    if (!dbSession) return res.status(404).json({ error: 'Session not found' });
 
     const existingPayment = await prisma.payment.findFirst({
       where: {
@@ -160,13 +156,8 @@ router.patch('/session/:sessionId/user/:userId/payment-status', authenticateUser
     const { sessionId, userId } = req.params;
     const { hasPaid } = req.body;
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const existingPayment = await prisma.payment.findFirst({
       where: {

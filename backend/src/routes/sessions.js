@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
 import { authenticateUser, loadDbUser, requireAdmin } from '../middleware/auth.js';
+import { getSession } from '../utils/getSession.js';
 
 const router = Router();
 
@@ -38,13 +39,8 @@ router.post('/:id/delete', authenticateUser, loadDbUser, requireAdmin, async (re
   try {
     const sessionId = req.params.id;
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const deletedSession = await prisma.session.delete({
       where: {
@@ -226,13 +222,8 @@ router.post('/:id/attend', authenticateUser, loadDbUser, async (req, res) => {
         .json({ error: 'Status must be yes, no, or maybe' });
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     let existingAttendance = await prisma.attendance.findFirst({
       where: {
@@ -367,13 +358,8 @@ router.post('/:id/attendances/delete', authenticateUser, loadDbUser, requireAdmi
         .json({ error: 'attendanceIds must be a non-empty array' });
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const attendances = await prisma.attendance.findMany({
       where: {
@@ -414,13 +400,8 @@ router.patch('/:id/showTeams', authenticateUser, loadDbUser, requireAdmin, async
       return res.status(400).json({ error: 'showTeams must be a boolean' });
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const updatedSession = await prisma.session.update({
       where: { id: sessionId },
@@ -442,13 +423,8 @@ router.patch('/:id/teamsLocked', authenticateUser, loadDbUser, requireAdmin, asy
       return res.status(400).json({ error: 'teamsLocked must be a boolean' });
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const updatedSession = await prisma.session.update({
       where: { id: sessionId },
@@ -474,13 +450,8 @@ router.post('/:id/lockTeams', authenticateUser, loadDbUser, requireAdmin, async 
       return res.status(400).json({ error: 'numOfTeams must be at least 2' });
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const lockedTeamsData = {
       teams: teams.map((team) =>
@@ -518,13 +489,8 @@ router.patch('/:id/time', authenticateUser, loadDbUser, requireAdmin, async (req
         .json({ error: 'startTime and endTime are required' });
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
-
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
 
     const updatedSession = await prisma.session.update({
       where: { id: sessionId },

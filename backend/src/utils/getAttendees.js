@@ -1,3 +1,5 @@
+import prisma from '../db/client.js';
+
 export async function getAttendees(sessionId) {
     const attendees = await prisma.attendance.findMany({
         where: { sessionId },
