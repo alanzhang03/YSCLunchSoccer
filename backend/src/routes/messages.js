@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
-import { authenticateUser } from '../middleware/auth.js';
+import { authenticateUser, loadDbUser } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -38,10 +38,10 @@ router.get('/:sessionId', async (req, res) => {
   }
 });
 
-router.post('/', authenticateUser, async (req, res) => {
+router.post('/', authenticateUser, loadDbUser, async (req, res) => {
   try {
     const { sessionId, content } = req.body;
-    const supabaseUser = req.user;
+    const dbUser = req.dbUser;
 
     if (!sessionId || !content || content.trim() === '') {
       return res
@@ -55,14 +55,6 @@ router.post('/', authenticateUser, async (req, res) => {
 
     if (!session) {
       return res.status(404).json({ error: 'Session not found' });
-    }
-
-    let dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
     }
 
     const message = await prisma.message.create({

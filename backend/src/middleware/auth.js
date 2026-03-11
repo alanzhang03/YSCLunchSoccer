@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '../lib/supabase.js';
+import prisma from '../db/client.js';
 
 export async function authenticateUser(req, res, next) {
   try {
@@ -23,4 +24,24 @@ export async function authenticateUser(req, res, next) {
     console.error('Auth middleware error:', error.message);
     return res.status(401).json({ error: 'Authentication failed' });
   }
+}
+
+export async function loadDbUser(req, res, next) {
+  try {
+    const dbUser = await prisma.user.findUnique({
+      where: { supabaseUserId: req.user.id },
+    });
+    if (!dbUser) return res.status(404).json({ error: 'User not found in database' });
+    req.dbUser = dbUser;
+    next();
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to load user' });
+  }
+}
+
+export function requireAdmin(req, res, next) {
+  if (!req.dbUser?.isAdmin) {
+    return res.status(403).json({ error: 'Admins only' });
+  }
+  next();
 }

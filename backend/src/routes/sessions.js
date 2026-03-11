@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
-import { authenticateUser } from '../middleware/auth.js';
+import { authenticateUser, loadDbUser, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -34,22 +34,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/:id/delete', authenticateUser, async (req, res) => {
+router.post('/:id/delete', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const sessionId = req.params.id;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res.status(403).json({ error: 'Only admins can delete sessions' });
-    }
 
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
@@ -70,22 +57,8 @@ router.post('/:id/delete', authenticateUser, async (req, res) => {
   }
 });
 
-router.post('/', authenticateUser, async (req, res) => {
+router.post('/', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res.status(403).json({ error: 'Only admins can create sessions' });
-    }
-
     const { date, dayOfWeek, startTime, endTime, timezone = 'EST', group = '' } = req.body;
 
     if (!date || !dayOfWeek || !startTime || !endTime) {
@@ -132,18 +105,9 @@ router.post('/', authenticateUser, async (req, res) => {
   }
 });
 
-router.post('/rsvp-multiple', authenticateUser, async (req, res) => {
+router.post('/rsvp-multiple', authenticateUser, loadDbUser, async (req, res) => {
   try {
-    const supabaseUser = req.user;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
+    const dbUser = req.dbUser;
     const { sessionIds, status } = req.body;
 
     const sessions = await prisma.session.findMany({
@@ -201,18 +165,9 @@ router.post('/rsvp-multiple', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/sessionsByUser', authenticateUser, async (req, res) => {
+router.get('/sessionsByUser', authenticateUser, loadDbUser, async (req, res) => {
   try {
-    const supabaseUser = req.user;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
+    const dbUser = req.dbUser;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -259,11 +214,11 @@ router.get('/sessionsByUser', authenticateUser, async (req, res) => {
   }
 });
 
-router.post('/:id/attend', authenticateUser, async (req, res) => {
+router.post('/:id/attend', authenticateUser, loadDbUser, async (req, res) => {
   try {
     const sessionId = req.params.id;
     const { status } = req.body;
-    const supabaseUser = req.user;
+    const dbUser = req.dbUser;
 
     if (!['yes', 'no', 'maybe'].includes(status)) {
       return res
@@ -277,14 +232,6 @@ router.post('/:id/attend', authenticateUser, async (req, res) => {
 
     if (!session) {
       return res.status(404).json({ error: 'Session not found' });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
     }
 
     let existingAttendance = await prisma.attendance.findFirst({
@@ -409,9 +356,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/:id/attendances/delete', authenticateUser, async (req, res) => {
+router.post('/:id/attendances/delete', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const sessionId = req.params.id;
     const { attendanceIds } = req.body;
 
@@ -419,20 +365,6 @@ router.post('/:id/attendances/delete', authenticateUser, async (req, res) => {
       return res
         .status(400)
         .json({ error: 'attendanceIds must be a non-empty array' });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res
-        .status(403)
-        .json({ error: 'Only admins can delete attendances' });
     }
 
     const session = await prisma.session.findUnique({
@@ -473,28 +405,13 @@ router.post('/:id/attendances/delete', authenticateUser, async (req, res) => {
   }
 });
 
-router.patch('/:id/showTeams', authenticateUser, async (req, res) => {
+router.patch('/:id/showTeams', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const sessionId = req.params.id;
     const { showTeams } = req.body;
 
     if (typeof showTeams !== 'boolean') {
       return res.status(400).json({ error: 'showTeams must be a boolean' });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res
-        .status(403)
-        .json({ error: 'Only admins can update showTeams' });
     }
 
     const session = await prisma.session.findUnique({
@@ -516,28 +433,13 @@ router.patch('/:id/showTeams', authenticateUser, async (req, res) => {
   }
 });
 
-router.patch('/:id/teamsLocked', authenticateUser, async (req, res) => {
+router.patch('/:id/teamsLocked', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const sessionId = req.params.id;
     const { teamsLocked } = req.body;
 
     if (typeof teamsLocked !== 'boolean') {
       return res.status(400).json({ error: 'teamsLocked must be a boolean' });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res
-        .status(403)
-        .json({ error: 'Only admins can update teamsLocked' });
     }
 
     const session = await prisma.session.findUnique({
@@ -559,9 +461,8 @@ router.patch('/:id/teamsLocked', authenticateUser, async (req, res) => {
   }
 });
 
-router.post('/:id/lockTeams', authenticateUser, async (req, res) => {
+router.post('/:id/lockTeams', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const sessionId = req.params.id;
     const { teams, numOfTeams } = req.body;
 
@@ -571,18 +472,6 @@ router.post('/:id/lockTeams', authenticateUser, async (req, res) => {
 
     if (!numOfTeams || numOfTeams < 2) {
       return res.status(400).json({ error: 'numOfTeams must be at least 2' });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res.status(403).json({ error: 'Only admins can lock teams' });
     }
 
     const session = await prisma.session.findUnique({
@@ -618,9 +507,8 @@ router.post('/:id/lockTeams', authenticateUser, async (req, res) => {
   }
 });
 
-router.patch('/:id/time', authenticateUser, async (req, res) => {
+router.patch('/:id/time', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const sessionId = req.params.id;
     const { startTime, endTime } = req.body;
 
@@ -628,20 +516,6 @@ router.patch('/:id/time', authenticateUser, async (req, res) => {
       return res
         .status(400)
         .json({ error: 'startTime and endTime are required' });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res
-        .status(403)
-        .json({ error: 'Only admins can update session time' });
     }
 
     const session = await prisma.session.findUnique({

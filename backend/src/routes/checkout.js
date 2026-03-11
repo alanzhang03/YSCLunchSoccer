@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import Stripe from 'stripe';
 import prisma from '../db/client.js';
-import { authenticateUser } from '../middleware/auth.js';
+import { authenticateUser, loadDbUser, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-router.post('/', authenticateUser, async (req, res) => {
+router.post('/', authenticateUser, loadDbUser, async (req, res) => {
   try {
-    const supabaseUser = req.user;
+    const dbUser = req.dbUser;
     const { priceId, quantity = 1, sessionId } = req.body;
 
     if (!priceId) {
@@ -17,14 +17,6 @@ router.post('/', authenticateUser, async (req, res) => {
 
     if (!sessionId) {
       return res.status(400).json({ error: 'sessionId is required' });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
     }
 
     const dbSession = await prisma.session.findUnique({
@@ -125,17 +117,9 @@ router.post('/webhook', async (req, res) => {
   res.json({ received: true });
 });
 
-router.get('/status', authenticateUser, async (req, res) => {
+router.get('/status', authenticateUser, loadDbUser, async (req, res) => {
   try {
-    const supabaseUser = req.user;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
+    const dbUser = req.dbUser;
 
     const payments = await prisma.payment.findMany({
       where: { userId: dbUser.id },
@@ -150,18 +134,10 @@ router.get('/status', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/session/:sessionId/status', authenticateUser, async (req, res) => {
+router.get('/session/:sessionId/status', authenticateUser, loadDbUser, async (req, res) => {
   try {
-    const supabaseUser = req.user;
+    const dbUser = req.dbUser;
     const { sessionId } = req.params;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
 
     const payment = await prisma.payment.findFirst({
       where: {
@@ -179,23 +155,10 @@ router.get('/session/:sessionId/status', authenticateUser, async (req, res) => {
   }
 });
 
-router.patch('/session/:sessionId/user/:userId/payment-status', authenticateUser, async (req, res) => {
+router.patch('/session/:sessionId/user/:userId/payment-status', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const { sessionId, userId } = req.params;
-    const { hasPaid } = req.body; 
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res.status(403).json({ error: 'Only admins can update payment status' });
-    }
+    const { hasPaid } = req.body;
 
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
@@ -250,24 +213,11 @@ router.patch('/session/:sessionId/user/:userId/payment-status', authenticateUser
 router.get(
   '/session/:sessionId/all-statuses',
   authenticateUser,
+  loadDbUser,
+  requireAdmin,
   async (req, res) => {
     try {
-      const supabaseUser = req.user;
       const { sessionId } = req.params;
-
-      const dbUser = await prisma.user.findUnique({
-        where: { supabaseUserId: supabaseUser.id },
-      });
-
-      if (!dbUser) {
-        return res.status(404).json({ error: 'User not found in database' });
-      }
-
-      if (!dbUser.isAdmin) {
-        return res
-          .status(403)
-          .json({ error: 'Only admins can view all payment statuses' });
-      }
 
       const payments = await prisma.payment.findMany({
         where: {

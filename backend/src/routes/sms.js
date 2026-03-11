@@ -1,25 +1,13 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
-import { authenticateUser } from '../middleware/auth.js';
+import { authenticateUser, loadDbUser, requireAdmin } from '../middleware/auth.js';
 import sendSms from '../lib/twilio.js';
-import { gamedayMessage } from '../utils/smsTemplates.js';
-
+import { gamedayMessage, deleteSessionMessage } from '../utils/smsTemplates.js';
+import { getAttendees } from '../utils/getAttendees.js';
 const router = Router();
 
-router.post('/:sessionId/send', authenticateUser, async (req, res) => {
+router.post('/:sessionId/send', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
     try {
-        const supabaseUser = req.user
-        const dbUser = await prisma.user.findUnique({
-            where: { supabaseUserId: supabaseUser.id }
-        })
-
-        if (!dbUser) {
-            return res.status(404).json({ error: 'User not found in database' });
-        }
-
-        if (!dbUser.isAdmin) {
-            return res.status(403).json({ error: 'Only admins can send SMS' });
-        }
         const sessionId = req.params.sessionId
         const session = await prisma.session.findUnique({
             where: {
@@ -28,13 +16,7 @@ router.post('/:sessionId/send', authenticateUser, async (req, res) => {
         })
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
-        const attendances = await prisma.attendance.findMany({
-            where: { sessionId: sessionId },
-            include: {
-                user: true,
-            },
-        })
-        const filteredAttendances = attendances.filter((a) => a.user && a.status === 'yes' && a.user.smsOptIn === true)
+        const filteredAttendances = getAttendees(sessionId)
 
         const recipients = filteredAttendances.map((a) => a.user)
         const { teams } = req.body;
@@ -53,4 +35,11 @@ router.post('/:sessionId/send', authenticateUser, async (req, res) => {
     }
 })
 
+router.post('/:sessionId/notify-deletion', authenticateUser, loadDbUser, requireAdmin, async (_req, res) => {
+    try {
+        res.status(501).json({ error: 'Not implemented' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
 export default router;
