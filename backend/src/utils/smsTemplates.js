@@ -3,5 +3,5 @@ export function gamedayMessage(session, { teamColor, teammates }) {
 }
 
 export function deleteSessionMessage(session) {
-    return `YSC Lunch Soccer, the session on ${session.dayOfWeek} from ${session.startTime} to`
+    return `YSC Lunch Soccer, the session on ${session.dayOfWeek} from ${session.startTime} to has been deleted, sorry :(.)`
 }

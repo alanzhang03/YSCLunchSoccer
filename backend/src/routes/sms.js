@@ -12,9 +12,7 @@ router.post('/:sessionId/send', authenticateUser, loadDbUser, requireAdmin, asyn
         const session = await getSession(sessionId);
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
-        const filteredAttendances = getAttendees(sessionId)
-
-        const recipients = filteredAttendances.map((a) => a.user)
+        const recipients = await getAttendees(sessionId)
         const { teams } = req.body;
         for (const recipient of recipients) {
             const team = teams.find(t => t.playerIds.includes(recipient.id));
@@ -24,7 +22,7 @@ router.post('/:sessionId/send', authenticateUser, loadDbUser, requireAdmin, asyn
             await sendSms([recipient], message);
         }
 
-        res.json(filteredAttendances)
+        res.json(recipients)
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -36,13 +34,16 @@ router.post('/:sessionId/notify-deletion', authenticateUser, loadDbUser, require
         const sessionId = req.params.sessionId
         const session = await getSession(sessionId);
         if (!session) return res.status(404).json({ error: 'Session not found' });
-        const filteredAttendances = getAttendees(sessionId)
+        const recipients = await getAttendees(sessionId)
 
-        for (const recipient of filteredAttendances) {
+        for (const recipient of recipients) {
             const message = deleteSessionMessage(session)
+            await sendSms([recipient], message)
         }
+        res.json(recipients)
 
     } catch (error) {
+        res.status(500).json({ error: error.message })
 
     }
 })
