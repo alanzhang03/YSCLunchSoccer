@@ -444,6 +444,8 @@ router.get('/me', async (req, res) => {
         isAdmin: true,
         wedGroup: true,
         ogGroup: true,
+        testingGroup: true,
+        smsOptIn: true,
         createdAt: true,
       },
     });

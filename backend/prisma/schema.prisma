@@ -26,6 +26,7 @@ model User {
   isAdmin        Boolean  @default(false)
   wedGroup       Boolean  @default(false)
   ogGroup        Boolean  @default(false)
+  testingGroup   Boolean  @default(false)
   createdAt      DateTime @default(now())
 
   attendances Attendance[]
