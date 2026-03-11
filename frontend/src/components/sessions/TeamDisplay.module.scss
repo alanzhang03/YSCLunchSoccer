@@ -204,6 +204,35 @@
     }
   }
 
+  .sendTextContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .sendTextButton {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 0.65rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2);
+
+    &:hover {
+      background: #6d28d9;
+      box-shadow: 0 4px 8px rgba(124, 58, 237, 0.3);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
   .loading {
     text-align: center;
     padding: 3rem;

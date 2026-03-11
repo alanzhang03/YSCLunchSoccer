@@ -157,6 +157,7 @@ const SessionList = () => {
         if (!session.group || session.group === '') return true;
         if (session.group === 'wedGroup') return user?.wedGroup;
         if (session.group === 'ogGroup') return user?.ogGroup;
+        if (session.group === 'testingGroup') return user?.testingGroup;
         return false;
       });
     }

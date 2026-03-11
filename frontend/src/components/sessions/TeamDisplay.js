@@ -8,6 +8,7 @@ import {
   updateShowTeams,
   updateTeamsLocked,
   lockTeams,
+  sendSmsToAttendees,
 } from '@/lib/api';
 import { DUMMY_ATTENDEES } from '@/lib/constants';
 import {
@@ -163,8 +164,6 @@ const TeamDisplay = ({ sessionId }) => {
     }),
   );
 
-  // const attendancesArray = getSessionAttendances(sessionId);
-
   function handleNumOfTeamChange(e) {
     if (teamsLocked) {
       return;
@@ -207,6 +206,8 @@ const TeamDisplay = ({ sessionId }) => {
       fetchData();
     }
   }, [sessionId]);
+
+  console.log(attendes);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -405,6 +406,20 @@ const TeamDisplay = ({ sessionId }) => {
         console.error('Failed to lock teams:', err);
         setError(err.message || 'Failed to lock teams');
       }
+    }
+  };
+
+  const handleSendText = async () => {
+    try {
+      const teamsPayload = teamsArray.map((team, i) => ({
+        color: teamColors[i],
+        playerIds: team.map((p) => p.user?.id || p.userId),
+        playerNames: team.map((p) => p.user?.name || p.name),
+      }));
+      const result = await sendSmsToAttendees(sessionId, teamsPayload);
+      alert(`Message Sent!`);
+    } catch (err) {
+      alert(`Failed to send messages: ${err.message}`);
     }
   };
 
@@ -687,6 +702,13 @@ const TeamDisplay = ({ sessionId }) => {
               Teams will be revealed on the day of the session. Please check
               back then!
             </p>
+          </div>
+        )}
+        {isAdmin && teamsLocked && showTeams && (
+          <div className={styles.sendTextContainer}>
+            <button className={styles.sendTextButton} onClick={handleSendText}>
+              Send Text to Players
+            </button>
           </div>
         )}
       </div>

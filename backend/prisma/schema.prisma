@@ -21,10 +21,12 @@ model User {
   phone          String   @unique
   name           String
   password       String?
+  smsOptIn       Boolean  @default(false)
   skill          Int      @default(5)
   isAdmin        Boolean  @default(false)
   wedGroup       Boolean  @default(false)
   ogGroup        Boolean  @default(false)
+  testingGroup   Boolean  @default(false)
   createdAt      DateTime @default(now())
 
   attendances Attendance[]

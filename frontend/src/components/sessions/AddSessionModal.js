@@ -9,7 +9,15 @@ const formatTimeTo12Hour = (time24) => {
   return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
 };
 
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAYS = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
 
 const FIELDS = [
   { name: 'date', label: 'Date', type: 'date' },
@@ -34,9 +42,8 @@ const AddSessionModal = ({ retrieveNewSession, onClose, isSubmitting }) => {
       if (name === 'date' && value) {
         const [year, month, day] = value.split('-').map(Number);
         updated.dayOfWeek = DAYS[new Date(year, month - 1, day).getDay()];
-      }
-      else if (name === 'group' && value) {
-        updated.group = value
+      } else if (name === 'group' && value) {
+        updated.group = value;
       }
       return updated;
     });
@@ -117,6 +124,7 @@ const AddSessionModal = ({ retrieveNewSession, onClose, isSubmitting }) => {
               <option value=''>Everyone</option>
               <option value='wedGroup'>Wednesday Group</option>
               <option value='ogGroup'>OG Group</option>
+              <option value='testingGroup'>Testing Group</option>
             </select>
           </div>
           <div className={styles.formActions}>
