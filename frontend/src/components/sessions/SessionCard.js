@@ -274,8 +274,8 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
 
     try {
       setIsDeleting(true);
+      await sendSmsAfterDeleteSession(sessionData.id);
       await deleteSession(sessionData.id);
-      await sendSmsAfterDeleteSession(sessionData.id)
       if (onDelete) onDelete(sessionData.id);
     } catch (error) {
       console.error('Error deleting session:', error);
