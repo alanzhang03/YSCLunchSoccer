@@ -1,42 +1,18 @@
 import { Router } from 'express';
-import prisma from '../db/client.js';
-import { authenticateUser } from '../middleware/auth.js';
+import { authenticateUser, loadDbUser, requireAdmin } from '../middleware/auth.js';
 import sendSms from '../lib/twilio.js';
-import { gamedayMessage } from '../utils/smsTemplates.js';
-
+import { gamedayMessage, deleteSessionMessage } from '../utils/smsTemplates.js';
+import { getAttendees } from '../utils/getAttendees.js';
+import { getSession } from '../utils/getSession.js';
 const router = Router();
 
-router.post('/:sessionId/send', authenticateUser, async (req, res) => {
+router.post('/:sessionId/send', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
     try {
-        const supabaseUser = req.user
-        const dbUser = await prisma.user.findUnique({
-            where: { supabaseUserId: supabaseUser.id }
-        })
-
-        if (!dbUser) {
-            return res.status(404).json({ error: 'User not found in database' });
-        }
-
-        if (!dbUser.isAdmin) {
-            return res.status(403).json({ error: 'Only admins can send SMS' });
-        }
         const sessionId = req.params.sessionId
-        const session = await prisma.session.findUnique({
-            where: {
-                id: sessionId,
-            }
-        })
+        const session = await getSession(sessionId);
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
-        const attendances = await prisma.attendance.findMany({
-            where: { sessionId: sessionId },
-            include: {
-                user: true,
-            },
-        })
-        const filteredAttendances = attendances.filter((a) => a.user && a.status === 'yes' && a.user.smsOptIn === true)
-
-        const recipients = filteredAttendances.map((a) => a.user)
+        const recipients = await getAttendees(sessionId)
         const { teams } = req.body;
         for (const recipient of recipients) {
             const team = teams.find(t => t.playerIds.includes(recipient.id));
@@ -46,11 +22,29 @@ router.post('/:sessionId/send', authenticateUser, async (req, res) => {
             await sendSms([recipient], message);
         }
 
-        res.json(filteredAttendances)
+        res.json(recipients)
 
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 })
 
+router.post('/:sessionId/notify-deletion', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
+    try {
+        const sessionId = req.params.sessionId
+        const session = await getSession(sessionId);
+        if (!session) return res.status(404).json({ error: 'Session not found' });
+        const recipients = await getAttendees(sessionId)
+
+        for (const recipient of recipients) {
+            const message = deleteSessionMessage(session)
+            await sendSms([recipient], message)
+        }
+        res.json(recipients)
+
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+
+    }
+})
 export default router;

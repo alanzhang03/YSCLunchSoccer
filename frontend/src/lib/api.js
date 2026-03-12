@@ -442,3 +442,19 @@ export async function sendSmsToAttendees(sessionId, teams) {
 
   return response.json()
 }
+
+export async function sendSmsAfterDeleteSession(sessionId) {
+  const response = await fetch(`${API_BASE_URL}/sms/${sessionId}/notify-deletion`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to send SMS');
+  }
+
+  return response.json()
+}

@@ -13,6 +13,7 @@ import {
   createCheckoutSession,
   getAllSessionPaymentStatuses,
   updateUserPaymentStatus,
+  sendSmsAfterDeleteSession
 } from '@/lib/api';
 import Link from 'next/link';
 
@@ -41,8 +42,8 @@ const transformSessionData = (session, yesCount) => {
   const weekday = session.dayOfWeek
     ? session.dayOfWeek.toUpperCase()
     : sessionDate
-        .toLocaleDateString('en-US', { weekday: 'long' })
-        .toUpperCase();
+      .toLocaleDateString('en-US', { weekday: 'long' })
+      .toUpperCase();
 
   const formattedDate = sessionDate.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -273,6 +274,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
 
     try {
       setIsDeleting(true);
+      await sendSmsAfterDeleteSession(sessionData.id);
       await deleteSession(sessionData.id);
       if (onDelete) onDelete(sessionData.id);
     } catch (error) {

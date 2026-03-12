@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
-import { authenticateUser } from '../middleware/auth.js';
+import { authenticateUser, loadDbUser, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -14,22 +14,8 @@ const userSelect = {
   createdAt: true,
 };
 
-router.get('/', authenticateUser, async (req, res) => {
+router.get('/', authenticateUser, loadDbUser, requireAdmin, async (_req, res) => {
   try {
-    const supabaseUser = req.user;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res.status(403).json({ error: 'Only admins can view all users' });
-    }
-
     const users = await prisma.user.findMany({
       select: userSelect,
       orderBy: { createdAt: 'desc' },
@@ -42,22 +28,9 @@ router.get('/', authenticateUser, async (req, res) => {
   }
 });
 
-router.patch('/:userId', authenticateUser, async (req, res) => {
+router.patch('/:userId', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
-    const supabaseUser = req.user;
     const { userId } = req.params;
-
-    const dbUser = await prisma.user.findUnique({
-      where: { supabaseUserId: supabaseUser.id },
-    });
-
-    if (!dbUser) {
-      return res.status(404).json({ error: 'User not found in database' });
-    }
-
-    if (!dbUser.isAdmin) {
-      return res.status(403).json({ error: 'Only admins can update users' });
-    }
 
     const targetUser = await prisma.user.findUnique({
       where: { id: userId },

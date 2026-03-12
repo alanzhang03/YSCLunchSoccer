@@ -111,7 +111,7 @@ const SessionList = () => {
           return session;
         }),
       );
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const rsvpToSessions = async (sessionIds) => {
