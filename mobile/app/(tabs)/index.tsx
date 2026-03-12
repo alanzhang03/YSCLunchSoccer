@@ -1,98 +1,197 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Linking, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
+import UpcomingSessions from '@/components/UpcomingSessions';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const MAPS_URL =
+  'https://www.google.com/maps/place/YSC+Sports/@40.0773687,-75.4039779,1694m/data=!3m2!1e3!4b1!4m6!3m5!1s0x89c6945bbbf66627:0xc51da4623125fd8e!8m2!3d40.0773687!4d-75.4039779!16s%2Fg%2F1txnqdnh';
+
+const FEATURES = [
+  {
+    title: 'Play together.',
+    body: "Join your friends for lunchtime soccer. RSVP to sessions, see who's playing, and get ready for kickoff.",
+  },
+  {
+    title: 'Stay organized.',
+    body: "Teams get sorted automatically. See who's showing up in real-time. No more group chat chaos.",
+  },
+  {
+    title: 'Build community.',
+    body: 'Meet new people. Make new friends. Have fun!',
+  },
+];
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  return (
+    <View style={styles.background}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+
+        <View style={styles.hero}>
+          <Text style={styles.title}>YSC Lunch Soccer</Text>
+          <Text style={styles.subtitle}>Join your friends for lunchtime soccer sessions</Text>
+          <TouchableOpacity onPress={() => Linking.openURL(MAPS_URL)}>
+            <Text style={styles.location}>📍 224 County Line Rd, Wayne, PA</Text>
+          </TouchableOpacity>
+          {!loading && user && (
+            <Text style={styles.welcome}>
+              Welcome back, <Text style={{ fontWeight: '700' }}>{user.name}</Text>!
+            </Text>
+          )}
+          {!loading && !user && (
+            <View style={styles.authButtons}>
+              <TouchableOpacity style={styles.loginButton} onPress={() => router.push('/login' as any)}>
+                <Text style={styles.loginButtonText}>Log In</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.signupButton} onPress={() => router.push('/signup' as any)}>
+                <Text style={styles.signupButtonText}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
+        <UpcomingSessions />
+
+        <View style={styles.ctaSection}>
+          <TouchableOpacity style={styles.ctaButton} onPress={() => router.push('/sessions' as any)}>
+            <Text style={styles.ctaButtonText}>View Sessions →</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.featuresSection}>
+          {FEATURES.map((f) => (
+            <View key={f.title} style={styles.featureCard}>
+              <Text style={styles.featureTitle}>{f.title}</Text>
+              <Text style={styles.featureBody}>{f.body}</Text>
+            </View>
+          ))}
+        </View>
+
+        {!loading && !user && (
+          <View style={styles.bottomCta}>
+            <Text style={styles.bottomCtaHeading}>Ready to play?</Text>
+            <TouchableOpacity style={styles.ctaButton} onPress={() => router.push('/signup' as any)}>
+              <Text style={styles.ctaButtonText}>Get started</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  background: {
+    flex: 1,
+    backgroundColor: '#1a2a3a',
+  },
+  scroll: {
+    paddingHorizontal: 20,
+    paddingTop: 80,
+    paddingBottom: 40,
+  },
+  hero: {
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 24,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: '#fff',
+    textAlign: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  subtitle: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.8)',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  location: {
+    color: 'rgba(255,255,255,0.7)',
+    marginTop: 12,
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
+  welcome: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 16,
+  },
+  authButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 20,
+  },
+  loginButton: {
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.4)',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  signupButton: {
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  signupButtonText: {
+    color: '#000',
+    fontWeight: '600',
+  },
+  ctaSection: {
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  ctaButton: {
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    backgroundColor: '#3b82f6',
+    borderRadius: 8,
+  },
+  ctaButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  featuresSection: {
+    marginTop: 8,
+    gap: 12,
+  },
+  featureCard: {
+    padding: 20,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  featureTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 6,
+  },
+  featureBody: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 20,
+  },
+  bottomCta: {
+    alignItems: 'center',
+    marginTop: 32,
+    gap: 16,
+  },
+  bottomCtaHeading: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#fff',
   },
 });
