@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, Linking, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+  StyleSheet,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import UpcomingSessions from '@/components/UpcomingSessions';
@@ -27,25 +34,38 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.background}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.hero}>
           <Text style={styles.title}>YSC Lunch Soccer</Text>
-          <Text style={styles.subtitle}>Join your friends for lunchtime soccer sessions</Text>
+          <Text style={styles.subtitle}>
+            Join your friends for lunchtime soccer sessions
+          </Text>
           <TouchableOpacity onPress={() => Linking.openURL(MAPS_URL)}>
-            <Text style={styles.location}>📍 224 County Line Rd, Wayne, PA</Text>
+            <Text style={styles.location}>
+              📍 224 County Line Rd, Wayne, PA
+            </Text>
           </TouchableOpacity>
           {!loading && user && (
             <Text style={styles.welcome}>
-              Welcome back, <Text style={{ fontWeight: '700' }}>{user.name}</Text>!
+              Welcome back,{' '}
+              <Text style={{ fontWeight: '700' }}>{user.name}</Text>!
             </Text>
           )}
           {!loading && !user && (
             <View style={styles.authButtons}>
-              <TouchableOpacity style={styles.loginButton} onPress={() => router.push('/login' as any)}>
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => router.push('/login' as any)}
+              >
                 <Text style={styles.loginButtonText}>Log In</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.signupButton} onPress={() => router.push('/signup' as any)}>
+              <TouchableOpacity
+                style={styles.signupButton}
+                onPress={() => router.push('/signup' as any)}
+              >
                 <Text style={styles.signupButtonText}>Sign Up</Text>
               </TouchableOpacity>
             </View>
@@ -55,7 +75,10 @@ export default function HomeScreen() {
         <UpcomingSessions />
 
         <View style={styles.ctaSection}>
-          <TouchableOpacity style={styles.ctaButton} onPress={() => router.push('/sessions' as any)}>
+          <TouchableOpacity
+            style={styles.ctaButton}
+            onPress={() => router.push('/sessions' as any)}
+          >
             <Text style={styles.ctaButtonText}>View Sessions →</Text>
           </TouchableOpacity>
         </View>
@@ -72,12 +95,14 @@ export default function HomeScreen() {
         {!loading && !user && (
           <View style={styles.bottomCta}>
             <Text style={styles.bottomCtaHeading}>Ready to play?</Text>
-            <TouchableOpacity style={styles.ctaButton} onPress={() => router.push('/signup' as any)}>
+            <TouchableOpacity
+              style={styles.ctaButton}
+              onPress={() => router.push('/signup' as any)}
+            >
               <Text style={styles.ctaButtonText}>Get started</Text>
             </TouchableOpacity>
           </View>
         )}
-
       </ScrollView>
     </View>
   );

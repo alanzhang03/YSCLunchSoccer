@@ -9,7 +9,6 @@ import styles from './my-profile.module.scss';
 import { adjustPersonalInfo } from '@/lib/api';
 import Link from 'next/link';
 
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -160,7 +159,7 @@ const MyProfilePage = () => {
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Password</span>
-              <Link href="/reset-password" className={styles.resetPasswordLink}>
+              <Link href='/reset-password' className={styles.resetPasswordLink}>
                 Reset Password
               </Link>
             </div>

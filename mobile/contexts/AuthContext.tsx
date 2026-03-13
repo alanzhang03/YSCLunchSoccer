@@ -1,11 +1,21 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
 
 interface User {
   id: string;
   name: string;
   email: string;
+  phone: string;
+  skill: number;
+  createdAt: string;
 }
 
 interface AuthContextType {
