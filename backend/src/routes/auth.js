@@ -263,7 +263,11 @@ router.post('/signup', async (req, res) => {
       false,
     );
 
-    return res.status(201).json({ user });
+    return res.status(201).json({
+      user,
+      accessToken: signInData.session.access_token,
+      refreshToken: signInData.session.refresh_token,
+    });
   } catch (error) {
     console.error('Signup error:', error);
     return res.status(500).json({
@@ -369,7 +373,12 @@ router.post('/login', async (req, res) => {
       createdAt: user.createdAt,
     };
 
-    return res.json({ message: 'Login successful', user: safeUser });
+    return res.json({
+      message: 'Login successful',
+      user: safeUser,
+      accessToken: signInData.session.access_token,
+      refreshToken: signInData.session.refresh_token,
+    });
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({
@@ -382,7 +391,9 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', async (req, res) => {
   try {
-    let token = req.cookies?.sb_access_token;
+    let token =
+      req.cookies?.sb_access_token ||
+      req.headers.authorization?.replace('Bearer ', '');
     const refreshToken = req.cookies?.sb_refresh_token;
 
     if (!token && !refreshToken) {
@@ -651,7 +662,9 @@ router.post('/reset-password', async (req, res) => {
 
 router.put('/update-profile', async (req, res) => {
   try {
-    const token = req.cookies?.sb_access_token;
+    const token =
+      req.cookies?.sb_access_token ||
+      req.headers.authorization?.replace('Bearer ', '');
 
     if (!token) {
       return res.status(401).json({ error: 'Not authenticated' });
