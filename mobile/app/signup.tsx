@@ -9,6 +9,9 @@ import {
 import React, { useState } from 'react';
 import { colors } from '@/constants/styles';
 import Slider from '@react-native-community/slider';
+import { signup as signupFn } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
+import { router } from 'expo-router';
 
 const signup = () => {
   const [phoneNum, setPhoneNum] = useState('');
@@ -20,7 +23,20 @@ const signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {};
+  const { checkAuth } = useAuth();
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await signupFn(name, email, phoneNum, password, skill);
+      await checkAuth();
+      router.replace('/(tabs)');
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>

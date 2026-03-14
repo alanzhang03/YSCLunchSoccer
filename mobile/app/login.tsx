@@ -1,11 +1,36 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import React, { useState } from 'react';
 import { colors } from '@/constants/styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { login as loginfn } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
+import { router } from 'expo-router';
 
 const login = () => {
+  const { checkAuth } = useAuth();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await loginfn(identifier, password);
+      await checkAuth();
+      router.replace('/(tabs)');
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,7 +59,7 @@ const login = () => {
             secureTextEntry
           />
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
         </View>

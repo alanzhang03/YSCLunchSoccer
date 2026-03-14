@@ -6,8 +6,7 @@ import {
   ReactNode,
 } from 'react';
 
-const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
+import { getMe, signup, login, logout } from '@/lib/auth';
 
 interface User {
   id: string;
@@ -36,20 +35,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/me`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data?.user || null);
-      } else {
-        setUser(null);
-      }
+      const data = await getMe();
+      setUser(data?.user || null);
     } catch {
       setUser(null);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSignup = async (
+    name: string,
+    email: string,
+    phoneNum: string,
+    password: string,
+    skill: number,
+  ) => {
+    const data = await signup(name, email, phoneNum, password, skill);
+    setUser(data);
+    return data;
+  };
+  const handleLogin = async (identifier: string, password: string) => {
+    const data = await login(identifier, password);
+    setUser(data);
+    return data;
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
   };
 
   return (
