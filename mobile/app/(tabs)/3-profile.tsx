@@ -4,6 +4,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants/styles';
@@ -38,11 +39,15 @@ export default function Profile() {
 
   const initial = user?.name?.charAt(0).toUpperCase() ?? '?';
 
+  const handleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.card}>
-          <TouchableOpacity style={styles.editButton}>
+          <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
             <Text style={styles.editButtonText}>Edit Info</Text>
           </TouchableOpacity>
 
@@ -58,17 +63,50 @@ export default function Profile() {
         <View style={styles.infoSection}>
           <View style={styles.infoCard}>
             <Text style={styles.infoLabel}>Email</Text>
-            <Text style={styles.infoValue}>{user?.email ?? ''}</Text>
+            {!isEditing ? (
+              <Text style={styles.infoValue}>{user?.email ?? ''}</Text>
+            ) : (
+              <TextInput
+                style={styles.infoInput}
+                value={formData.email}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, email: text })
+                }
+                keyboardType='email-address'
+                autoCapitalize='none'
+              />
+            )}
           </View>
 
           <View style={styles.infoCard}>
             <Text style={styles.infoLabel}>Name</Text>
-            <Text style={styles.infoValue}>{user?.name ?? ''}</Text>
+            {!isEditing ? (
+              <Text style={styles.infoValue}>{user?.name ?? ''}</Text>
+            ) : (
+              <TextInput
+                style={styles.infoInput}
+                value={formData.name}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, name: text })
+                }
+              />
+            )}
           </View>
 
           <View style={styles.infoCard}>
             <Text style={styles.infoLabel}>Phone</Text>
-            <Text style={styles.infoValue}>{user?.phone ?? ''}</Text>
+            {!isEditing ? (
+              <Text style={styles.infoValue}>{user?.phone ?? ''}</Text>
+            ) : (
+              <TextInput
+                style={styles.infoInput}
+                value={formData.phone}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, phone: text })
+                }
+                keyboardType='phone-pad'
+              />
+            )}
           </View>
 
           <View style={styles.infoCard}>
@@ -77,6 +115,12 @@ export default function Profile() {
               <Text style={styles.resetButtonText}>Reset Password</Text>
             </TouchableOpacity>
           </View>
+
+          {isEditing && (
+            <TouchableOpacity style={styles.saveInfoButton}>
+              <Text style={styles.saveInfoButtonText}>Save Info</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -162,6 +206,14 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontWeight: '500',
   },
+  infoInput: {
+    fontSize: 16,
+    color: '#111827',
+    fontWeight: '500',
+    borderBottomWidth: 1,
+    borderBottomColor: '#3a7abf',
+    paddingVertical: 2,
+  },
   resetButton: {
     alignSelf: 'flex-start',
     borderWidth: 1,
@@ -173,6 +225,20 @@ const styles = StyleSheet.create({
   },
   resetButtonText: {
     color: '#3a7abf',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  saveInfoButton: {
+    alignSelf: 'center',
+    borderWidth: 1,
+    backgroundColor: '#3a7abf',
+    borderRadius: 8,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    marginTop: 4,
+  },
+  saveInfoButtonText: {
+    color: '#FFF',
     fontSize: 14,
     fontWeight: '500',
   },
