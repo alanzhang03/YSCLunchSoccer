@@ -91,6 +91,14 @@ const Footer = () => {
           <p className={styles.copy}>
             © {currentYear} YSC Lunch Soccer. All rights reserved.
           </p>
+          <nav className={styles.legalLinks}>
+            <Link href='/privacy' className={styles.legalLink}>
+              Privacy Policy
+            </Link>
+            <Link href='/terms' className={styles.legalLink}>
+              Terms of Service
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>

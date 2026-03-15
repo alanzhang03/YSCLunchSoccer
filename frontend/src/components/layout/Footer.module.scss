@@ -183,6 +183,23 @@
         font-weight: 500;
       }
 
+      .legalLinks {
+        display: flex;
+        gap: 1.25rem;
+        align-items: center;
+
+        .legalLink {
+          color: #64748b;
+          text-decoration: none;
+          font-size: 0.8125rem;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: #1f73b7;
+          }
+        }
+      }
+
       .meta {
         margin: 0;
         display: flex;
