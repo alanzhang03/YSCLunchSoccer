@@ -5,11 +5,13 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants/styles';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
+import { adjustPersonalInfo } from '@/lib/api';
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -18,7 +20,7 @@ export default function Profile() {
     phone: '',
     email: '',
   });
-  const { user } = useAuth();
+  const { user, checkAuth } = useAuth();
   useEffect(() => {
     if (user) {
       setFormData({
@@ -41,6 +43,21 @@ export default function Profile() {
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleSavePersonalInfo = async () => {
+    try {
+      await adjustPersonalInfo(
+        formData.name,
+        formData.email,
+        formData.phone,
+        user?.skill ?? 5,
+      );
+      await checkAuth();
+      setIsEditing(false);
+    } catch (e: any) {
+      Alert.alert('Error', e.message ?? 'Failed to save');
+    }
   };
 
   return (
@@ -117,7 +134,10 @@ export default function Profile() {
           </View>
 
           {isEditing && (
-            <TouchableOpacity style={styles.saveInfoButton}>
+            <TouchableOpacity
+              style={styles.saveInfoButton}
+              onPress={handleSavePersonalInfo}
+            >
               <Text style={styles.saveInfoButtonText}>Save Info</Text>
             </TouchableOpacity>
           )}
