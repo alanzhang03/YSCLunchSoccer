@@ -1,7 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 async function main() {
-  //change to reference a table in your schema
   const val = await prisma.<SOME_TABLE_NAME>.findMany({
     take: 10,
   });
