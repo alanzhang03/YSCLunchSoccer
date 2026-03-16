@@ -6,7 +6,7 @@ import {
   ReactNode,
 } from 'react';
 
-import { getMe, signup, login, logout } from '@/lib/auth';
+import { getMe } from '@/lib/auth';
 
 interface User {
   id: string;
@@ -42,28 +42,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSignup = async (
-    name: string,
-    email: string,
-    phoneNum: string,
-    password: string,
-    skill: number,
-  ) => {
-    const data = await signup(name, email, phoneNum, password, skill);
-    setUser(data);
-    return data;
-  };
-  const handleLogin = async (identifier: string, password: string) => {
-    const data = await login(identifier, password);
-    setUser(data);
-    return data;
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    setUser(null);
   };
 
   return (

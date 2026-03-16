@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { getSessionsByUser } from '@/lib/api';
@@ -12,7 +18,10 @@ const STATUS_COLORS: Record<string, string> = {
 
 function formatDate(dateString: string, dayOfWeek?: string) {
   let sessionDate: Date;
-  if (typeof dateString === 'string' && dateString.match(/^\d{4}-\d{2}-\d{2}/)) {
+  if (
+    typeof dateString === 'string' &&
+    dateString.match(/^\d{4}-\d{2}-\d{2}/)
+  ) {
     const [year, month, day] = dateString.split('T')[0].split('-');
     sessionDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
   } else {
@@ -22,9 +31,13 @@ function formatDate(dateString: string, dayOfWeek?: string) {
 
   const weekday = dayOfWeek
     ? dayOfWeek.toUpperCase()
-    : sessionDate.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+    : sessionDate
+        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toUpperCase();
   const formattedDate = sessionDate.toLocaleDateString('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
   return { weekday, formattedDate };
 }
@@ -40,7 +53,9 @@ export default function UpcomingSessions() {
     if (!authLoading && user) {
       getSessionsByUser()
         .then((data) => setSessions(data || []))
-        .catch((err) => setError(err.message))
+        .catch((err) => {
+          setError(err.message);
+        })
         .finally(() => setLoading(false));
     } else if (!authLoading) {
       setLoading(false);
@@ -53,7 +68,7 @@ export default function UpcomingSessions() {
     return (
       <View style={styles.container}>
         <Text style={styles.heading}>Your Upcoming Sessions</Text>
-        <ActivityIndicator color="#fff" />
+        <ActivityIndicator color='#fff' />
       </View>
     );
   }
@@ -85,7 +100,10 @@ export default function UpcomingSessions() {
     <View style={styles.container}>
       <Text style={styles.heading}>Your Upcoming Sessions</Text>
       {sessions.map((session) => {
-        const { weekday, formattedDate } = formatDate(session.date, session.dayOfWeek);
+        const { weekday, formattedDate } = formatDate(
+          session.date,
+          session.dayOfWeek,
+        );
         const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
         const status = session.attendances?.[0]?.status;
         return (
@@ -97,14 +115,21 @@ export default function UpcomingSessions() {
             <View style={styles.sessionHeader}>
               <Text style={styles.weekday}>{weekday}</Text>
               {status && (
-                <View style={[styles.badge, { backgroundColor: STATUS_COLORS[status] || '#6b7280' }]}>
+                <View
+                  style={[
+                    styles.badge,
+                    { backgroundColor: STATUS_COLORS[status] || '#6b7280' },
+                  ]}
+                >
                   <Text style={styles.badgeText}>{status.toUpperCase()}</Text>
                 </View>
               )}
             </View>
             <Text style={styles.date}>{formattedDate}</Text>
             <Text style={styles.time}>{time}</Text>
-            <Text style={styles.muted}>{session._count?.attendances ?? 0} attending</Text>
+            <Text style={styles.muted}>
+              {session._count?.attendances ?? 0} attending
+            </Text>
           </TouchableOpacity>
         );
       })}
