@@ -73,13 +73,6 @@ const Page = () => {
                 required
                 placeholder='abc@example.com'
               />
-              <label>Phone Number</label>
-              <input
-                value={phoneNum}
-                onChange={handlePhoneNum}
-                required
-                placeholder='123-456-7890'
-              />
               <label>Password</label>
               <div className={styles.passwordInputWrapper}>
                 <input
@@ -98,6 +91,8 @@ const Page = () => {
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
+
+
               <label>
                 What would you say your soccer skill level is? (1-10)
               </label>
@@ -128,6 +123,16 @@ const Page = () => {
                 1 = Beginner, 5 = Casual pickup player, 7 = Solid pickup
                 player, 10 = Elite (former or
                 current semi-pro / pro)
+              </p>
+              <label>Phone Number</label>
+              <input
+                value={phoneNum}
+                onChange={handlePhoneNum}
+                required
+                placeholder='123-456-7890'
+              />
+              <p className={styles.smsDisclosure}>
+                By providing your phone number, you agree to receive recurring automated SMS notifications from YSC Lunch Soccer related to session confirmations, reminders, and waitlist updates. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe or HELP for help. Consent is not a condition of registration. See our <a href='/terms' className={styles.smsDisclosureLink}>Terms of Service</a> for details.
               </p>
             </div>
 
