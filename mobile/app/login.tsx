@@ -62,6 +62,11 @@ const login = () => {
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
+
+          {/* DEV ONLY */}
+          <TouchableOpacity style={styles.devButton} onPress={() => router.replace('/(tabs)')}>
+            <Text style={styles.devButtonText}>Dev: Skip to App</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -130,5 +135,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  devButton: {
+    marginTop: 12,
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  devButtonText: {
+    color: '#9ca3af',
+    fontSize: 13,
   },
 });

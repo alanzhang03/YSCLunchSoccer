@@ -77,7 +77,7 @@ export default function HomeScreen() {
         <View style={styles.ctaSection}>
           <TouchableOpacity
             style={styles.ctaButton}
-            onPress={() => router.push('/sessions' as any)}
+            onPress={() => router.push('/(tabs)/2-sessions' as any)}
           >
             <Text style={styles.ctaButtonText}>View Sessions →</Text>
           </TouchableOpacity>

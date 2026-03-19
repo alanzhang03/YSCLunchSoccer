@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { getSessions, attendSession } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { colors } from '@/constants/styles';
+import { useRouter } from 'expo-router';
 
 type Attendance = {
   id: string;
@@ -31,6 +32,7 @@ export default function SessionsScreen() {
   const [loading, setLoading] = useState(true);
   const [rsvping, setRsvping] = useState<string | null>(null);
   const { user } = useAuth();
+  let router = useRouter()
 
   const fetchSessions = async () => {
     try {
@@ -97,7 +99,7 @@ export default function SessionsScreen() {
           const myStatus = getMyStatus(session);
           const yesCount = getYesCount(session);
           return (
-            <View key={session.id} style={styles.card}>
+            <TouchableOpacity onPress={() => router.push(`/sessions/${session.id}`)} key={session.id} style={styles.card}>
               <View style={styles.cardHeader}>
                 <View>
                   <Text style={styles.dayOfWeek}>{session.dayOfWeek}</Text>
@@ -140,7 +142,7 @@ export default function SessionsScreen() {
                   );
                 })}
               </View>
-            </View>
+            </TouchableOpacity>
           );
         })}
 

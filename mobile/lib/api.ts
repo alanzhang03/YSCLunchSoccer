@@ -23,13 +23,23 @@ export async function getSessions() {
   return response.json();
 }
 
+export async function getSessionById(sessionId: string) {
+  const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}`, {
+    method: 'GET',
+    headers: await authHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch session info for session`)
+  }
+  return response.json();
+}
+
 export async function getSessionsByUser() {
   const response = await fetch(`${API_BASE_URL}/sessions/sessionsByUser`, {
     method: 'GET',
     headers: await authHeaders(),
   });
   if (!response.ok) {
-    console.log('getSessionsByUser status:', response.status);
     throw new Error('Failed to fetch sessions');
   }
   return response.json();
