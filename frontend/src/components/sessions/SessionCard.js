@@ -314,15 +314,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         </Link>
       )}
 
-      {!transformedData.teamsLocked && (
-        <AttendanceSection
-          sessionData={sessionData}
-          isAdmin={isAdmin}
-          allPaymentStatuses={allPaymentStatuses}
-          onTogglePaymentStatus={handleTogglePaymentStatus}
-          onAttendanceUpdate={onAttendanceUpdate}
-        />
-      )}
+      <AttendanceSection
+        sessionData={sessionData}
+        isAdmin={isAdmin}
+        allPaymentStatuses={allPaymentStatuses}
+        onTogglePaymentStatus={handleTogglePaymentStatus}
+        onAttendanceUpdate={onAttendanceUpdate}
+      />
 
       <AttendanceButton
         onSend={handleAttendance}
