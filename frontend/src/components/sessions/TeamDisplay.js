@@ -60,9 +60,8 @@ const DraggablePlayer = ({ player, isAdmin }) => {
     <li
       ref={setNodeRef}
       style={style}
-      className={`${styles.playerItem} ${
-        isAdmin ? styles.draggable : ''
-      } ${isDraggingItem ? styles.dragging : ''}`}
+      className={`${styles.playerItem} ${isAdmin ? styles.draggable : ''
+        } ${isDraggingItem ? styles.dragging : ''}`}
       {...attributes}
       {...listeners}
     >
@@ -97,9 +96,8 @@ const DroppableTeam = ({
   return (
     <div
       ref={setNodeRef}
-      className={`${styles.teamCard} ${isOver ? styles.teamOver : ''} ${
-        isOver ? styles.teamOverPulse : ''
-      }`}
+      className={`${styles.teamCard} ${isOver ? styles.teamOver : ''} ${isOver ? styles.teamOverPulse : ''
+        }`}
     >
       {isOver && (
         <div className={styles.dropIndicator}>
@@ -368,9 +366,9 @@ const TeamDisplay = ({ sessionId }) => {
       numTeams = customNumTeams;
     } else {
       numTeams = 2;
-      if (yesAttendances.length >= 23 && yesAttendances.length <= 31) {
+      if (yesAttendances.length >= 23 && yesAttendances.length <= 26) {
         numTeams = 3;
-      } else if (yesAttendances.length > 31) {
+      } else if (yesAttendances.length > 26) {
         numTeams = 4;
       }
       setNumOfTeams(numTeams);
@@ -571,13 +569,13 @@ const TeamDisplay = ({ sessionId }) => {
   };
   const activePlayer = activeId
     ? (() => {
-        const playerId = activeId.toString().replace('player-', '');
-        for (const team of teamsArray) {
-          const player = team.find((p) => String(p.id) === String(playerId));
-          if (player) return player;
-        }
-        return null;
-      })()
+      const playerId = activeId.toString().replace('player-', '');
+      for (const team of teamsArray) {
+        const player = team.find((p) => String(p.id) === String(playerId));
+        if (player) return player;
+      }
+      return null;
+    })()
     : null;
 
   if (loading) {
@@ -625,9 +623,8 @@ const TeamDisplay = ({ sessionId }) => {
               </button>
               <div className={styles.lockStatus}>
                 <button
-                  className={`${styles.lockBadge} ${
-                    teamsLocked ? styles.locked : styles.unlocked
-                  }`}
+                  className={`${styles.lockBadge} ${teamsLocked ? styles.locked : styles.unlocked
+                    }`}
                   onClick={toggleTeamsLocked}
                 >
                   {teamsLocked ? '🔒 Teams Locked' : '🔓 Teams Unlocked'}

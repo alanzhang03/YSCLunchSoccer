@@ -52,16 +52,29 @@ export default function SessionDetailPage() {
       }
     };
 
-    if (sessionId) {
-      fetchSession();
-    }
+    if (!sessionId) return;
+
+    fetchSession();
+
+    const interval = setInterval(async () => {
+      try {
+        const fresh = await getSessionById(sessionId)
+        setSession(fresh)
+      } catch (err) {
+        console.error('failed to poll session:', err)
+      }
+    }, 30000)
+
+    return () => clearInterval(interval)
+
+
   }, [sessionId]);
 
   const handleAttendanceUpdate = async () => {
     try {
       const data = await getSessionById(sessionId);
       setSession(data);
-    } catch (err) {}
+    } catch (err) { }
   };
 
   if (loading) {
