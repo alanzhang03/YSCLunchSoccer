@@ -374,14 +374,14 @@ export async function sendEmail({ name, email, message }) {
   return response.json();
 }
 
-export async function adjustPersonalInfo({ name, email, phone, skill }) {
+export async function adjustPersonalInfo({ name, email, phone, skill, smsOptIn }) {
   const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
     method: 'PUT',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name, email, phone, skill }),
+    body: JSON.stringify({ name, email, phone, skill, smsOptIn }),
   });
 
   if (!response.ok) {

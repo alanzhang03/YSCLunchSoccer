@@ -170,7 +170,7 @@ router.post('/contact', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
   try {
-    const { phoneNum, email: rawEmail, name, password, skill } = req.body;
+    const { phoneNum, email: rawEmail, name, password, skill, smsOptIn } = req.body;
     const email = rawEmail?.toLowerCase();
 
     if (!phoneNum || !email || !name || !password) {
@@ -234,6 +234,7 @@ router.post('/signup', async (req, res) => {
         phone: phoneNum,
         name,
         skill: skillNumber,
+        smsOptIn: Boolean(smsOptIn),
       },
       select: {
         id: true,
@@ -681,7 +682,7 @@ router.put('/update-profile', async (req, res) => {
       return res.status(401).json({ error: 'Invalid or expired token' });
     }
 
-    const { name, email, phone, skill } = req.body;
+    const { name, email, phone, skill, smsOptIn } = req.body;
 
     if (!name || !email || !phone) {
       return res
@@ -737,7 +738,7 @@ router.put('/update-profile', async (req, res) => {
       }
     }
 
-    const updateData = { name, email, phone };
+    const updateData = { name, email, phone, smsOptIn: Boolean(smsOptIn) };
     if (skillNumber !== undefined) {
       updateData.skill = skillNumber;
     }
@@ -752,6 +753,7 @@ router.put('/update-profile', async (req, res) => {
         name: true,
         skill: true,
         isAdmin: true,
+        smsOptIn: true,
         createdAt: true,
       },
     });

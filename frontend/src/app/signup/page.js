@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState('');
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -42,7 +43,7 @@ const Page = () => {
     setError('');
     setLoading(true);
     try {
-      await signup(phoneNum, email, name, password, skill);
+      await signup(phoneNum, email, name, password, skill, smsOptIn);
       router.push('/');
     } catch (err) {
       setError(err.message || 'Signup failed');
@@ -92,7 +93,6 @@ const Page = () => {
                 </button>
               </div>
 
-
               <label>
                 What would you say your soccer skill level is? (1-10)
               </label>
@@ -120,9 +120,8 @@ const Page = () => {
                 />
               </div>
               <p className={styles.skillHint}>
-                1 = Beginner, 5 = Casual pickup player, 7 = Solid pickup
-                player, 10 = Elite (former or
-                current semi-pro / pro)
+                1 = Beginner, 5 = Casual pickup player, 7 = Solid pickup player,
+                10 = Elite (former or current semi-pro / pro)
               </p>
               <label>Phone Number</label>
               <input
@@ -131,9 +130,16 @@ const Page = () => {
                 required
                 placeholder='123-456-7890'
               />
-              <p className={styles.smsDisclosure}>
-                By providing your phone number, you agree to receive recurring automated SMS notifications from YSC Lunch Soccer related to session confirmations, reminders, and waitlist updates. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe or HELP for help. Consent is not a condition of registration. See our <a href='/terms' className={styles.smsDisclosureLink}>Terms of Service</a> for details.
-              </p>
+              <label className={styles.smsOptIn}>
+                <input
+                  type='checkbox'
+                  checked={smsOptIn}
+                  onChange={(e) => setSmsOptIn(e.target.checked)}
+                />
+                I agree to receive SMS notifications (session reminders,
+                confirmations, waitlist updates) from YSC Lunch Soccer. Message
+                frequency varies. Reply STOP to unsubscribe or HELP for help.
+              </label>
             </div>
 
             {error && <p className={styles.error}>{error}</p>}
