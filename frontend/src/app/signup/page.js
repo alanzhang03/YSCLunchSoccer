@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState('');
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -42,7 +43,7 @@ const Page = () => {
     setError('');
     setLoading(true);
     try {
-      await signup(phoneNum, email, name, password, skill);
+      await signup(phoneNum, email, name, password, skill, smsOptIn);
       router.push('/');
     } catch (err) {
       setError(err.message || 'Signup failed');
@@ -80,6 +81,14 @@ const Page = () => {
                 required
                 placeholder='123-456-7890'
               />
+              <label className={styles.smsOptIn}>
+                <input
+                  type='checkbox'
+                  checked={smsOptIn}
+                  onChange={(e) => setSmsOptIn(e.target.checked)}
+                />
+                I agree to receive SMS notifications (session reminders, confirmations, waitlist updates) from YSC Lunch Soccer. Message frequency varies. Reply STOP to unsubscribe or HELP for help.
+              </label>
               <label>Password</label>
               <div className={styles.passwordInputWrapper}>
                 <input

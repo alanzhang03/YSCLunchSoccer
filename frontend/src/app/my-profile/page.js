@@ -40,6 +40,7 @@ const MyProfilePage = () => {
     phone: '',
     skill: '',
     email: '',
+    smsOptIn: false,
   });
 
   const router = useRouter();
@@ -51,6 +52,7 @@ const MyProfilePage = () => {
         phone: user.phone,
         skill: user.skill,
         email: user.email,
+        smsOptIn: user.smsOptIn ?? false,
       });
     }
   }, [user]);
@@ -162,6 +164,28 @@ const MyProfilePage = () => {
               <Link href='/reset-password' className={styles.resetPasswordLink}>
                 Reset Password
               </Link>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.label}>SMS Notifications</span>
+              {isEditing ? (
+                <label className={styles.smsOptIn}>
+                  <input
+                    type='checkbox'
+                    checked={formData.smsOptIn}
+                    onChange={(e) =>
+                      setFormData({ ...formData, smsOptIn: e.target.checked })
+                    }
+                  />
+                  I agree to receive SMS notifications (session reminders,
+                  confirmations, waitlist updates) from YSC Lunch Soccer.
+                  Message frequency varies. Reply STOP to unsubscribe or HELP
+                  for help.
+                </label>
+              ) : (
+                <span className={styles.value}>
+                  {user.smsOptIn ? 'Opted in' : 'Not opted in'}
+                </span>
+              )}
             </div>
             {/*
             <div className={styles.infoItem}>

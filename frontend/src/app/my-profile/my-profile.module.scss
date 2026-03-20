@@ -170,6 +170,24 @@
             color: $text-dark;
           }
 
+          .smsOptIn {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: $text-dark;
+            cursor: pointer;
+            max-width: 320px;
+            text-align: left;
+
+            input[type='checkbox'] {
+              width: auto;
+              margin-top: 2px;
+              flex-shrink: 0;
+            }
+          }
+
           .input {
             font-size: 1rem;
             font-family: inherit;
