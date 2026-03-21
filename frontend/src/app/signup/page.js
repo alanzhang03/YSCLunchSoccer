@@ -119,10 +119,27 @@ const Page = () => {
                   aria-label='Skill level'
                 />
               </div>
-              <p className={styles.skillHint}>
-                1 = Beginner, 5 = Casual pickup player, 7 = Solid pickup player,
-                10 = Elite (former or current semi-pro / pro)
-              </p>
+              <div className={styles.skillHint}>
+                <div className={styles.skillScale}>
+                  {[
+                    ['1', 'Never played'],
+                    ['3', 'Played a few times'],
+                    ['5', 'Regular pickup'],
+                    ['7', 'Competitive'],
+                    ['10', 'Semi-pro / pro'],
+                  ].map(([num, label]) => (
+                    <div key={num} className={styles.skillScaleItem}>
+                      <span className={styles.skillScaleNum}>{num}</span>
+                      <span className={styles.skillScaleLabel}>{label}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className={styles.skillWarning}>
+                  Unsure? Put 4 or 5. Please be honest, inaccurate ratings
+                  affect team balance. Honest ratings keep matches fair for
+                  everyone.
+                </p>
+              </div>
               <label>Phone Number</label>
               <input
                 value={phoneNum}
