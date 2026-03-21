@@ -6,7 +6,7 @@ import {
   ReactNode,
 } from 'react';
 
-import { getMe } from '@/lib/auth';
+import { getMe, logout as logoutFn } from '@/lib/auth';
 
 interface User {
   id: string;
@@ -21,6 +21,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   checkAuth: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -44,8 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const logout = async () => {
+    await logoutFn();
+    setUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, checkAuth }}>
+    <AuthContext.Provider value={{ user, loading, checkAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );
