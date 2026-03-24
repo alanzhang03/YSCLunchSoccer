@@ -205,7 +205,6 @@ const TeamDisplay = ({ sessionId }) => {
     }
   }, [sessionId]);
 
-  console.log(attendes);
 
   useEffect(() => {
     if (!sessionId) return;
