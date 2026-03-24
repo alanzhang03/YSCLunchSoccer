@@ -12,6 +12,7 @@ import { colors } from '@/constants/styles';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { adjustPersonalInfo } from '@/lib/api';
+import { router } from 'expo-router';
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -20,7 +21,7 @@ export default function Profile() {
     phone: '',
     email: '',
   });
-  const { user, checkAuth } = useAuth();
+  const { user, checkAuth, logout } = useAuth();
   useEffect(() => {
     if (user) {
       setFormData({
@@ -141,6 +142,25 @@ export default function Profile() {
               <Text style={styles.saveInfoButtonText}>Save Info</Text>
             </TouchableOpacity>
           )}
+
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => {
+              Alert.alert('Log Out', 'Are you sure you want to log out?', [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Log Out',
+                  style: 'destructive',
+                  onPress: async () => {
+                    await logout();
+                    router.replace('/login');
+                  },
+                },
+              ]);
+            }}
+          >
+            <Text style={styles.logoutButtonText}>Log Out</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -259,6 +279,20 @@ const styles = StyleSheet.create({
   },
   saveInfoButtonText: {
     color: '#FFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  logoutButton: {
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#ef4444',
+    borderRadius: 8,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    marginTop: 8,
+  },
+  logoutButtonText: {
+    color: '#ef4444',
     fontSize: 14,
     fontWeight: '500',
   },

@@ -1,4 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
+import { logout } from '@/lib/auth';
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
@@ -14,8 +15,16 @@ async function authHeaders(
   };
 }
 
+async function authedFetch(url: string, options: RequestInit): Promise<Response> {
+  const response = await fetch(url, options);
+  if (response.status === 401) {
+    await logout();
+  }
+  return response;
+}
+
 export async function getSessions() {
-  const response = await fetch(`${API_BASE_URL}/sessions`, {
+  const response = await authedFetch(`${API_BASE_URL}/sessions`, {
     method: 'GET',
     headers: await authHeaders(),
   });
@@ -24,7 +33,7 @@ export async function getSessions() {
 }
 
 export async function getSessionById(sessionId: string) {
-  const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}`, {
+  const response = await authedFetch(`${API_BASE_URL}/sessions/${sessionId}`, {
     method: 'GET',
     headers: await authHeaders(),
   });
@@ -35,7 +44,7 @@ export async function getSessionById(sessionId: string) {
 }
 
 export async function getSessionsByUser() {
-  const response = await fetch(`${API_BASE_URL}/sessions/sessionsByUser`, {
+  const response = await authedFetch(`${API_BASE_URL}/sessions/sessionsByUser`, {
     method: 'GET',
     headers: await authHeaders(),
   });
@@ -49,7 +58,7 @@ export async function attendSession(
   sessionId: string,
   status: 'yes' | 'no' | 'maybe',
 ) {
-  const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/attend`, {
+  const response = await authedFetch(`${API_BASE_URL}/sessions/${sessionId}/attend`, {
     method: 'POST',
     headers: await authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ status }),
@@ -64,7 +73,7 @@ export async function adjustPersonalInfo(
   phone: string,
   skill: number,
 ) {
-  const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+  const response = await authedFetch(`${API_BASE_URL}/auth/update-profile`, {
     method: 'PUT',
     headers: await authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ name, email, phone, skill }),
