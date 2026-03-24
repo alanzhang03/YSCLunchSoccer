@@ -1,5 +1,6 @@
-export function gamedayMessage(session, { teamColor, teammates }) {
-    return `YSC Lunch Soccer! You're on ${teamColor} with ${teammates.join(', ')}. See you ${session.dayOfWeek} ${session.startTime}!`
+export function gamedayMessage(session, { teamNum, teamColor, teammates }) {
+    const teammateList = teammates.map(name => `- ${name}`).join('\n');
+    return `YSC Lunch Soccer!\nYou're on Team ${teamNum} (${teamColor}):\n${teammateList}\n\nSee you ${session.dayOfWeek} ${session.startTime}!`;
 }
 
 export function deleteSessionMessage(session) {

@@ -18,7 +18,7 @@ router.post('/:sessionId/send', authenticateUser, loadDbUser, requireAdmin, asyn
             const team = teams.find(t => t.playerIds.includes(recipient.id));
             if (!team) continue;
             const teammates = team.playerNames.filter(name => name !== recipient.name);
-            const message = gamedayMessage(session, { teamColor: team.color, teammates });
+            const message = gamedayMessage(session, { teamNum: team.teamNum, teamColor: team.color, teammates });
             await sendSms([recipient], message);
         }
 

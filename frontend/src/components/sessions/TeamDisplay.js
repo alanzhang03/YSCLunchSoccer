@@ -143,7 +143,7 @@ const TeamDisplay = ({ sessionId }) => {
   const [randomizeByCore, setRandomizeByCore] = useState(false);
 
   const isAdmin = user?.isAdmin || false;
-  const teamColors = ['Black', 'White', 'Red', 'Blue', 'Yellow'];
+  const teamColors = ['Dark', 'White', 'Dark 2', 'White 2', 'Dark 3', 'White 3'];
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -410,6 +410,7 @@ const TeamDisplay = ({ sessionId }) => {
   const handleSendText = async () => {
     try {
       const teamsPayload = teamsArray.map((team, i) => ({
+        teamNum: i + 1,
         color: teamColors[i],
         playerIds: team.map((p) => p.user?.id || p.userId),
         playerNames: team.map((p) => p.user?.name || p.name),
