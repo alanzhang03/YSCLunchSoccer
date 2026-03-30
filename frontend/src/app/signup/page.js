@@ -10,6 +10,7 @@ const Page = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [name, setName] = useState('');
   const [skill, setSkill] = useState('5');
   const [error, setError] = useState('');
@@ -30,6 +31,10 @@ const Page = () => {
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
+
+  const handleConfirmEmailChange = (e) => {
+    setConfirmEmail(e.target.value);
+  };
   const handleSkillChange = (e) => {
     const value = e.target.value;
 
@@ -43,6 +48,12 @@ const Page = () => {
     setError('');
     setLoading(true);
     try {
+      if (email !== confirmEmail) {
+        setError('Emails do not match');
+        setLoading(false);
+        return;
+      }
+
       await signup(phoneNum, email, name, password, skill, smsOptIn);
       router.push('/');
     } catch (err) {
@@ -74,6 +85,17 @@ const Page = () => {
                 required
                 placeholder='abc@example.com'
               />
+              <label>Confirm Email</label>
+              <input
+                value={confirmEmail}
+                type='email'
+                onChange={handleConfirmEmailChange}
+                required
+                placeholder=''
+              />
+              {error === 'Emails do not match' && (
+                <p className={styles.emailError}>{error}</p>
+              )}
               <label>Password</label>
               <div className={styles.passwordInputWrapper}>
                 <input
@@ -92,7 +114,6 @@ const Page = () => {
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
-
               <label>
                 What would you say your soccer skill level is? (1-10)
               </label>
