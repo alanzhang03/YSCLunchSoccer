@@ -13,7 +13,7 @@ import {
   createCheckoutSession,
   getAllSessionPaymentStatuses,
   updateUserPaymentStatus,
-  sendSmsAfterDeleteSession
+  sendSmsAfterDeleteSession,
 } from '@/lib/api';
 import Link from 'next/link';
 
@@ -42,8 +42,8 @@ const transformSessionData = (session, yesCount) => {
   const weekday = session.dayOfWeek
     ? session.dayOfWeek.toUpperCase()
     : sessionDate
-      .toLocaleDateString('en-US', { weekday: 'long' })
-      .toUpperCase();
+        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toUpperCase();
 
   const formattedDate = sessionDate.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -52,7 +52,7 @@ const transformSessionData = (session, yesCount) => {
   });
 
   const time = `${session.startTime} - ${session.endTime} ${session.timezone}`;
-
+  const fieldLocation = session.fieldLocation;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const tomorrow = new Date(today);
@@ -88,6 +88,7 @@ const transformSessionData = (session, yesCount) => {
     weekday,
     time,
     available: `${yesCount}/${MAX_ATTENDANCE}`,
+    fieldLocation,
     today: isToday,
     tomorrow: isTomorrow,
     relativeDate,

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { updateSessionTime } from '@/lib/api';
+import { updateSessionTime, updateSessionFieldLocation } from '@/lib/api';
 
 const getCalendarEventData = (rawSessionData) => {
   if (
@@ -74,13 +74,19 @@ export default function Card({
   const [endTime, setEndTime] = useState(() =>
     rawSessionData?.endTime ? to24Hour(rawSessionData.endTime) : '',
   );
+
+  const [fieldLocation, setFieldLocation] = useState(sessionData.fieldLocation);
+  const [isEditingFieldLocation, setIsEditingFieldLocation] = useState(false);
+  const [isSavingFieldLocation, setIsSavingFieldLocation] = useState(false);
   const { user } = useAuth();
   const isAdmin = user?.isAdmin;
 
   const calendarData = getCalendarEventData(rawSessionData);
 
   const handleCancel = () => {
-    setStartTime(rawSessionData?.startTime ? to24Hour(rawSessionData.startTime) : '');
+    setStartTime(
+      rawSessionData?.startTime ? to24Hour(rawSessionData.startTime) : '',
+    );
     setEndTime(rawSessionData?.endTime ? to24Hour(rawSessionData.endTime) : '');
     setIsEditing(false);
   };
@@ -89,7 +95,11 @@ export default function Card({
     if (!startTime || !endTime) return;
     setIsSaving(true);
     try {
-      await updateSessionTime(sessionId, to12Hour(startTime), to12Hour(endTime));
+      await updateSessionTime(
+        sessionId,
+        to12Hour(startTime),
+        to12Hour(endTime),
+      );
       setIsEditing(false);
       if (onTimeUpdate) onTimeUpdate();
     } catch (error) {
@@ -98,6 +108,18 @@ export default function Card({
       setIsSaving(false);
     }
   };
+
+  const handleFieldLocationChange = async () => {
+    setIsSavingFieldLocation(true);
+    try {
+      await updateSessionFieldLocation(sessionId, fieldLocation);
+      setIsEditingFieldLocation(false);
+    } catch (error) {
+      alert('Failed to update field location. Please try again.');
+    } finally {
+      setIsSavingFieldLocation(false);
+    }
+  }
 
   return (
     <div className={styles.card}>
@@ -118,6 +140,37 @@ export default function Card({
           )}
           <div className={styles.weekday}>{weekday}</div>
           <div className={styles.date}>{date}</div>
+          {isEditingFieldLocation ? (
+            <div className={styles.editLocationForm}>
+              <input
+                type='text'
+                value={fieldLocation}
+                className={styles.editLocationInput}
+                onChange={(e) => setFieldLocation(e.target.value)}
+                disabled={isSavingFieldLocation}
+              />
+              <div className={styles.editLocationActions}>
+                <button onClick={handleFieldLocationChange} disabled={isSavingFieldLocation}>
+                  {isSavingFieldLocation ? 'Saving...' : 'Save'}
+                </button>
+                <button onClick={() => setIsEditingFieldLocation(false)} disabled={isSavingFieldLocation}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.fieldLocationContainer}>
+              <div>{fieldLocation}</div>
+              {isAdmin && (
+                <button
+                  className={styles.editFieldLocation}
+                  onClick={() => setIsEditingFieldLocation(true)}
+                >
+                  Edit Location
+                </button>
+              )}
+            </div>
+          )}
           {isEditing ? (
             <div className={styles.editTimeForm}>
               <div className={styles.timeInputs}>

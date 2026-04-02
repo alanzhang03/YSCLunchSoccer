@@ -335,6 +335,27 @@ export async function getAllSessionPaymentStatuses(sessionId) {
   return response.json();
 }
 
+export async function updateSessionFieldLocation(sessionId, fieldLocation) {
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${sessionId}/fieldLocation`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fieldLocation }),
+    },
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to update field location');
+  }
+
+  return response.json();
+}
+
 export async function updateSessionTime(sessionId, startTime, endTime) {
   const response = await fetch(
     `${API_BASE_URL}/sessions/${sessionId}/time`,

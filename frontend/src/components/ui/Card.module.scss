@@ -146,6 +146,90 @@
     }
   }
 
+  .fieldLocationContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    div {
+      color: #64748b;
+      font-size: 0.8125rem;
+    }
+
+    .editFieldLocation {
+      background: none;
+      border: none;
+      color: #1f73b7;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(31, 115, 183, 0.1);
+      }
+    }
+  }
+
+  .editLocationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .editLocationInput {
+      padding: 0.25rem 0.375rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      color: #1e293b;
+      width: 100%;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: #1f73b7;
+      }
+    }
+
+    .editLocationActions {
+      display: flex;
+      gap: 0.375rem;
+
+      button {
+        padding: 0.25rem 0.625rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid #cbd5e1;
+        background: white;
+        color: #475569;
+        transition: all 0.2s ease;
+
+        &:first-child {
+          background: #1f73b7;
+          color: white;
+          border-color: #1f73b7;
+
+          &:hover {
+            background: #1a5f99;
+          }
+        }
+
+        &:last-child:hover {
+          background: #f1f5f9;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
   .editTimeForm {
     display: flex;
     flex-direction: column;

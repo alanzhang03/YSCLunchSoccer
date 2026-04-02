@@ -478,6 +478,29 @@ router.post('/:id/lockTeams', authenticateUser, loadDbUser, requireAdmin, async 
   }
 });
 
+router.patch('/:id/fieldLocation', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
+  try {
+    const sessionId = req.params.id;
+    const { fieldLocation } = req.body;
+
+    if (!fieldLocation) {
+      return res.status(400).json({ error: 'fieldLocation is required' });
+    }
+
+    const session = await getSession(sessionId);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+
+    const updatedSession = await prisma.session.update({
+      where: { id: sessionId },
+      data: { fieldLocation },
+    });
+
+    res.json({ success: true, session: updatedSession });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.patch('/:id/time', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
     const sessionId = req.params.id;
