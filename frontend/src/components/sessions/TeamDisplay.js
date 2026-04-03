@@ -6,7 +6,6 @@ import {
   getSessionAttendances,
   getSessionById,
   updateShowTeams,
-  updateTeamsLocked,
   lockTeams,
   sendSmsToAttendees,
 } from '@/lib/api';
@@ -84,7 +83,6 @@ const DroppableTeam = ({
   teamColor,
   isAdmin,
   players,
-  teamsLocked,
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `team-${teamIndex}`,
@@ -119,7 +117,6 @@ const DroppableTeam = ({
               key={player.id}
               player={player}
               isAdmin={isAdmin}
-              teamsLocked={teamsLocked}
             />
           ))}
         </ul>
@@ -137,7 +134,6 @@ const TeamDisplay = ({ sessionId }) => {
   const [numOfTeams, setNumOfTeams] = useState();
   const [customNumTeams, setCustomNumTeams] = useState(null);
   const [showTeams, setShowTeams] = useState(false);
-  const [teamsLocked, setTeamsLocked] = useState(false);
   const [lockedTeamsData, setLockedTeamsData] = useState(null);
   const [activeId, setActiveId] = useState(null);
   const [randomizeByCore, setRandomizeByCore] = useState(false);
@@ -163,9 +159,6 @@ const TeamDisplay = ({ sessionId }) => {
   );
 
   function handleNumOfTeamChange(e) {
-    if (teamsLocked) {
-      return;
-    }
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 2 && value <= 6) {
       setCustomNumTeams(value);
@@ -186,7 +179,6 @@ const TeamDisplay = ({ sessionId }) => {
         ]);
         setAttendes(attendancesResult.attendances);
         setShowTeams(sessionResult.showTeams === true);
-        setTeamsLocked(sessionResult.teamsLocked === true);
         setLockedTeamsData(sessionResult.lockedTeams);
         if (sessionResult.lockedTeams?.numOfTeams) {
           setNumOfTeams(sessionResult.lockedTeams.numOfTeams);
@@ -237,39 +229,6 @@ const TeamDisplay = ({ sessionId }) => {
     } catch (err) {
       console.error('Failed to update showTeams:', err);
       setError(err.message || 'Failed to update showTeams');
-    }
-  };
-
-  const toggleTeamsLocked = async () => {
-    const newTeamsLocked = !teamsLocked;
-
-    if (newTeamsLocked && teamsArray.length > 0) {
-      try {
-        await lockTeams(sessionId, teamsArray, numOfTeams);
-        const lockedData = {
-          teams: teamsArray.map((team) =>
-            team.map((player) => ({
-              userId: player.user?.id || player.userId,
-              attendanceId: player.id,
-            })),
-          ),
-          numOfTeams: numOfTeams,
-          lockedAt: new Date().toISOString(),
-        };
-        setLockedTeamsData(lockedData);
-        setTeamsLocked(true);
-      } catch (err) {
-        console.error('Failed to lock teams:', err);
-        setError(err.message || 'Failed to lock teams');
-      }
-    } else {
-      try {
-        await updateTeamsLocked(sessionId, newTeamsLocked);
-        setTeamsLocked(newTeamsLocked);
-      } catch (err) {
-        console.error('Failed to update teamsLocked:', err);
-        setError(err.message || 'Failed to update teamsLocked');
-      }
     }
   };
 
@@ -387,7 +346,6 @@ const TeamDisplay = ({ sessionId }) => {
         await lockTeams(sessionId, teams, numTeams);
         await updateShowTeams(sessionId, true);
         setShowTeams(true);
-        setTeamsLocked(true);
         const lockedData = {
           teams: teams.map((team) =>
             team.map((player) => ({
@@ -423,7 +381,7 @@ const TeamDisplay = ({ sessionId }) => {
 
   useEffect(() => {
     calculateTeams();
-  }, [attendes, teamsLocked, lockedTeamsData, customNumTeams]);
+  }, [attendes, lockedTeamsData, customNumTeams]);
 
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
@@ -543,7 +501,7 @@ const TeamDisplay = ({ sessionId }) => {
 
     setTeamsArray(newTeams);
 
-    if (isAdmin && teamsLocked) {
+    if (isAdmin && lockedTeamsData) {
       try {
         await lockTeams(sessionId, newTeams, numOfTeams);
         const lockedData = {
@@ -607,12 +565,6 @@ const TeamDisplay = ({ sessionId }) => {
                   required
                   className={styles.numTeamsInput}
                   placeholder='2-6'
-                  disabled={teamsLocked}
-                  title={
-                    teamsLocked
-                      ? 'Teams are locked. Randomize again to change number of teams.'
-                      : ''
-                  }
                 />
               </div>
               <button
@@ -621,15 +573,6 @@ const TeamDisplay = ({ sessionId }) => {
               >
                 {showTeams ? 'Hide Teams' : 'Show Teams'}
               </button>
-              <div className={styles.lockStatus}>
-                <button
-                  className={`${styles.lockBadge} ${teamsLocked ? styles.locked : styles.unlocked
-                    }`}
-                  onClick={toggleTeamsLocked}
-                >
-                  {teamsLocked ? '🔒 Teams Locked' : '🔓 Teams Unlocked'}
-                </button>
-              </div>
               <div className={styles.randomizeGroup}>
                 <button
                   className={styles.randomizeButton}
@@ -676,7 +619,6 @@ const TeamDisplay = ({ sessionId }) => {
                   teamColor={teamColors[teamIndex]}
                   isAdmin={isAdmin}
                   players={team}
-                  teamsLocked={teamsLocked}
                 />
               ))}
             </div>
@@ -701,7 +643,7 @@ const TeamDisplay = ({ sessionId }) => {
             </p>
           </div>
         )}
-        {isAdmin && teamsLocked && showTeams && (
+        {isAdmin && lockedTeamsData && showTeams && (
           <div className={styles.sendTextContainer}>
             <button className={styles.sendTextButton} onClick={handleSendText}>
               Send Text to Players
