@@ -88,7 +88,8 @@ const AttendanceSection = ({
 
     const count = selectedAttendanceIds.size;
     const confirmed = window.confirm(
-      `Are you sure you want to remove ${count} ${count === 1 ? 'attendee' : 'attendees'
+      `Are you sure you want to remove ${count} ${
+        count === 1 ? 'attendee' : 'attendees'
       }? This action cannot be undone.`,
     );
 
@@ -132,10 +133,11 @@ const AttendanceSection = ({
           return (
             <div
               key={attendance.id}
-              className={`${styles.attendanceItem} ${isRemoveMode && selectedAttendanceIds.has(attendance.id)
-                ? styles.selected
-                : ''
-                } ${isRemoveMode ? styles.clickable : ''}`}
+              className={`${styles.attendanceItem} ${
+                isRemoveMode && selectedAttendanceIds.has(attendance.id)
+                  ? styles.selected
+                  : ''
+              } ${isRemoveMode ? styles.clickable : ''}`}
               onClick={() =>
                 isRemoveMode && toggleSelectAttendance(attendance.id)
               }

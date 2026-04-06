@@ -136,14 +136,7 @@ const TeamDisplay = ({ sessionId }) => {
   const [sending, setSending] = useState(false);
 
   const isAdmin = user?.isAdmin || false;
-  const teamColors = [
-    'Dark',
-    'White',
-    'Dark 2',
-    'White 2',
-    'Dark 3',
-    'White 3',
-  ];
+  const teamColors = ['Dark', 'White', 'Dark', 'White', 'Dark', 'White'];
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
