@@ -7,5 +7,7 @@ export function gamedayMessage(
 }
 
 export function deleteSessionMessage(session) {
-  return `YSC Lunch Soccer, the session on ${session.date} (${session.dayOfWeek}) from ${session.startTime} to ${session.endTime} has been deleted, sorry :(.)`;
+  const d = new Date(session.date);
+  const formattedDate = `${session.dayOfWeek}, ${d.getUTCMonth() + 1}/${d.getUTCDate()}`;
+  return `YSC Lunch Soccer\n\nThe session on ${formattedDate} from ${session.startTime} to ${session.endTime} has been deleted, sorry :(`;
 }

@@ -5,13 +5,13 @@ A web application for managing lunchtime soccer sessions, RSVPs, team randomizat
 ## Features
 
 - **User Authentication**: Secure signup and login with Supabase Auth
-- **Session Management**: Automatically generates Monday and Friday lunch soccer sessions
+- **Session Management**: Automatically generates Monday, Wednesday, and Friday lunch soccer sessions
 - **RSVP System**: Users can RSVP as "Yes", "Maybe", or "Can't Make It"
-- **Team Randomization**: Automatically creates balanced teams (2-6 teams based on attendance or admin input) with drag-and-drop player management
-- **Team Locking**: Admins can lock teams to prevent further changes, with support for adding late-joining players
+- **Team Randomization**: Automatically creates balanced teams (2-6 teams based on attendance or admin input) with drag-and-drop player management; supports OG group priority randomization
+- **Team Assignment SMS**: Admins can send Twilio SMS to opted-in attendees with their team number, color, teammates, opponent team, and field number
+- **Session Deletion Notifications**: Admins can notify all attendees via SMS when a session is cancelled
 - **Session Chat**: Real-time messaging for each session
 - **Skill Level Tracking**: Users can set their skill level (1-10) used for team balancing
-- **SMS Notifications**: Admins can send Twilio SMS reminders to opted-in attendees
 - **Admin Panel**: Admins can manage users, sessions, teams, and send notifications
 - **Attendance Tracking**: View who's attending each session with capacity limits (45 max)
 - **Stripe Payments**: Session payment tracking and checkout integration
@@ -65,8 +65,8 @@ YSCLunchSoccer/
 
 ## Database Schema
 
-- **User**: Stores user info, skill level, admin status, and SMS opt-in preference
-- **Session**: Stores session dates, times, timezone, team data, and lock state
+- **User**: Stores user info, skill level, admin status, SMS opt-in and preference
+- **Session**: Stores session dates, times, field location, timezone, team data, and lock state
 - **Attendance**: Links users to sessions with RSVP status
 - **Message**: Stores chat messages for each session
 - **Payment**: Tracks Stripe payment status per user per session
@@ -75,7 +75,7 @@ YSCLunchSoccer/
 
 Sessions are automatically generated:
 
-- **Schedule**: Every Monday and Friday at 11:30 AM - 1:05 PM EST
+- **Schedule**: Every Monday, Wednesday, and Friday at 11:30 AM - 1:05 PM EST
 - **Auto-generation**: Runs every Friday at midnight via cron job
 - **Maintenance**: Old sessions are automatically deleted
 - **Capacity**: Maintains 6 upcoming sessions at all times
@@ -93,7 +93,7 @@ Sessions are automatically generated:
 
 ### Sessions
 
-- `GET /api/sessions` - Get all sessions
+- `GET /api/sessions` - Get all sessions (optional auth filters Wednesday sessions by wedGroup)
 - `GET /api/sessions/:id` - Get session by ID
 - `GET /api/sessions/:id/attendances` - Get session attendances
 - `POST /api/sessions` - Create a new session (admin only)
@@ -113,7 +113,8 @@ Sessions are automatically generated:
 
 ### SMS
 
-- `POST /api/sms/:sessionId/send` - Send SMS to opted-in attendees (admin only)
+- `POST /api/sms/:sessionId/send` - Send team assignment SMS to opted-in attendees (admin only)
+- `POST /api/sms/:sessionId/notify-deletion` - Send session cancellation SMS to all attendees (admin only)
 
 ### Admin
 
