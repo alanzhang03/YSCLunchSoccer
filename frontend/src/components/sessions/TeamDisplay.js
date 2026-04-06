@@ -59,8 +59,9 @@ const DraggablePlayer = ({ player, isAdmin }) => {
     <li
       ref={setNodeRef}
       style={style}
-      className={`${styles.playerItem} ${isAdmin ? styles.draggable : ''
-        } ${isDraggingItem ? styles.dragging : ''}`}
+      className={`${styles.playerItem} ${
+        isAdmin ? styles.draggable : ''
+      } ${isDraggingItem ? styles.dragging : ''}`}
       {...attributes}
       {...listeners}
     >
@@ -77,13 +78,7 @@ const DraggablePlayer = ({ player, isAdmin }) => {
   );
 };
 
-const DroppableTeam = ({
-  team,
-  teamIndex,
-  teamColor,
-  isAdmin,
-  players,
-}) => {
+const DroppableTeam = ({ team, teamIndex, teamColor, isAdmin, players }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `team-${teamIndex}`,
     disabled: !isAdmin,
@@ -94,8 +89,9 @@ const DroppableTeam = ({
   return (
     <div
       ref={setNodeRef}
-      className={`${styles.teamCard} ${isOver ? styles.teamOver : ''} ${isOver ? styles.teamOverPulse : ''
-        }`}
+      className={`${styles.teamCard} ${isOver ? styles.teamOver : ''} ${
+        isOver ? styles.teamOverPulse : ''
+      }`}
     >
       {isOver && (
         <div className={styles.dropIndicator}>
@@ -137,9 +133,17 @@ const TeamDisplay = ({ sessionId }) => {
   const [lockedTeamsData, setLockedTeamsData] = useState(null);
   const [activeId, setActiveId] = useState(null);
   const [randomizeByCore, setRandomizeByCore] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const isAdmin = user?.isAdmin || false;
-  const teamColors = ['Dark', 'White', 'Dark 2', 'White 2', 'Dark 3', 'White 3'];
+  const teamColors = [
+    'Dark',
+    'White',
+    'Dark 2',
+    'White 2',
+    'Dark 3',
+    'White 3',
+  ];
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -196,7 +200,6 @@ const TeamDisplay = ({ sessionId }) => {
       fetchData();
     }
   }, [sessionId]);
-
 
   useEffect(() => {
     if (!sessionId) return;
@@ -330,8 +333,8 @@ const TeamDisplay = ({ sessionId }) => {
         numTeams = 4;
       }
       setNumOfTeams(numTeams);
-      setShowTeams(true);
     }
+    setShowTeams(true);
 
     let teams;
     if (randomizeByCore) {
@@ -366,16 +369,19 @@ const TeamDisplay = ({ sessionId }) => {
 
   const handleSendText = async () => {
     try {
+      setSending(true);
       const teamsPayload = teamsArray.map((team, i) => ({
         teamNum: i + 1,
         color: teamColors[i],
         playerIds: team.map((p) => p.user?.id || p.userId),
         playerNames: team.map((p) => p.user?.name || p.name),
       }));
-      const result = await sendSmsToAttendees(sessionId, teamsPayload);
+      await sendSmsToAttendees(sessionId, teamsPayload);
       alert(`Message Sent!`);
     } catch (err) {
       alert(`Failed to send messages: ${err.message}`);
+    } finally {
+      setSending(false);
     }
   };
 
@@ -527,13 +533,13 @@ const TeamDisplay = ({ sessionId }) => {
   };
   const activePlayer = activeId
     ? (() => {
-      const playerId = activeId.toString().replace('player-', '');
-      for (const team of teamsArray) {
-        const player = team.find((p) => String(p.id) === String(playerId));
-        if (player) return player;
-      }
-      return null;
-    })()
+        const playerId = activeId.toString().replace('player-', '');
+        for (const team of teamsArray) {
+          const player = team.find((p) => String(p.id) === String(playerId));
+          if (player) return player;
+        }
+        return null;
+      })()
     : null;
 
   if (loading) {
@@ -646,7 +652,7 @@ const TeamDisplay = ({ sessionId }) => {
         {isAdmin && lockedTeamsData && showTeams && (
           <div className={styles.sendTextContainer}>
             <button className={styles.sendTextButton} onClick={handleSendText}>
-              Send Text to Players
+              {sending ? `Sending Texts...` : `Send Texts To Players`}
             </button>
           </div>
         )}
