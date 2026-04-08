@@ -51,7 +51,7 @@ router.post(
 
         const opponentTeamData = teams.find((t) => t.teamNum === opponentNum);
         const opponentTeam = opponentTeamData
-          ? `Team ${opponentNum} (${opponentTeamData.color})`
+          ? `Team ${opponentNum}`
           : `Team ${opponentNum}`;
 
         let fieldNumber;
