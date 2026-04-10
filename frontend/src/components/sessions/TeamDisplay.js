@@ -16,7 +16,7 @@ import {
   fillTeamsRoundRobin,
 } from '@/lib/teamRandomizer';
 
-const USE_DUMMY_DATA = false;
+const USE_DUMMY_DATA = true;
 import {
   DndContext,
   closestCenter,
@@ -134,6 +134,14 @@ const TeamDisplay = ({ sessionId }) => {
   const [activeId, setActiveId] = useState(null);
   const [randomizeByCore, setRandomizeByCore] = useState(false);
   const [sending, setSending] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const isAdmin = user?.isAdmin || false;
   const teamColors = ['Dark', 'White', 'Dark', 'White', 'Dark', 'White'];
@@ -524,6 +532,36 @@ const TeamDisplay = ({ sessionId }) => {
   const handleDragCancel = () => {
     setActiveId(null);
   };
+
+  const handleMobileMove = async (player, sourceTeamIndex, targetTeamIndex) => {
+    if (sourceTeamIndex === targetTeamIndex || !isAdmin) return;
+
+    const newTeams = teamsArray.map((t) => [...t]);
+    const playerIndex = newTeams[sourceTeamIndex].findIndex(
+      (p) => String(p.id) === String(player.id),
+    );
+    if (playerIndex === -1) return;
+
+    const [moved] = newTeams[sourceTeamIndex].splice(playerIndex, 1);
+    newTeams[targetTeamIndex].push(moved);
+    setTeamsArray(newTeams);
+
+    try {
+      await lockTeams(sessionId, newTeams, numOfTeams);
+      setLockedTeamsData({
+        teams: newTeams.map((team) =>
+          team.map((p) => ({
+            userId: p.user?.id || p.userId,
+            attendanceId: p.id,
+          })),
+        ),
+        numOfTeams,
+        lockedAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('Failed to save mobile move:', err);
+    }
+  };
   const activePlayer = activeId
     ? (() => {
         const playerId = activeId.toString().replace('player-', '');
@@ -602,38 +640,90 @@ const TeamDisplay = ({ sessionId }) => {
             </p>
           </div>
         ) : showTeams ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragCancel={handleDragCancel}
-          >
+          isMobile ? (
             <div className={styles.teamsGrid}>
               {teamsArray.map((team, teamIndex) => (
-                <DroppableTeam
-                  key={teamIndex}
-                  team={team}
-                  teamIndex={teamIndex}
-                  teamColor={teamColors[teamIndex]}
-                  isAdmin={isAdmin}
-                  players={team}
-                />
+                <div key={teamIndex} className={styles.teamCard}>
+                  <div className={styles.teamHeader}>
+                    <h3 className={styles.teamTitle}>
+                      Team {teamIndex + 1} ({teamColors[teamIndex]})
+                    </h3>
+                    <span className={styles.teamCount}>
+                      {team.length} players
+                    </span>
+                  </div>
+                  <ul className={styles.playerList}>
+                    {team.map((player) => (
+                      <li key={player.id} className={styles.playerItem}>
+                        <span className={styles.playerName}>
+                          {player.user?.name || player.name}
+                        </span>
+                        {isAdmin && (
+                          <span className={styles.mobilePlayerControls}>
+                            {player.user?.skill != null && (
+                              <span className={styles.skillBadge}>
+                                {player.user.skill}
+                              </span>
+                            )}
+                            <select
+                              className={styles.mobileTeamSelect}
+                              value={teamIndex}
+                              onChange={(e) =>
+                                handleMobileMove(
+                                  player,
+                                  teamIndex,
+                                  parseInt(e.target.value),
+                                )
+                              }
+                            >
+                              {teamsArray.map((_, i) => (
+                                <option key={i} value={i}>
+                                  T{i + 1}
+                                </option>
+                              ))}
+                            </select>
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
-            <DragOverlay dropAnimation={null}>
-              {activePlayer ? (
-                <div className={styles.dragOverlay}>
-                  <div className={styles.dragOverlayContent}>
-                    <span className={styles.dragOverlayName}>
-                      {activePlayer.user?.name || activePlayer.name}
-                    </span>
-                    <div className={styles.dragOverlayBadge}>Moving...</div>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragCancel={handleDragCancel}
+            >
+              <div className={styles.teamsGrid}>
+                {teamsArray.map((team, teamIndex) => (
+                  <DroppableTeam
+                    key={teamIndex}
+                    team={team}
+                    teamIndex={teamIndex}
+                    teamColor={teamColors[teamIndex]}
+                    isAdmin={isAdmin}
+                    players={team}
+                  />
+                ))}
+              </div>
+              <DragOverlay dropAnimation={null}>
+                {activePlayer ? (
+                  <div className={styles.dragOverlay}>
+                    <div className={styles.dragOverlayContent}>
+                      <span className={styles.dragOverlayName}>
+                        {activePlayer.user?.name || activePlayer.name}
+                      </span>
+                      <div className={styles.dragOverlayBadge}>Moving...</div>
+                    </div>
                   </div>
-                </div>
-              ) : null}
-            </DragOverlay>
-          </DndContext>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          )
         ) : (
           <div className={styles.emptyState}>
             <p>

@@ -5,26 +5,25 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './page.module.scss';
 import UpcomingSessions from '@/components/ui/UpcomingSessions';
-import TestimonialsSlider from '@/components/ui/TestimonialsSlider';
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.15,
       delayChildren: 0.1,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.6,
+      duration: 0.55,
       ease: [0.4, 0, 0.2, 1],
     },
   },
@@ -36,18 +35,25 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
+        {/* ── HERO ── */}
         <motion.div
           className={styles.hero}
           variants={containerVariants}
           initial='hidden'
           animate='visible'
         >
+          <motion.div className={styles.scheduleTag} variants={itemVariants}>
+            Mon · Wed · Fri &nbsp;·&nbsp; 11:30 AM – 1:05 PM
+          </motion.div>
+
           <motion.h1 className={styles.title} variants={itemVariants}>
             YSC Lunch Soccer
           </motion.h1>
+
           <motion.p className={styles.subtitle} variants={itemVariants}>
-            Join your friends for lunchtime soccer sessions
+            Three days a week. All skill levels. No coordination required.
           </motion.p>
+
           <motion.a
             href='https://www.google.com/maps/place/YSC+Sports/@40.0773687,-75.4039779,1694m/data=!3m2!1e3!4b1!4m6!3m5!1s0x89c6945bbbf66627:0xc51da4623125fd8e!8m2!3d40.0773687!4d-75.4039779!16s%2Fg%2F1txnqdnh?entry=ttu&g_ep=EgoyMDI2MDExMy4wIKXMDSoASAFQAw%3D%3D'
             target='_blank'
@@ -58,6 +64,7 @@ export default function Home() {
           >
             📍 224 County Line Rd, Wayne, PA
           </motion.a>
+
           {!loading && user && (
             <motion.p
               className={styles.welcomeMessage}
@@ -69,6 +76,7 @@ export default function Home() {
               Welcome back, <strong>{user.name}</strong>!
             </motion.p>
           )}
+
           {!loading && !user && (
             <motion.div
               className={styles.authButtons}
@@ -78,15 +86,6 @@ export default function Home() {
               transition={{ delay: 0.4, duration: 0.4 }}
             >
               <motion.a
-                href='/login'
-                className={styles.loginButton}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-              >
-                Log In
-              </motion.a>
-              <motion.a
                 href='/signup'
                 className={styles.signupButton}
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -95,80 +94,92 @@ export default function Home() {
               >
                 Sign Up
               </motion.a>
+              <motion.a
+                href='/login'
+                className={styles.loginButton}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              >
+                Log In
+              </motion.a>
             </motion.div>
           )}
         </motion.div>
 
+        {/* ── UPCOMING SESSIONS ── */}
         <UpcomingSessions />
 
+        {/* ── HOW IT WORKS ── */}
         <motion.div
-          className={styles.ctaSection}
-          variants={itemVariants}
-          initial='hidden'
-          animate='visible'
-          transition={{ delay: 0.3 }}
-        >
-          <motion.a
-            href='/sessions'
-            className={styles.ctaButton}
-            whileHover={{ scale: 1.05, y: -3 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-          >
-            <span>View Sessions</span>
-          </motion.a>
-        </motion.div>
-
-        <motion.div
-          className={styles.featuresSection}
+          className={styles.howItWorks}
           variants={containerVariants}
           initial='hidden'
           animate='visible'
         >
-          <motion.div className={styles.feature} variants={itemVariants}>
-            <h2>Play together.</h2>
-            <p>
-              Join your friends for lunchtime soccer. RSVP to sessions, see
-              who&apos;s playing, and get ready for kickoff.
-            </p>
-          </motion.div>
+          <motion.h2 className={styles.sectionTitle} variants={itemVariants}>
+            How it works
+          </motion.h2>
 
-          <motion.div className={styles.feature} variants={itemVariants}>
-            <h2>Stay organized.</h2>
-            <p>
-              Teams get sorted automatically. See who's showing up in real-time.
-              No more group chat chaos.
-            </p>
-          </motion.div>
-
-          <motion.div className={styles.feature} variants={itemVariants}>
-            <h2>Build community.</h2>
-            <p>Meet new people. Make new friends. Have fun!</p>
-          </motion.div>
-        </motion.div>
-
-        <TestimonialsSlider />
-
-        <motion.div
-          className={styles.ctaSection}
-          variants={itemVariants}
-          initial='hidden'
-          animate='visible'
-        >
-          {!user && (
-            <>
-              <h3>Ready to play?</h3>
-              <div className={styles.ctaButtons}>
-                <Link href='/signup' className={styles.primaryButton}>
-                  Get started
-                </Link>
-                <Link href='/about-us' className={styles.secondaryLink}>
-                  Learn more
-                </Link>
+          <div className={styles.steps}>
+            <motion.div className={styles.step} variants={itemVariants}>
+              <span className={styles.stepNumber}>01</span>
+              <div className={styles.stepContent}>
+                <h3>RSVP to a session</h3>
+                <p>
+                  Browse upcoming Mon, Wed, and Fri sessions. Hit Yes before
+                  midnight and you&apos;re in — max 50 players per game.
+                </p>
               </div>
-            </>
-          )}
+            </motion.div>
+
+            <motion.div className={styles.stepDivider} variants={itemVariants} />
+
+            <motion.div className={styles.step} variants={itemVariants}>
+              <span className={styles.stepNumber}>02</span>
+              <div className={styles.stepContent}>
+                <h3>Get your team assignment</h3>
+                <p>
+                  Teams are skill-balanced automatically. You&apos;ll get an SMS
+                  with your team, jersey color, and opponents before kickoff.
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div className={styles.stepDivider} variants={itemVariants} />
+
+            <motion.div className={styles.step} variants={itemVariants}>
+              <span className={styles.stepNumber}>03</span>
+              <div className={styles.stepContent}>
+                <h3>Show up and play</h3>
+                <p>
+                  Arrive at YSC Sports, find your team, and play. No group chats,
+                  no coordination — just lunch soccer.
+                </p>
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
+
+        {/* ── FINAL CTA ── */}
+        {!loading && !user && (
+          <motion.div
+            className={styles.ctaSection}
+            variants={itemVariants}
+            initial='hidden'
+            animate='visible'
+          >
+            <h3>Ready to play?</h3>
+            <div className={styles.ctaButtons}>
+              <Link href='/signup' className={styles.primaryButton}>
+                Get started
+              </Link>
+              <Link href='/about-us' className={styles.secondaryLink}>
+                Learn more
+              </Link>
+            </div>
+          </motion.div>
+        )}
       </main>
     </div>
   );
