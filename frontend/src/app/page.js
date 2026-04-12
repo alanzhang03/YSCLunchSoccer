@@ -43,7 +43,7 @@ export default function Home() {
           animate='visible'
         >
           <motion.div className={styles.scheduleTag} variants={itemVariants}>
-            Mon · Wed · Fri &nbsp;·&nbsp; 11:30 AM – 1:05 PM
+            Mon · Fri &nbsp;·&nbsp; 11:30 AM – 1:05 PM
           </motion.div>
 
           <motion.h1 className={styles.title} variants={itemVariants}>
@@ -126,8 +126,8 @@ export default function Home() {
               <div className={styles.stepContent}>
                 <h3>RSVP to a session</h3>
                 <p>
-                  Browse upcoming Mon, Wed, and Fri sessions. Hit Yes before
-                  midnight and you&apos;re in — max 50 players per game.
+                  Browse upcoming Monday and Friday sessions. Hit Yes before
+                  10:45 AM and you&apos;re in.
                 </p>
               </div>
             </motion.div>
@@ -157,10 +157,7 @@ export default function Home() {
               <span className={styles.stepNumber}>03</span>
               <div className={styles.stepContent}>
                 <h3>Show up and play</h3>
-                <p>
-                  Arrive at YSC Sports, find your team, and play. No group
-                  chats, no coordination — just lunch soccer.
-                </p>
+                <p>Arrive at YSC Sports, find your team, and play!</p>
               </div>
             </motion.div>
           </div>
