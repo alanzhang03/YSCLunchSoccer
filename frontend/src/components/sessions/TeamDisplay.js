@@ -49,11 +49,12 @@ const DraggablePlayer = ({ player, isAdmin }) => {
     disabled: !isAdmin,
   });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: isDraggingItem ? 'none' : transition,
-    opacity: isDraggingItem ? 0.3 : 1,
-  };
+  const style = isDraggingItem
+    ? { transition: 'none', opacity: 0.3 }
+    : {
+        ...(transform ? { transform: CSS.Transform.toString(transform) } : {}),
+        ...(transition ? { transition } : {}),
+      };
 
   return (
     <li
