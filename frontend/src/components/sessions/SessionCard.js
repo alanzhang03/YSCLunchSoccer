@@ -320,12 +320,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         className={styles.attendanceToggle}
         onClick={() => setShowAttendees((v) => !v)}
         type='button'
+        aria-expanded={showAttendees}
       >
         <span className={styles.attendanceToggleLabel}>
           {(() => {
-            const yes = sessionData?.attendances?.filter(a => a.status === 'yes').length || 0;
-            const maybe = sessionData?.attendances?.filter(a => a.status === 'maybe').length || 0;
-            return `${yes} going${maybe > 0 ? ` · ${maybe} maybe` : ''}`;
+            const yesCount = sessionData?.attendances?.filter(a => a.status === 'yes').length || 0;
+            const maybeCount = sessionData?.attendances?.filter(a => a.status === 'maybe').length || 0;
+            return `${yesCount} going${maybeCount > 0 ? ` · ${maybeCount} maybe` : ''}`;
           })()}
         </span>
         <span className={styles.attendanceToggleChevron}>

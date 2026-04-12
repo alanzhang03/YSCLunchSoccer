@@ -138,10 +138,11 @@ const TeamDisplay = ({ sessionId }) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const mql = window.matchMedia('(max-width: 768px)');
+    const handler = (e) => setIsMobile(e.matches);
+    setIsMobile(mql.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
   }, []);
 
   const isAdmin = user?.isAdmin || false;
@@ -537,6 +538,7 @@ const TeamDisplay = ({ sessionId }) => {
   const handleMobileMove = async (player, sourceTeamIndex, targetTeamIndex) => {
     if (sourceTeamIndex === targetTeamIndex || !isAdmin) return;
 
+    const prevTeams = teamsArray.map((t) => [...t]);
     const newTeams = teamsArray.map((t) => [...t]);
     const playerIndex = newTeams[sourceTeamIndex].findIndex(
       (p) => String(p.id) === String(player.id),
@@ -560,6 +562,7 @@ const TeamDisplay = ({ sessionId }) => {
         lockedAt: new Date().toISOString(),
       });
     } catch (err) {
+      setTeamsArray(prevTeams);
       console.error('Failed to save mobile move:', err);
     }
   };
