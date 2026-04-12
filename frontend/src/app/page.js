@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './page.module.scss';
 import UpcomingSessions from '@/components/ui/UpcomingSessions';
+import TestimonialsSlider from '@/components/ui/TestimonialsSlider';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -35,7 +36,6 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        {/* ── HERO ── */}
         <motion.div
           className={styles.hero}
           variants={containerVariants}
@@ -51,7 +51,7 @@ export default function Home() {
           </motion.h1>
 
           <motion.p className={styles.subtitle} variants={itemVariants}>
-            Three days a week. All skill levels. No coordination required.
+            Join your friends for lunchtime soccer sessions
           </motion.p>
 
           <motion.a
@@ -107,15 +107,14 @@ export default function Home() {
           )}
         </motion.div>
 
-        {/* ── UPCOMING SESSIONS ── */}
         <UpcomingSessions />
 
-        {/* ── HOW IT WORKS ── */}
         <motion.div
           className={styles.howItWorks}
           variants={containerVariants}
           initial='hidden'
-          animate='visible'
+          whileInView='visible'
+          viewport={{ once: true, margin: '-80px' }}
         >
           <motion.h2 className={styles.sectionTitle} variants={itemVariants}>
             How it works
@@ -133,7 +132,10 @@ export default function Home() {
               </div>
             </motion.div>
 
-            <motion.div className={styles.stepDivider} variants={itemVariants} />
+            <motion.div
+              className={styles.stepDivider}
+              variants={itemVariants}
+            />
 
             <motion.div className={styles.step} variants={itemVariants}>
               <span className={styles.stepNumber}>02</span>
@@ -146,28 +148,31 @@ export default function Home() {
               </div>
             </motion.div>
 
-            <motion.div className={styles.stepDivider} variants={itemVariants} />
+            <motion.div
+              className={styles.stepDivider}
+              variants={itemVariants}
+            />
 
             <motion.div className={styles.step} variants={itemVariants}>
               <span className={styles.stepNumber}>03</span>
               <div className={styles.stepContent}>
                 <h3>Show up and play</h3>
                 <p>
-                  Arrive at YSC Sports, find your team, and play. No group chats,
-                  no coordination — just lunch soccer.
+                  Arrive at YSC Sports, find your team, and play. No group
+                  chats, no coordination — just lunch soccer.
                 </p>
               </div>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* ── FINAL CTA ── */}
         {!loading && !user && (
           <motion.div
             className={styles.ctaSection}
             variants={itemVariants}
             initial='hidden'
-            animate='visible'
+            whileInView='visible'
+            viewport={{ once: true, margin: '-80px' }}
           >
             <h3>Ready to play?</h3>
             <div className={styles.ctaButtons}>
@@ -180,6 +185,7 @@ export default function Home() {
             </div>
           </motion.div>
         )}
+        <TestimonialsSlider />
       </main>
     </div>
   );
