@@ -122,6 +122,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   const [allPaymentStatuses, setAllPaymentStatuses] = useState({});
 
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showAttendees, setShowAttendees] = useState(false);
   useEffect(() => {
     if (sessionData?.attendances) {
       const count = sessionData.attendances.filter(
@@ -315,13 +316,33 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         </Link>
       )}
 
-      <AttendanceSection
-        sessionData={sessionData}
-        isAdmin={isAdmin}
-        allPaymentStatuses={allPaymentStatuses}
-        onTogglePaymentStatus={handleTogglePaymentStatus}
-        onAttendanceUpdate={onAttendanceUpdate}
-      />
+      <button
+        className={styles.attendanceToggle}
+        onClick={() => setShowAttendees((v) => !v)}
+        type='button'
+        aria-expanded={showAttendees}
+      >
+        <span className={styles.attendanceToggleLabel}>
+          {(() => {
+            const yesCount = sessionData?.attendances?.filter(a => a.status === 'yes').length || 0;
+            const maybeCount = sessionData?.attendances?.filter(a => a.status === 'maybe').length || 0;
+            return `${yesCount} going${maybeCount > 0 ? ` · ${maybeCount} maybe` : ''}`;
+          })()}
+        </span>
+        <span className={styles.attendanceToggleChevron}>
+          {showAttendees ? '▲' : '▼'}
+        </span>
+      </button>
+
+      {showAttendees && (
+        <AttendanceSection
+          sessionData={sessionData}
+          isAdmin={isAdmin}
+          allPaymentStatuses={allPaymentStatuses}
+          onTogglePaymentStatus={handleTogglePaymentStatus}
+          onAttendanceUpdate={onAttendanceUpdate}
+        />
+      )}
 
       <AttendanceButton
         onSend={handleAttendance}
