@@ -54,6 +54,13 @@ const Page = () => {
         return;
       }
 
+      const digits = phoneNum.replace(/\D/g, '');
+      if (digits.length !== 10) {
+        setError('Phone number must be 10 digits');
+        setLoading(false);
+        return;
+      }
+
       await signup(phoneNum, email, name, password, skill, smsOptIn);
       router.push('/');
     } catch (err) {

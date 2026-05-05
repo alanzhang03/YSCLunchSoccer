@@ -14,6 +14,7 @@ import {
   randomizeTeams,
   randomizeOgTeams,
   fillTeamsRoundRobin,
+  shuffleArray,
 } from '@/lib/teamRandomizer';
 
 const USE_DUMMY_DATA = false;
@@ -298,7 +299,7 @@ const TeamDisplay = ({ sessionId }) => {
         newPlayers,
         numTeams,
       );
-      setTeamsArray(teams);
+      setTeamsArray(teams.map(shuffleArray));
 
       if (newPlayers.length > 0 && isAdmin) {
         try {
@@ -320,7 +321,7 @@ const TeamDisplay = ({ sessionId }) => {
       }
     } else {
       const teams = randomizeTeams(yesAttendances, numTeams);
-      setTeamsArray(teams);
+      setTeamsArray(teams.map(shuffleArray));
     }
   };
 
