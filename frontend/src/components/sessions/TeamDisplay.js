@@ -342,9 +342,9 @@ const TeamDisplay = ({ sessionId }) => {
 
     let teams;
     if (randomizeByCore) {
-      teams = randomizeOgTeams(yesAttendances, numTeams);
+      teams = randomizeOgTeams(yesAttendances, numTeams).map(shuffleArray);
     } else {
-      teams = randomizeTeams(yesAttendances, numTeams);
+      teams = randomizeTeams(yesAttendances, numTeams).map(shuffleArray);
     }
     setTeamsArray(teams);
 
