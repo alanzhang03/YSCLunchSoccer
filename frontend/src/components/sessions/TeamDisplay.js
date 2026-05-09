@@ -299,7 +299,7 @@ const TeamDisplay = ({ sessionId }) => {
         newPlayers,
         numTeams,
       );
-      setTeamsArray(teams.map(shuffleArray));
+      setTeamsArray(teams);
 
       if (newPlayers.length > 0 && isAdmin) {
         try {
