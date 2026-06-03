@@ -181,10 +181,8 @@ const Page = () => {
                   checked={smsOptIn}
                   onChange={(e) => setSmsOptIn(e.target.checked)}
                 />
-                I agree to receive SMS notifications (session reminders, team
-                and color updates, deleted sessions) from YSC Lunch Soccer.
-                Message frequency varies. Reply STOP to unsubscribe or HELP for
-                help.
+                I agree to receive text messages (teams and team color, deleted
+                sessions, etc.).
               </label>
             </div>
 
