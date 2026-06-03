@@ -51,6 +51,7 @@ const AdminPage = () => {
       phone: u.phone,
       skill: u.skill,
       isAdmin: u.isAdmin,
+      smsOptIn: u.smsOptIn,
     });
     setError('');
   };
@@ -166,6 +167,12 @@ const AdminPage = () => {
                     </th>
                     <th
                       className={styles.sortable}
+                      onClick={() => handleSort('smsOptIn')}
+                    >
+                      SMS Opt-in{sortIndicator('smsOptIn')}
+                    </th>
+                    <th
+                      className={styles.sortable}
                       onClick={() => handleSort('createdAt')}
                     >
                       Joined{sortIndicator('createdAt')}
@@ -244,6 +251,21 @@ const AdminPage = () => {
                               <option value='true'>Yes</option>
                             </select>
                           </td>
+                          <td>
+                            <select
+                              className={styles.select}
+                              value={editData.smsOptIn ? 'true' : 'false'}
+                              onChange={(e) =>
+                                setEditData({
+                                  ...editData,
+                                  smsOptIn: e.target.value === 'true',
+                                })
+                              }
+                            >
+                              <option value='false'>No</option>
+                              <option value='true'>Yes</option>
+                            </select>
+                          </td>
                           <td>{new Date(u.createdAt).toLocaleDateString()}</td>
                           <td className={styles.actions}>
                             <button
@@ -275,6 +297,15 @@ const AdminPage = () => {
                               }
                             >
                               {u.isAdmin ? 'Yes' : 'No'}
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              className={
+                                u.smsOptIn ? styles.badgeSms : styles.badgeUser
+                              }
+                            >
+                              {u.smsOptIn ? 'Yes' : 'No'}
                             </span>
                           </td>
                           <td>{new Date(u.createdAt).toLocaleDateString()}</td>
