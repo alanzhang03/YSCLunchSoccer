@@ -321,7 +321,7 @@ const TeamDisplay = ({ sessionId }) => {
       }
     } else {
       const teams = randomizeTeams(yesAttendances, numTeams);
-      setTeamsArray(teams.map(shuffleArray));
+      setTeamsArray(teams);
     }
   };
 
