@@ -342,7 +342,7 @@
   }
 
   .actions {
-    padding-top: 1.25rem;
+    padding-top: 0.75rem;
     border-top: 1px solid #e2e8f0;
   }
 }
@@ -392,6 +392,11 @@
   margin-top: 0.25rem;
   margin-bottom: 0.5rem;
   transition: all 0.4s ease;
+
+  --btn-background: #1f73b7;
+  --btn-text: #ffffff;
+  --btn-border: #1a5f99;
+  --btn-shadow: rgba(31, 115, 183, 0.25);
 
   &:hover {
     transform: scale(1.025);

@@ -119,7 +119,7 @@ export default function Card({
     } finally {
       setIsSavingFieldLocation(false);
     }
-  }
+  };
 
   return (
     <div className={styles.card}>
@@ -150,10 +150,16 @@ export default function Card({
                 disabled={isSavingFieldLocation}
               />
               <div className={styles.editLocationActions}>
-                <button onClick={handleFieldLocationChange} disabled={isSavingFieldLocation}>
+                <button
+                  onClick={handleFieldLocationChange}
+                  disabled={isSavingFieldLocation}
+                >
                   {isSavingFieldLocation ? 'Saving...' : 'Save'}
                 </button>
-                <button onClick={() => setIsEditingFieldLocation(false)} disabled={isSavingFieldLocation}>
+                <button
+                  onClick={() => setIsEditingFieldLocation(false)}
+                  disabled={isSavingFieldLocation}
+                >
                   Cancel
                 </button>
               </div>

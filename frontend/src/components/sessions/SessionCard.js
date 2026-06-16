@@ -324,8 +324,12 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       >
         <span className={styles.attendanceToggleLabel}>
           {(() => {
-            const yesCount = sessionData?.attendances?.filter(a => a.status === 'yes').length || 0;
-            const maybeCount = sessionData?.attendances?.filter(a => a.status === 'maybe').length || 0;
+            const yesCount =
+              sessionData?.attendances?.filter((a) => a.status === 'yes')
+                .length || 0;
+            const maybeCount =
+              sessionData?.attendances?.filter((a) => a.status === 'maybe')
+                .length || 0;
             return `${yesCount} going${maybeCount > 0 ? ` · ${maybeCount} maybe` : ''}`;
           })()}
         </span>
@@ -344,14 +348,14 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         />
       )}
 
-      <AttendanceButton
-        onSend={handleAttendance}
-        currentStatus={currentStatus}
-        disabled={isSubmitting || !user}
-        yesDisabled={yesCount >= MAX_ATTENDANCE && currentStatus !== 'yes'}
-      />
-
-      {!user && (
+      {user ? (
+        <AttendanceButton
+          onSend={handleAttendance}
+          currentStatus={currentStatus}
+          disabled={isSubmitting}
+          yesDisabled={yesCount >= MAX_ATTENDANCE && currentStatus !== 'yes'}
+        />
+      ) : (
         <div className={styles.loginPrompt}>
           <a href='/login' className={styles.loginLink}>
             Log in to RSVP
