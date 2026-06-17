@@ -4,7 +4,7 @@ import styles from './SessionCard.module.scss';
 import { deleteAttendances } from '@/lib/api';
 import { DUMMY_USERS } from '@/lib/constants';
 
-const USE_DUMMY_DATA = true;
+const USE_DUMMY_DATA = false;
 
 const generateDummyAttendances = () => {
   const dummyYes = DUMMY_USERS.slice(0, 10).map((user, index) => ({

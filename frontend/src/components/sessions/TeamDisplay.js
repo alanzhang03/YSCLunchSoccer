@@ -16,16 +16,6 @@ import {
   fillTeamsRoundRobin,
   shuffleArray,
 } from '@/lib/teamRandomizer';
-
-const USE_DUMMY_DATA = true;
-
-const FIELD_OPTIONS = [
-  'Indoor Upper Field A (Upper Left)',
-  'Indoor Upper Field B (Upper Right)',
-  'Indoor Lower Field C',
-  'Upper Outdoor Field',
-  'Lower Outdoor Field',
-];
 import {
   DndContext,
   closestCenter,
@@ -44,6 +34,16 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+const USE_DUMMY_DATA = false;
+
+const FIELD_OPTIONS = [
+  'Indoor Upper Field A (Upper Left)',
+  'Indoor Upper Field B (Upper Right)',
+  'Indoor Lower Field C',
+  'Upper Outdoor Field',
+  'Lower Outdoor Field',
+];
 
 const DraggablePlayer = ({ player, isAdmin }) => {
   const {
@@ -157,7 +157,10 @@ const TeamDisplay = ({ sessionId }) => {
     for (let i = 1; i <= numTeams; i += 2) {
       if (i + 1 <= numTeams) {
         const matchupIndex = (i - 1) / 2;
-        result.push({ teams: [i, i + 1], field: defaultFields[matchupIndex] ?? null });
+        result.push({
+          teams: [i, i + 1],
+          field: defaultFields[matchupIndex] ?? null,
+        });
       }
     }
     return result;
@@ -427,7 +430,7 @@ const TeamDisplay = ({ sessionId }) => {
 
   useEffect(() => {
     calculateTeams();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attendes, lockedTeamsData, customNumTeams]);
 
   const handleDragStart = (event) => {
@@ -710,56 +713,66 @@ const TeamDisplay = ({ sessionId }) => {
                         {matchup.field || `Game ${matchupIdx + 1}`}
                       </div>
                       <div className={styles.matchupTeamsGrid}>
-                        {[team1Idx, team2Idx].filter(idx => teamsArray[idx]).map(teamIndex => {
-                          const team = teamsArray[teamIndex];
-                          return (
-                            <div key={teamIndex} className={styles.teamCard}>
-                              <div className={styles.teamHeader}>
-                                <h3 className={styles.teamTitle}>
-                                  Team {teamIndex + 1} ({teamColors[teamIndex]})
-                                </h3>
-                                <span className={styles.teamCount}>
-                                  {team.length} players
-                                </span>
-                              </div>
-                              <ul className={styles.playerList}>
-                                {team.map((player) => (
-                                  <li key={player.id} className={styles.playerItem}>
-                                    <span className={styles.playerName}>
-                                      {player.user?.name || player.name}
-                                    </span>
-                                    {isAdmin && (
-                                      <span className={styles.mobilePlayerControls}>
-                                        {player.user?.skill != null && (
-                                          <span className={styles.skillBadge}>
-                                            {player.user.skill}
-                                          </span>
-                                        )}
-                                        <select
-                                          className={styles.mobileTeamSelect}
-                                          value={teamIndex}
-                                          onChange={(e) =>
-                                            handleMobileMove(
-                                              player,
-                                              teamIndex,
-                                              parseInt(e.target.value),
-                                            )
+                        {[team1Idx, team2Idx]
+                          .filter((idx) => teamsArray[idx])
+                          .map((teamIndex) => {
+                            const team = teamsArray[teamIndex];
+                            return (
+                              <div key={teamIndex} className={styles.teamCard}>
+                                <div className={styles.teamHeader}>
+                                  <h3 className={styles.teamTitle}>
+                                    Team {teamIndex + 1} (
+                                    {teamColors[teamIndex]})
+                                  </h3>
+                                  <span className={styles.teamCount}>
+                                    {team.length} players
+                                  </span>
+                                </div>
+                                <ul className={styles.playerList}>
+                                  {team.map((player) => (
+                                    <li
+                                      key={player.id}
+                                      className={styles.playerItem}
+                                    >
+                                      <span className={styles.playerName}>
+                                        {player.user?.name || player.name}
+                                      </span>
+                                      {isAdmin && (
+                                        <span
+                                          className={
+                                            styles.mobilePlayerControls
                                           }
                                         >
-                                          {teamsArray.map((_, i) => (
-                                            <option key={i} value={i}>
-                                              T{i + 1}
-                                            </option>
-                                          ))}
-                                        </select>
-                                      </span>
-                                    )}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          );
-                        })}
+                                          {player.user?.skill != null && (
+                                            <span className={styles.skillBadge}>
+                                              {player.user.skill}
+                                            </span>
+                                          )}
+                                          <select
+                                            className={styles.mobileTeamSelect}
+                                            value={teamIndex}
+                                            onChange={(e) =>
+                                              handleMobileMove(
+                                                player,
+                                                teamIndex,
+                                                parseInt(e.target.value),
+                                              )
+                                            }
+                                          >
+                                            {teamsArray.map((_, i) => (
+                                              <option key={i} value={i}>
+                                                T{i + 1}
+                                              </option>
+                                            ))}
+                                          </select>
+                                        </span>
+                                      )}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
                   );
@@ -835,16 +848,18 @@ const TeamDisplay = ({ sessionId }) => {
                           {matchup.field || `Game ${matchupIdx + 1}`}
                         </div>
                         <div className={styles.matchupTeamsGrid}>
-                          {[team1Idx, team2Idx].filter(idx => teamsArray[idx]).map(teamIndex => (
-                            <DroppableTeam
-                              key={teamIndex}
-                              team={teamsArray[teamIndex]}
-                              teamIndex={teamIndex}
-                              teamColor={teamColors[teamIndex]}
-                              isAdmin={isAdmin}
-                              players={teamsArray[teamIndex]}
-                            />
-                          ))}
+                          {[team1Idx, team2Idx]
+                            .filter((idx) => teamsArray[idx])
+                            .map((teamIndex) => (
+                              <DroppableTeam
+                                key={teamIndex}
+                                team={teamsArray[teamIndex]}
+                                teamIndex={teamIndex}
+                                teamColor={teamColors[teamIndex]}
+                                isAdmin={isAdmin}
+                                players={teamsArray[teamIndex]}
+                              />
+                            ))}
                         </div>
                       </div>
                     );
@@ -904,17 +919,25 @@ const TeamDisplay = ({ sessionId }) => {
                       <select
                         className={styles.fieldSelect}
                         value={matchup.field || ''}
-                        onChange={(e) => handleFieldAssignment(i, e.target.value)}
+                        onChange={(e) =>
+                          handleFieldAssignment(i, e.target.value)
+                        }
                       >
                         <option value=''>-- Select Field --</option>
                         {FIELD_OPTIONS.map((f) => (
-                          <option key={f} value={f} disabled={assignedFields.includes(f)}>
+                          <option
+                            key={f}
+                            value={f}
+                            disabled={assignedFields.includes(f)}
+                          >
                             {f}
                           </option>
                         ))}
                       </select>
                     ) : matchup.field ? (
-                      <span className={styles.matchupField}>{matchup.field}</span>
+                      <span className={styles.matchupField}>
+                        {matchup.field}
+                      </span>
                     ) : null}
                   </div>
                 );
