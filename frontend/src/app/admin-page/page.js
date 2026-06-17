@@ -4,7 +4,12 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { fetchAllUsers, updateUser } from '@/lib/api';
+import {
+  fetchAllUsers,
+  updateUser,
+  getDisclaimerInfo,
+  setDisclaimerInfo,
+} from '@/lib/api';
 import styles from './admin.module.scss';
 
 const AdminPage = () => {
@@ -19,6 +24,12 @@ const AdminPage = () => {
   const [sortKey, setSortKey] = useState('name');
   const [sortDir, setSortDir] = useState('asc');
 
+  const [disclaimerEnabled, setDisclaimerEnabled] = useState(false);
+  const [disclaimerMessage, setDisclaimerMessage] = useState('');
+  const [disclaimerSaving, setDisclaimerSaving] = useState(false);
+  const [disclaimerError, setDisclaimerError] = useState('');
+  const [disclaimerSuccess, setDisclaimerSuccess] = useState(false);
+
   useEffect(() => {
     if (!loading && (!user || !user.isAdmin)) {
       router.push('/');
@@ -28,8 +39,35 @@ const AdminPage = () => {
   useEffect(() => {
     if (user?.isAdmin) {
       loadUsers();
+      loadDisclaimer();
     }
   }, [user]);
+
+  const loadDisclaimer = async () => {
+    try {
+      const data = await getDisclaimerInfo();
+      if (data) {
+        setDisclaimerEnabled(data.enabled);
+        setDisclaimerMessage(data.message);
+      }
+    } catch {
+      // non-critical, fail silently
+    }
+  };
+
+  const saveDisclaimer = async () => {
+    try {
+      setDisclaimerSaving(true);
+      setDisclaimerError('');
+      setDisclaimerSuccess(false);
+      await setDisclaimerInfo(disclaimerEnabled, disclaimerMessage);
+      setDisclaimerSuccess(true);
+    } catch (err) {
+      setDisclaimerError(err.message || 'Failed to save disclaimer');
+    } finally {
+      setDisclaimerSaving(false);
+    }
+  };
 
   const loadUsers = async () => {
     try {
@@ -118,6 +156,51 @@ const AdminPage = () => {
     <div className={styles.page}>
       <main className={styles.main}>
         <div className={styles.card}>
+          <div className={styles.header}>
+            <h1>Site Settings</h1>
+            <p>Manage the homepage disclaimer</p>
+          </div>
+
+          <div className={styles.disclaimerSection}>
+            <div className={styles.disclaimerToggleRow}>
+              <label className={styles.toggleLabel}>
+                <input
+                  type='checkbox'
+                  checked={disclaimerEnabled}
+                  onChange={(e) => setDisclaimerEnabled(e.target.checked)}
+                />
+                Show disclaimer on homepage
+              </label>
+            </div>
+
+            <textarea
+              className={styles.disclaimerTextarea}
+              placeholder='Enter disclaimer message...'
+              value={disclaimerMessage}
+              onChange={(e) => setDisclaimerMessage(e.target.value)}
+              rows={6}
+            />
+
+            {disclaimerError && (
+              <div className={styles.error}>{disclaimerError}</div>
+            )}
+            {disclaimerSuccess && (
+              <div className={styles.success}>
+                Disclaimer saved successfully.
+              </div>
+            )}
+
+            <button
+              className={styles.saveBtn}
+              onClick={saveDisclaimer}
+              disabled={disclaimerSaving}
+            >
+              {disclaimerSaving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
+
+        <div className={`${styles.card} ${styles.secondCard}`}>
           <div className={styles.header}>
             <h1>User Management</h1>
             <p>{users.length} registered users</p>

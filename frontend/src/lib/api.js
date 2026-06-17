@@ -357,17 +357,14 @@ export async function updateSessionFieldLocation(sessionId, fieldLocation) {
 }
 
 export async function updateSessionTime(sessionId, startTime, endTime) {
-  const response = await fetch(
-    `${API_BASE_URL}/sessions/${sessionId}/time`,
-    {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ startTime, endTime }),
+  const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/time`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+    body: JSON.stringify({ startTime, endTime }),
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -395,7 +392,13 @@ export async function sendEmail({ name, email, message }) {
   return response.json();
 }
 
-export async function adjustPersonalInfo({ name, email, phone, skill, smsOptIn }) {
+export async function adjustPersonalInfo({
+  name,
+  email,
+  phone,
+  skill,
+  smsOptIn,
+}) {
   const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
     method: 'PUT',
     credentials: 'include',
@@ -461,21 +464,51 @@ export async function sendSmsToAttendees(sessionId, teams) {
     throw new Error(errorData.error || 'Failed to send SMS');
   }
 
-  return response.json()
+  return response.json();
 }
 
 export async function sendSmsAfterDeleteSession(sessionId) {
-  const response = await fetch(`${API_BASE_URL}/sms/${sessionId}/notify-deletion`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sessionId }),
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/sms/${sessionId}/notify-deletion`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId }),
+    },
+  );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error || 'Failed to send SMS');
   }
 
-  return response.json()
+  return response.json();
+}
+
+export async function getDisclaimerInfo() {
+  const response = await fetch(`${API_BASE_URL}/disclaimer`);
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to fetch disclaimer');
+  }
+
+  return response.json();
+}
+
+export async function setDisclaimerInfo(enabled, message) {
+  const response = await fetch(`${API_BASE_URL}/disclaimer`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled, message }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to update disclaimer');
+  }
+
+  return response.json();
 }

@@ -8,7 +8,8 @@ import authRouter from './routes/auth.js';
 import messagesRouter from './routes/messages.js';
 import checkoutRouter from './routes/checkout.js';
 import adminRouter from './routes/admin.js';
-import smsRouter from './routes/sms.js'
+import smsRouter from './routes/sms.js';
+import disclaimerRouter from './routes/disclaimer.js';
 import { sessionGenerator } from './utils/sessionGenerator.js';
 
 dotenv.config();
@@ -65,6 +66,7 @@ app.use('/api/messages', messagesRouter);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/admin/users', adminRouter);
 app.use('/api/sms', smsRouter)
+app.use('/api/disclaimer', disclaimerRouter);
 
 setTimeout(async () => {
   try {

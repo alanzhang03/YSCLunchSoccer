@@ -106,3 +106,9 @@ model Payment {
   @@index([sessionId])
   @@index([status])
 }
+
+model Disclaimer {
+  id      Int     @id @default(1)
+  enabled Boolean @default(false)
+  message String  @default("")
+}

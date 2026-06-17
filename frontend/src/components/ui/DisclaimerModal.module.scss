@@ -1,0 +1,81 @@
+@use '@/styles/variables' as *;
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem 2rem 1.75rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  border-top: 4px solid $ysc-primary-blue;
+}
+
+.iconRow {
+  margin-bottom: 0.75rem;
+}
+
+.icon {
+  font-size: 2rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.message {
+  font-size: 0.9375rem;
+  color: $text-medium;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
+.okButton {
+  background: $primary-gradient;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.625rem 2rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+
+  .title {
+    font-size: 1.125rem;
+  }
+
+  .message {
+    font-size: 0.875rem;
+  }
+}
