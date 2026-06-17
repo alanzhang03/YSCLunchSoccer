@@ -30,15 +30,20 @@ router.post(
         const teamNum = team.teamNum;
 
         const matchup = matchups?.find((m) => m.teams.includes(teamNum));
-        const opponentNum = matchup ? matchup.teams.find((t) => t !== teamNum) : null;
+        const opponentNums = matchup ? matchup.teams.filter((t) => t !== teamNum) : [];
         const fieldName = matchup?.field || null;
+
+        const opponentTeam =
+          opponentNums.length === 0
+            ? 'TBD'
+            : opponentNums.map((n) => `Team ${n}`).join(' & ');
 
         const teammates = team.playerNames;
         const message = gamedayMessage(session, {
           teamNum,
           teamColor: team.color,
           teammates,
-          opponentTeam: opponentNum ? `Team ${opponentNum}` : 'TBD',
+          opponentTeam,
           fieldName,
         });
         await sendSms([recipient], message);

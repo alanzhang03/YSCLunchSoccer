@@ -161,6 +161,12 @@ const TeamDisplay = ({ sessionId }) => {
           teams: [i, i + 1],
           field: defaultFields[matchupIndex] ?? null,
         });
+      } else {
+        if (result.length > 0) {
+          result[result.length - 1].teams.push(i);
+        } else {
+          result.push({ teams: [i], field: defaultFields[0] ?? null });
+        }
       }
     }
     return result;
@@ -705,15 +711,14 @@ const TeamDisplay = ({ sessionId }) => {
             matchups.length > 0 ? (
               <div className={styles.fieldGroups}>
                 {matchups.map((matchup, matchupIdx) => {
-                  const team1Idx = matchup.teams[0] - 1;
-                  const team2Idx = matchup.teams[1] - 1;
                   return (
                     <div key={matchupIdx} className={styles.fieldGroup}>
                       <div className={styles.fieldGroupHeader}>
                         {matchup.field || `Game ${matchupIdx + 1}`}
                       </div>
                       <div className={styles.matchupTeamsGrid}>
-                        {[team1Idx, team2Idx]
+                        {matchup.teams
+                          .map((t) => t - 1)
                           .filter((idx) => teamsArray[idx])
                           .map((teamIndex) => {
                             const team = teamsArray[teamIndex];
@@ -840,15 +845,14 @@ const TeamDisplay = ({ sessionId }) => {
               {matchups.length > 0 ? (
                 <div className={styles.fieldGroups}>
                   {matchups.map((matchup, matchupIdx) => {
-                    const team1Idx = matchup.teams[0] - 1;
-                    const team2Idx = matchup.teams[1] - 1;
                     return (
                       <div key={matchupIdx} className={styles.fieldGroup}>
                         <div className={styles.fieldGroupHeader}>
                           {matchup.field || `Game ${matchupIdx + 1}`}
                         </div>
                         <div className={styles.matchupTeamsGrid}>
-                          {[team1Idx, team2Idx]
+                          {matchup.teams
+                            .map((t) => t - 1)
                             .filter((idx) => teamsArray[idx])
                             .map((teamIndex) => (
                               <DroppableTeam
@@ -913,7 +917,7 @@ const TeamDisplay = ({ sessionId }) => {
                 return (
                   <div key={i} className={styles.matchupRow}>
                     <span className={styles.matchupTeams}>
-                      Team {matchup.teams[0]} vs Team {matchup.teams[1]}
+                      {matchup.teams.map((t) => `Team ${t}`).join(' vs ')}
                     </span>
                     {isAdmin ? (
                       <select
