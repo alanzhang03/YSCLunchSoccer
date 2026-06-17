@@ -16,8 +16,8 @@ const AdminPage = () => {
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [sortKey, setSortKey] = useState('name');
-  const [sortDir, setSortDir] = useState('asc');
+  const [sortKey, setSortKey] = useState('createdAt');
+  const [sortDir, setSortDir] = useState('desc');
 
   useEffect(() => {
     if (!loading && (!user || !user.isAdmin)) {
