@@ -35,7 +35,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const USE_DUMMY_DATA = false;
+const USE_DUMMY_DATA = true;
 
 const FIELD_OPTIONS = [
   'Indoor Upper Field A (Upper Left)',
@@ -699,6 +699,50 @@ const TeamDisplay = ({ sessionId }) => {
           )}
         </div>
 
+        {showTeams && matchups.length > 0 && (
+          <div className={styles.matchupsSection}>
+            <h2 className={styles.matchupsTitle}>Matchups</h2>
+            <div className={styles.matchupsList}>
+              {matchups.map((matchup, i) => {
+                const assignedFields = matchups
+                  .filter((_, idx) => idx !== i)
+                  .map((m) => m.field)
+                  .filter(Boolean);
+                return (
+                  <div key={i} className={styles.matchupRow}>
+                    <span className={styles.matchupTeams}>
+                      {matchup.teams.map((t) => `Team ${t}`).join(' vs ')}
+                    </span>
+                    {isAdmin ? (
+                      <select
+                        className={styles.fieldSelect}
+                        value={matchup.field || ''}
+                        onChange={(e) =>
+                          handleFieldAssignment(i, e.target.value)
+                        }
+                      >
+                        <option value=''>-- Select Field --</option>
+                        {FIELD_OPTIONS.map((f) => (
+                          <option
+                            key={f}
+                            value={f}
+                            disabled={assignedFields.includes(f)}
+                          >
+                            {f}
+                          </option>
+                        ))}
+                      </select>
+                    ) : matchup.field ? (
+                      <span className={styles.matchupField}>
+                        {matchup.field}
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         {teamsArray.length === 0 ? (
           <div className={styles.emptyState}>
             <p>
@@ -903,50 +947,6 @@ const TeamDisplay = ({ sessionId }) => {
               Teams will be revealed on the day of the session. Please check
               back then!
             </p>
-          </div>
-        )}
-        {showTeams && matchups.length > 0 && (
-          <div className={styles.matchupsSection}>
-            <h2 className={styles.matchupsTitle}>Matchups</h2>
-            <div className={styles.matchupsList}>
-              {matchups.map((matchup, i) => {
-                const assignedFields = matchups
-                  .filter((_, idx) => idx !== i)
-                  .map((m) => m.field)
-                  .filter(Boolean);
-                return (
-                  <div key={i} className={styles.matchupRow}>
-                    <span className={styles.matchupTeams}>
-                      {matchup.teams.map((t) => `Team ${t}`).join(' vs ')}
-                    </span>
-                    {isAdmin ? (
-                      <select
-                        className={styles.fieldSelect}
-                        value={matchup.field || ''}
-                        onChange={(e) =>
-                          handleFieldAssignment(i, e.target.value)
-                        }
-                      >
-                        <option value=''>-- Select Field --</option>
-                        {FIELD_OPTIONS.map((f) => (
-                          <option
-                            key={f}
-                            value={f}
-                            disabled={assignedFields.includes(f)}
-                          >
-                            {f}
-                          </option>
-                        ))}
-                      </select>
-                    ) : matchup.field ? (
-                      <span className={styles.matchupField}>
-                        {matchup.field}
-                      </span>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
           </div>
         )}
         {isAdmin && lockedTeamsData && showTeams && (
