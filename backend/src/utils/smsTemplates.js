@@ -1,9 +1,10 @@
 export function gamedayMessage(
   session,
-  { teamNum, teamColor, teammates, opponentTeam, fieldNumber },
+  { teamNum, teamColor, teammates, opponentTeam, fieldName },
 ) {
   const teammateList = teammates.map((name) => `- ${name}`).join('\n');
-  return `YSC Lunch Soccer\n\nYou're on Team ${teamNum} (${teamColor}) playing against ${opponentTeam} on field ${fieldNumber}:\n\nTeam:\n${teammateList}\n\nSee you today at ${session.startTime} on the ${session.fieldLocation}! Make sure to bring a Dark and White shirt.`;
+  const fieldText = fieldName ? ` on ${fieldName}` : '';
+  return `YSC Lunch Soccer\n\nYou're on Team ${teamNum} (${teamColor}) playing against ${opponentTeam}${fieldText}:\n\nTeam:\n${teammateList}\n\nSee you today at ${session.startTime} on the ${session.fieldLocation}! Make sure to bring a Dark and White shirt.`;
 }
 
 export function helpMessage() {

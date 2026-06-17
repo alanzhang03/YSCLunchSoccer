@@ -204,6 +204,96 @@
     }
   }
 
+  .fieldGroups {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .fieldGroup {
+    .fieldGroupHeader {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1f73b7;
+      padding: 0.5rem 1rem;
+      background: #e3f2fd;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #1f73b7;
+    }
+
+    .matchupTeamsGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .matchupsSection {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e2e8f0;
+
+    .matchupsTitle {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1f73b7;
+      margin: 0 0 1rem 0;
+    }
+
+    .matchupsList {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .matchupRow {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.875rem 1.25rem;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+    }
+
+    .matchupTeams {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #1e293b;
+      flex: 1;
+    }
+
+    .fieldSelect {
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #374151;
+      background: white;
+      cursor: pointer;
+      min-width: 200px;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #1f73b7;
+        box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.1);
+      }
+    }
+
+    .matchupField {
+      font-weight: 600;
+      color: #1f73b7;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.875rem;
+      background: #e3f2fd;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+  }
+
   .sendTextContainer {
     display: flex;
     justify-content: center;
@@ -253,8 +343,9 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
+  }
 
-    .teamCard {
+  .teamCard {
       background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
       border: 2px solid #e2e8f0;
       border-radius: 12px;
@@ -536,7 +627,6 @@
         align-self: flex-start;
       }
     }
-  }
 }
 
 @keyframes teamOverGlow {
@@ -648,11 +738,25 @@
       }
     }
 
+    .matchupsSection {
+      .matchupRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .fieldSelect {
+        width: 100%;
+        min-width: unset;
+      }
+    }
+
     .teamsGrid {
       grid-template-columns: repeat(2, 1fr);
       gap: 0.75rem;
+    }
 
-      .teamCard {
+    .teamCard {
         min-height: 120px;
         padding: 0.6rem;
 
@@ -703,7 +807,6 @@
           }
         }
       }
-    }
   }
 }
 
