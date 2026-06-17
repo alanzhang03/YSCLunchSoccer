@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import styles from './page.module.scss';
 import UpcomingSessions from '@/components/ui/UpcomingSessions';
 import TestimonialsSlider from '@/components/ui/TestimonialsSlider';
+import DisclaimerModal from '@/components/ui/DisclaimerModal';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -35,6 +36,7 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
+      <DisclaimerModal />
       <main className={styles.main}>
         <motion.div
           className={styles.hero}
