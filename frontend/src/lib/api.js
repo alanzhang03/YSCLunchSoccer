@@ -451,6 +451,23 @@ export async function updateUser(userId, data) {
   return response.json();
 }
 
+export async function deleteUser(userId) {
+  const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to delete user');
+  }
+
+  return response.json();
+}
+
 export async function sendSmsToAttendees(sessionId, teams, matchups) {
   const response = await fetch(`${API_BASE_URL}/sms/${sessionId}/send`, {
     method: 'POST',

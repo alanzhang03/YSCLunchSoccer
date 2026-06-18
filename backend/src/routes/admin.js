@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import prisma from '../db/client.js';
+import { supabaseAdmin } from '../lib/supabase.js';
 import {
   authenticateUser,
   loadDbUser,
@@ -129,6 +130,45 @@ router.patch(
       return res.json({ user: updatedUser });
     } catch (error) {
       console.error('Update user error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  },
+);
+
+router.delete(
+  '/:userId',
+  authenticateUser,
+  loadDbUser,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const { userId } = req.params;
+
+      const targetUser = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!targetUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      if (targetUser.isAdmin) {
+        return res.status(403).json({ error: 'Cannot delete an admin user' });
+      }
+
+      await prisma.user.delete({ where: { id: userId } });
+
+      if (targetUser.supabaseUserId) {
+        const { error: authError } =
+          await supabaseAdmin.auth.admin.deleteUser(targetUser.supabaseUserId);
+        if (authError) {
+          console.error('Failed to delete Supabase Auth user:', authError);
+        }
+      }
+
+      return res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+      console.error('Delete user error:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   },

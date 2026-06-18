@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import {
   fetchAllUsers,
   updateUser,
+  deleteUser,
   getDisclaimerInfo,
   setDisclaimerInfo,
 } from '@/lib/api';
@@ -20,6 +21,7 @@ const AdminPage = () => {
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(null);
   const [error, setError] = useState('');
   const [sortKey, setSortKey] = useState('createdAt');
   const [sortDir, setSortDir] = useState('desc');
@@ -92,6 +94,20 @@ const AdminPage = () => {
       smsOptIn: u.smsOptIn,
     });
     setError('');
+  };
+
+  const handleDelete = async (u) => {
+    if (!window.confirm(`Delete ${u.name} (${u.email})? This is permanent and they will need to re-register.`)) return;
+    try {
+      setDeleting(u.id);
+      setError('');
+      await deleteUser(u.id);
+      setUsers((prev) => prev.filter((x) => x.id !== u.id));
+    } catch (err) {
+      setError(err.message || 'Failed to delete user');
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const cancelEdit = () => {
@@ -392,13 +408,22 @@ const AdminPage = () => {
                             </span>
                           </td>
                           <td>{new Date(u.createdAt).toLocaleDateString()}</td>
-                          <td>
+                          <td className={styles.actions}>
                             <button
                               className={styles.editBtn}
                               onClick={() => startEdit(u)}
                             >
                               Edit
                             </button>
+                            {!u.isAdmin && (
+                              <button
+                                className={styles.deleteBtn}
+                                onClick={() => handleDelete(u)}
+                                disabled={deleting === u.id}
+                              >
+                                {deleting === u.id ? 'Deleting...' : 'Delete'}
+                              </button>
+                            )}
                           </td>
                         </>
                       )}
