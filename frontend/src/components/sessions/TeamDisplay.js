@@ -35,7 +35,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const USE_DUMMY_DATA = true;
+const USE_DUMMY_DATA = false;
 
 const FIELD_OPTIONS = [
   'Indoor Upper Field A (Upper Left)',
