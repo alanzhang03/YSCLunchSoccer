@@ -233,7 +233,7 @@ export async function updateTeamsLocked(sessionId, teamsLocked) {
   return response.json();
 }
 
-export async function lockTeams(sessionId, teams, numOfTeams) {
+export async function lockTeams(sessionId, teams, numOfTeams, matchups) {
   const response = await fetch(
     `${API_BASE_URL}/sessions/${sessionId}/lockTeams`,
     {
@@ -242,7 +242,7 @@ export async function lockTeams(sessionId, teams, numOfTeams) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ teams, numOfTeams }),
+      body: JSON.stringify({ teams, numOfTeams, ...(matchups ? { matchups } : {}) }),
     },
   );
 
@@ -451,12 +451,12 @@ export async function updateUser(userId, data) {
   return response.json();
 }
 
-export async function sendSmsToAttendees(sessionId, teams) {
+export async function sendSmsToAttendees(sessionId, teams, matchups) {
   const response = await fetch(`${API_BASE_URL}/sms/${sessionId}/send`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ teams }),
+    body: JSON.stringify({ teams, ...(matchups?.length ? { matchups } : {}) }),
   });
 
   if (!response.ok) {

@@ -24,59 +24,27 @@ router.post(
       if (!session) return res.status(404).json({ error: 'Session not found' });
 
       const recipients = await getAttendees(sessionId);
-      const { teams } = req.body;
+      const { teams, matchups } = req.body;
       for (const recipient of recipients) {
         const team = teams.find((t) => t.playerIds.includes(recipient.id));
         const teamNum = team.teamNum;
-        let opponentNum;
 
-        switch (teamNum) {
-          case 1:
-            opponentNum = 2;
-            break;
-          case 2:
-            opponentNum = 1;
-            break;
-          case 3:
-            opponentNum = 4;
-            break;
-          case 4:
-            opponentNum = 3;
-            break;
-          case 5:
-            opponentNum = 6;
-            break;
-          case 6:
-            opponentNum = 5;
-            break;
-        }
+        const matchup = matchups?.find((m) => m.teams.includes(teamNum));
+        const opponentNums = matchup ? matchup.teams.filter((t) => t !== teamNum) : [];
+        const fieldName = matchup?.field || null;
 
-        const opponentTeamData = teams.find((t) => t.teamNum === opponentNum);
-        const opponentTeam = opponentTeamData
-          ? `Team ${opponentNum}`
-          : `Team ${opponentNum}`;
+        const opponentTeam =
+          opponentNums.length === 0
+            ? 'TBD'
+            : opponentNums.map((n) => `Team ${n}`).join(' & ');
 
-        let fieldNumber;
-
-        switch (teamNum) {
-          case 1:
-          case 2:
-            fieldNumber = 1;
-            break;
-          case 3:
-          case 4:
-            fieldNumber = 2;
-          case 5:
-          case 6:
-            fieldNumber = 3;
-        }
         const teammates = team.playerNames;
         const message = gamedayMessage(session, {
           teamNum,
           teamColor: team.color,
           teammates,
           opponentTeam,
-          fieldNumber,
+          fieldName,
         });
         await sendSms([recipient], message);
       }

@@ -142,13 +142,15 @@ export default function Card({
           <div className={styles.date}>{date}</div>
           {isEditingFieldLocation ? (
             <div className={styles.editLocationForm}>
-              <input
-                type='text'
+              <select
                 value={fieldLocation}
                 className={styles.editLocationInput}
                 onChange={(e) => setFieldLocation(e.target.value)}
                 disabled={isSavingFieldLocation}
-              />
+              >
+                <option value='Indoor Fields'>Indoor Fields</option>
+                <option value='Outdoor Fields'>Outdoor Fields</option>
+              </select>
               <div className={styles.editLocationActions}>
                 <button
                   onClick={handleFieldLocationChange}

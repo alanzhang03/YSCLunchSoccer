@@ -40,7 +40,7 @@ model Session {
   dayOfWeek     String
   startTime     String
   endTime       String
-  fieldLocation String   @default("Indoor Upper Fields")
+  fieldLocation String   @default("Indoor Fields")
   timezone      String   @default("EST")
   group         String   @default("")
   showTeams     Boolean  @default(false)

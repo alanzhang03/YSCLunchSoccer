@@ -440,7 +440,7 @@ router.patch('/:id/teamsLocked', authenticateUser, loadDbUser, requireAdmin, asy
 router.post('/:id/lockTeams', authenticateUser, loadDbUser, requireAdmin, async (req, res) => {
   try {
     const sessionId = req.params.id;
-    const { teams, numOfTeams } = req.body;
+    const { teams, numOfTeams, matchups } = req.body;
 
     if (!Array.isArray(teams)) {
       return res.status(400).json({ error: 'teams must be an array' });
@@ -462,6 +462,7 @@ router.post('/:id/lockTeams', authenticateUser, loadDbUser, requireAdmin, async 
       ),
       numOfTeams,
       lockedAt: new Date().toISOString(),
+      ...(matchups ? { matchups } : {}),
     };
 
     const updatedSession = await prisma.session.update({

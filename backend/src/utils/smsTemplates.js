@@ -1,9 +1,10 @@
 export function gamedayMessage(
   session,
-  { teamNum, teamColor, teammates, opponentTeam, fieldNumber },
+  { teamNum, teamColor, teammates, opponentTeam, fieldName },
 ) {
   const teammateList = teammates.map((name) => `- ${name}`).join('\n');
-  return `YSC Lunch Soccer\n\nYou're on Team ${teamNum} (${teamColor}) playing against ${opponentTeam} on field ${fieldNumber}:\n\nTeam:\n${teammateList}\n\nSee you today at ${session.startTime} on the ${session.fieldLocation}! Make sure to bring a Dark and White shirt.`;
+  const fieldText = fieldName ? ` on ${fieldName}` : '';
+  return `YSC Lunch Soccer\n\nYou're on Team ${teamNum} (${teamColor}) playing against ${opponentTeam}${fieldText}:\n\nTeam:\n${teammateList}\n\nSee you today at ${session.startTime} on the ${session.fieldLocation}! Make sure to bring a Dark and White shirt.`;
 }
 
 export function helpMessage() {
@@ -18,5 +19,5 @@ export function helpMessage() {
 export function deleteSessionMessage(session) {
   const d = new Date(session.date);
   const formattedDate = `${session.dayOfWeek}, ${d.getUTCMonth() + 1}/${d.getUTCDate()}`;
-  return `YSC Lunch Soccer\n\nThe session on ${formattedDate} from ${session.startTime} to ${session.endTime} has been deleted, sorry :(`;
+  return `YSC Lunch Soccer\n\nThe session on ${formattedDate} from ${session.startTime} to ${session.endTime} has been deleted, sorry.`;
 }
