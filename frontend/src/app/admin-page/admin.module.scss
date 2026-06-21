@@ -118,6 +118,42 @@
         font-weight: 500;
       }
 
+      .searchRow {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem 0;
+      }
+
+      .searchInput {
+        flex: 1;
+        max-width: 400px;
+        font-size: 0.875rem;
+        font-family: inherit;
+        padding: 0.5rem 0.875rem;
+        border: 1px solid rgba(31, 115, 183, 0.3);
+        border-radius: 8px;
+        outline: none;
+        background: $white;
+        color: $text-dark;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          border-color: $ysc-primary-blue;
+          box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.1);
+        }
+
+        &::placeholder {
+          color: rgba(0, 0, 0, 0.35);
+        }
+      }
+
+      .searchCount {
+        font-size: 0.8125rem;
+        color: $text-medium;
+        white-space: nowrap;
+      }
+
       .tableWrapper {
         overflow-x: auto;
         padding: 1.5rem;

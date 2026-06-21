@@ -25,6 +25,7 @@ const AdminPage = () => {
   const [error, setError] = useState('');
   const [sortKey, setSortKey] = useState('createdAt');
   const [sortDir, setSortDir] = useState('desc');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [disclaimerEnabled, setDisclaimerEnabled] = useState(false);
   const [disclaimerMessage, setDisclaimerMessage] = useState('');
@@ -142,7 +143,18 @@ const AdminPage = () => {
     }
   };
 
-  const sortedUsers = [...users].sort((a, b) => {
+  const filteredUsers = searchQuery.trim()
+    ? users.filter((u) => {
+        const q = searchQuery.toLowerCase();
+        return (
+          (u.name && u.name.toLowerCase().includes(q)) ||
+          (u.email && u.email.toLowerCase().includes(q)) ||
+          (u.phone && u.phone.includes(q))
+        );
+      })
+    : users;
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
     let valA = a[sortKey];
     let valB = b[sortKey];
     if (typeof valA === 'string') {
@@ -223,6 +235,23 @@ const AdminPage = () => {
           </div>
 
           {error && <div className={styles.error}>{error}</div>}
+
+          {!fetching && (
+            <div className={styles.searchRow}>
+              <input
+                className={styles.searchInput}
+                type='text'
+                placeholder='Search by name, email, or phone...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery.trim() && (
+                <span className={styles.searchCount}>
+                  {sortedUsers.length} of {users.length} users
+                </span>
+              )}
+            </div>
+          )}
 
           {fetching ? (
             <div className={styles.loadingContainer}>
