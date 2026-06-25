@@ -78,7 +78,7 @@ setTimeout(async () => {
   }
 }, 2000);
 
-cron.schedule('0 0 * * 5', async () => {
+cron.schedule('0 0 * * *', async () => {
   console.log('🔄 Running scheduled session generation...');
   try {
     await sessionGenerator();
@@ -89,5 +89,5 @@ cron.schedule('0 0 * * 5', async () => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log('📅 Session generation scheduled for every Friday at midnight');
+  console.log('📅 Session generation scheduled for every day at midnight');
 });
