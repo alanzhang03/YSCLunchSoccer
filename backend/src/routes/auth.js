@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { supabaseAdmin } from '../lib/supabase.js';
 import { sendPasswordResetEmail, sendContactFormEmail } from '../lib/email.js';
 import { strictLimiter } from '../middleware/rateLimiter.js';
+import { notificationQueue } from '../lib/queues.js';
 
 const router = Router();
 
@@ -156,7 +157,7 @@ router.post('/contact', async (req, res) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    await sendContactFormEmail(name, email, message);
+    await notificationQueue.add('send-contact-email', { name, email, message });
 
     return res.json({ message: 'Message sent successfully' });
   } catch (error) {
@@ -566,12 +567,7 @@ router.post('/forgot-password', strictLimiter, async (req, res) => {
     ).trim();
     const resetLink = `${frontendUrl}/reset-password/${token}`;
 
-    sendPasswordResetEmail(user.email, resetLink).catch((emailError) => {
-      console.error(
-        '[PASSWORD RESET] Error sending password reset email:',
-        emailError.message,
-      );
-    });
+    await notificationQueue.add('send-password-reset-email', { email: user.email, resetLink });
 
     return res.json({
       message:

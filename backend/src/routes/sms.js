@@ -5,7 +5,7 @@ import {
   loadDbUser,
   requireAdmin,
 } from '../middleware/auth.js';
-import sendSms from '../lib/twilio.js';
+import { notificationQueue } from '../lib/queues.js';
 import { gamedayMessage, deleteSessionMessage, helpMessage } from '../utils/smsTemplates.js';
 import { getAttendees } from '../utils/getAttendees.js';
 import { getSession } from '../utils/getSession.js';
@@ -46,7 +46,7 @@ router.post(
           opponentTeam,
           fieldName,
         });
-        await sendSms([recipient], message);
+        await notificationQueue.add('send-sms', { recipient, message });
       }
 
       res.json(recipients);
@@ -70,7 +70,7 @@ router.post(
 
       for (const recipient of recipients) {
         const message = deleteSessionMessage(session);
-        await sendSms([recipient], message);
+        await notificationQueue.add('send-sms', { recipient, message });
       }
       res.json(recipients);
     } catch (error) {

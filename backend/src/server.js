@@ -12,6 +12,7 @@ import smsRouter from './routes/sms.js';
 import disclaimerRouter from './routes/disclaimer.js';
 import { sessionGenerator } from './utils/sessionGenerator.js';
 import rateLimiter from './middleware/rateLimiter.js';
+import './workers/notificationWorker.js';
 
 dotenv.config();
 
