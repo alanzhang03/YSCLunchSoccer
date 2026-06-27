@@ -8,6 +8,7 @@ import StatsBar from './StatsBar';
 import SessionControls from './SessionControls';
 import { getSessions, createSession, attendMultipleSessions } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import supabase from '@/lib/supabaseClient';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -132,12 +133,21 @@ const SessionList = () => {
   }, [fetchSessions]);
 
   useEffect(() => {
-    if (loading) return;
-    const interval = setInterval(() => {
-      fetchSessions(false);
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [loading, fetchSessions]);
+    const channel = supabase
+      .channel(`attendance-changes-${Date.now()}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'Attendance' },
+        (payload) => {
+          const sessionId = payload.new?.sessionId || payload.old?.sessionId;
+          if (sessionId) setTimeout(() => updateSession(sessionId), 500);
+          else setTimeout(() => fetchSessions(false), 500);
+        },
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
+  }, []);
 
   useEffect(() => {
     if (!loading && sessions.length > 0) {
