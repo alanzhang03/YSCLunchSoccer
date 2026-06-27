@@ -138,10 +138,8 @@ const SessionList = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'Attendance' },
-        (payload) => {
-          const sessionId = payload.new?.sessionId || payload.old?.sessionId;
-          if (sessionId) setTimeout(() => updateSession(sessionId), 500);
-          else setTimeout(() => fetchSessions(false), 500);
+        () => {
+          fetchSessions(false);
         },
       )
       .subscribe();

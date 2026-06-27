@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { getSessionById } from '@/lib/api';
+import supabase from '@/lib/supabaseClient';
 import SessionCard from '@/components/sessions/SessionCard';
 import SessionChat from '@/components/sessions/SessionChat';
 import TeamDisplay from '@/components/sessions/TeamDisplay';
@@ -56,18 +57,27 @@ export default function SessionDetailPage() {
 
     fetchSession();
 
-    const interval = setInterval(async () => {
-      try {
-        const fresh = await getSessionById(sessionId)
-        setSession(fresh)
-      } catch (err) {
-        console.error('failed to poll session:', err)
-      }
-    }, 30000)
 
-    return () => clearInterval(interval)
+  }, [sessionId]);
 
+  useEffect(() => {
+    if (!sessionId) return;
 
+    const channel = supabase
+      .channel(`session-detail-${sessionId}-${Date.now()}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'Attendance' },
+        async () => {
+          try {
+            const data = await getSessionById(sessionId);
+            if (data) setSession(data);
+          } catch (err) {}
+        },
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
   }, [sessionId]);
 
   const handleAttendanceUpdate = async () => {
