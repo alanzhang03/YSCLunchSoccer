@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { supabaseAdmin } from '../lib/supabase.js';
 import { sendPasswordResetEmail, sendContactFormEmail } from '../lib/email.js';
+import { strictLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -168,7 +169,7 @@ router.post('/contact', async (req, res) => {
   }
 });
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', strictLimiter, async (req, res) => {
   try {
     const { phoneNum, email: rawEmail, name, password, skill, smsOptIn } = req.body;
     const email = rawEmail?.toLowerCase();
@@ -279,7 +280,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', strictLimiter, async (req, res) => {
   try {
     const { phoneNum, email, password, rememberMe } = req.body;
 
@@ -534,7 +535,7 @@ router.post('/logout', async (req, res) => {
   }
 });
 
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', strictLimiter, async (req, res) => {
   try {
     const { email } = req.body;
 

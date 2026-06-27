@@ -11,6 +11,7 @@ import adminRouter from './routes/admin.js';
 import smsRouter from './routes/sms.js';
 import disclaimerRouter from './routes/disclaimer.js';
 import { sessionGenerator } from './utils/sessionGenerator.js';
+import rateLimiter from './middleware/rateLimiter.js';
 
 dotenv.config();
 
@@ -49,12 +50,13 @@ app.use(
     credentials: true,
     exposedHeaders: ['Set-Cookie'],
     optionsSuccessStatus: 200,
-  })
+  }),
 );
 
 app.use('/api/checkout/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(rateLimiter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Backend is running!' });
@@ -65,7 +67,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/checkout', checkoutRouter);
 app.use('/api/admin/users', adminRouter);
-app.use('/api/sms', smsRouter)
+app.use('/api/sms', smsRouter);
 app.use('/api/disclaimer', disclaimerRouter);
 
 setTimeout(async () => {
@@ -73,7 +75,7 @@ setTimeout(async () => {
     await sessionGenerator();
   } catch (error) {
     console.error(
-      '⚠️  Initial session generation failed. Will retry on next scheduled run.'
+      '⚠️  Initial session generation failed. Will retry on next scheduled run.',
     );
   }
 }, 2000);

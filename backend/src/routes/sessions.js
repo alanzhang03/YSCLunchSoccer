@@ -7,6 +7,7 @@ import {
 } from '../middleware/auth.js';
 import { getSession } from '../utils/getSession.js';
 import redis from '../lib/redis.js';
+import { strictLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -142,6 +143,7 @@ router.post(
 
 router.post(
   '/rsvp-multiple',
+  strictLimiter,
   authenticateUser,
   loadDbUser,
   async (req, res) => {
@@ -260,7 +262,7 @@ router.get(
   },
 );
 
-router.post('/:id/attend', authenticateUser, loadDbUser, async (req, res) => {
+router.post('/:id/attend', strictLimiter, authenticateUser, loadDbUser, async (req, res) => {
   try {
     const sessionId = req.params.id;
     const { status } = req.body;
