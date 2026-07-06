@@ -38,9 +38,9 @@ import { CSS } from '@dnd-kit/utilities';
 const USE_DUMMY_DATA = false;
 
 const FIELD_OPTIONS = [
-  'Indoor Upper Field A (Upper Left)',
-  'Indoor Upper Field B (Upper Right)',
-  'Indoor Lower Field C',
+  'Indoor Field C (Upper Left Field)',
+  'Indoor Field D (Upper Right Field)',
+  'Indoor Field A (Lower Field)',
   'Upper Outdoor Field',
   'Lower Outdoor Field',
 ];
