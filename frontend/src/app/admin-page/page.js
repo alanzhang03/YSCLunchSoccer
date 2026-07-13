@@ -171,6 +171,18 @@ const AdminPage = () => {
   const sortIndicator = (key) =>
     sortKey === key ? (sortDir === 'asc' ? ' ▲' : ' ▼') : '';
 
+  const sortOptions = [
+    { key: 'name', label: 'Name' },
+    { key: 'email', label: 'Email' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'skill', label: 'Skill' },
+    { key: 'isAdmin', label: 'Admin' },
+    { key: 'smsOptIn', label: 'SMS Opt-in' },
+    { key: 'ogGroup', label: 'OG Group' },
+    { key: 'wedGroup', label: 'Wed Group' },
+    { key: 'createdAt', label: 'Joined' },
+  ];
+
   if (loading || !user?.isAdmin) {
     return (
       <div className={styles.page}>
@@ -262,6 +274,28 @@ const AdminPage = () => {
             </div>
           ) : (
             <div className={styles.tableWrapper}>
+              <div className={styles.mobileSortRow}>
+                <select
+                  className={styles.select}
+                  value={sortKey}
+                  onChange={(e) => setSortKey(e.target.value)}
+                >
+                  {sortOptions.map((opt) => (
+                    <option key={opt.key} value={opt.key}>
+                      Sort: {opt.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type='button'
+                  className={styles.sortDirBtn}
+                  onClick={() =>
+                    setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+                  }
+                >
+                  {sortDir === 'asc' ? '▲ Asc' : '▼ Desc'}
+                </button>
+              </div>
               <table className={styles.table}>
                 <thead>
                   <tr>
@@ -327,7 +361,7 @@ const AdminPage = () => {
                     <tr key={u.id}>
                       {editingId === u.id ? (
                         <>
-                          <td>
+                          <td data-label='Name' className={styles.nameCell}>
                             <input
                               className={styles.input}
                               value={editData.name}
@@ -339,7 +373,7 @@ const AdminPage = () => {
                               }
                             />
                           </td>
-                          <td>
+                          <td data-label='Email'>
                             <input
                               className={styles.input}
                               value={editData.email}
@@ -351,7 +385,7 @@ const AdminPage = () => {
                               }
                             />
                           </td>
-                          <td>
+                          <td data-label='Phone'>
                             <input
                               className={styles.input}
                               value={editData.phone}
@@ -363,7 +397,7 @@ const AdminPage = () => {
                               }
                             />
                           </td>
-                          <td>
+                          <td data-label='Skill'>
                             <input
                               className={styles.input}
                               type='number'
@@ -378,7 +412,7 @@ const AdminPage = () => {
                               }
                             />
                           </td>
-                          <td>
+                          <td data-label='Admin'>
                             <select
                               className={styles.select}
                               value={editData.isAdmin ? 'true' : 'false'}
@@ -393,7 +427,7 @@ const AdminPage = () => {
                               <option value='true'>Yes</option>
                             </select>
                           </td>
-                          <td>
+                          <td data-label='SMS Opt-in'>
                             <select
                               className={styles.select}
                               value={editData.smsOptIn ? 'true' : 'false'}
@@ -408,7 +442,7 @@ const AdminPage = () => {
                               <option value='true'>Yes</option>
                             </select>
                           </td>
-                          <td>
+                          <td data-label='OG Group'>
                             <select
                               className={styles.select}
                               value={editData.ogGroup ? 'true' : 'false'}
@@ -423,7 +457,7 @@ const AdminPage = () => {
                               <option value='true'>Yes</option>
                             </select>
                           </td>
-                          <td>
+                          <td data-label='Wed Group'>
                             <select
                               className={styles.select}
                               value={editData.wedGroup ? 'true' : 'false'}
@@ -438,7 +472,9 @@ const AdminPage = () => {
                               <option value='true'>Yes</option>
                             </select>
                           </td>
-                          <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+                          <td data-label='Joined'>
+                            {new Date(u.createdAt).toLocaleDateString()}
+                          </td>
                           <td className={styles.actions}>
                             <button
                               className={styles.saveBtn}
@@ -458,11 +494,13 @@ const AdminPage = () => {
                         </>
                       ) : (
                         <>
-                          <td>{u.name}</td>
-                          <td>{u.email}</td>
-                          <td>{u.phone}</td>
-                          <td>{u.skill}/10</td>
-                          <td>
+                          <td data-label='Name' className={styles.nameCell}>
+                            {u.name}
+                          </td>
+                          <td data-label='Email'>{u.email}</td>
+                          <td data-label='Phone'>{u.phone}</td>
+                          <td data-label='Skill'>{u.skill}/10</td>
+                          <td data-label='Admin'>
                             <span
                               className={
                                 u.isAdmin ? styles.badgeAdmin : styles.badgeUser
@@ -471,7 +509,7 @@ const AdminPage = () => {
                               {u.isAdmin ? 'Yes' : 'No'}
                             </span>
                           </td>
-                          <td>
+                          <td data-label='SMS Opt-in'>
                             <span
                               className={
                                 u.smsOptIn ? styles.badgeSms : styles.badgeUser
@@ -480,7 +518,7 @@ const AdminPage = () => {
                               {u.smsOptIn ? 'Yes' : 'No'}
                             </span>
                           </td>
-                          <td>
+                          <td data-label='OG Group'>
                             <span
                               className={
                                 u.ogGroup ? styles.badgeOg : styles.badgeUser
@@ -489,7 +527,7 @@ const AdminPage = () => {
                               {u.ogGroup ? 'Yes' : 'No'}
                             </span>
                           </td>
-                          <td>
+                          <td data-label='Wed Group'>
                             <span
                               className={
                                 u.wedGroup ? styles.badgeOg : styles.badgeUser
@@ -498,7 +536,9 @@ const AdminPage = () => {
                               {u.wedGroup ? 'Yes' : 'No'}
                             </span>
                           </td>
-                          <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+                          <td data-label='Joined'>
+                            {new Date(u.createdAt).toLocaleDateString()}
+                          </td>
                           <td className={styles.actions}>
                             <button
                               className={styles.editBtn}

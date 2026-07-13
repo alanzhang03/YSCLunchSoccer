@@ -416,6 +416,124 @@
         background: rgba(234, 88, 12, 0.12);
         color: #ea580c;
       }
+
+      .mobileSortRow {
+        display: none;
+      }
+
+      @media (max-width: 640px) {
+        .mobileSortRow {
+          display: flex;
+          gap: 0.625rem;
+          align-items: center;
+          margin-bottom: 1rem;
+
+          .select {
+            flex: 1;
+          }
+        }
+
+        .sortDirBtn {
+          font-size: 0.8125rem;
+          font-weight: 600;
+          font-family: inherit;
+          padding: 0.4rem 0.75rem;
+          color: $ysc-primary-blue;
+          background: transparent;
+          border: 1px solid rgba(31, 115, 183, 0.3);
+          border-radius: 6px;
+          cursor: pointer;
+          white-space: nowrap;
+
+          &:hover {
+            background: rgba(31, 115, 183, 0.08);
+          }
+        }
+
+        .tableWrapper {
+          padding: 1rem;
+          overflow-x: visible;
+        }
+
+        .table {
+          min-width: 0;
+          display: block;
+          font-size: 0.8125rem;
+
+          thead {
+            display: none;
+          }
+
+          tbody {
+            display: block;
+          }
+
+          tbody tr:hover {
+            background: transparent;
+          }
+
+          tr {
+            display: block;
+            margin-bottom: 0.875rem;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            padding: 0.25rem 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+            &::before {
+              content: attr(data-label);
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.03em;
+              color: $text-medium;
+              flex-shrink: 0;
+            }
+          }
+
+          td:last-child {
+            border-bottom: none;
+          }
+
+          .nameCell {
+            font-size: 1.0625rem;
+            font-weight: 700;
+            color: $ysc-primary-blue;
+
+            &::before {
+              content: none;
+            }
+          }
+
+          .actions {
+            justify-content: flex-end;
+            padding-top: 0.75rem;
+
+            &::before {
+              content: none;
+            }
+          }
+
+          .input,
+          .select {
+            max-width: 60%;
+            text-align: right;
+          }
+        }
+      }
     }
   }
 }
