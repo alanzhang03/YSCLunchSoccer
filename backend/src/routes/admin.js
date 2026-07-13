@@ -17,6 +17,8 @@ const userSelect = {
   smsOptIn: true,
   skill: true,
   isAdmin: true,
+  ogGroup: true,
+  wedGroup: true,
   createdAt: true,
 };
 
@@ -78,7 +80,16 @@ router.patch(
         return res.status(404).json({ error: 'Target user not found' });
       }
 
-      const { name, email, phone, skill, isAdmin, smsOptIn } = req.body;
+      const {
+        name,
+        email,
+        phone,
+        skill,
+        isAdmin,
+        smsOptIn,
+        ogGroup,
+        wedGroup,
+      } = req.body;
       const updateData = {};
 
       if (name !== undefined) {
@@ -119,6 +130,14 @@ router.patch(
 
       if (smsOptIn !== undefined) {
         updateData.smsOptIn = Boolean(smsOptIn);
+      }
+
+      if (ogGroup !== undefined) {
+        updateData.ogGroup = Boolean(ogGroup);
+      }
+
+      if (wedGroup !== undefined) {
+        updateData.wedGroup = Boolean(wedGroup);
       }
 
       const updatedUser = await prisma.user.update({

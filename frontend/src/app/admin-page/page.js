@@ -93,6 +93,8 @@ const AdminPage = () => {
       skill: u.skill,
       isAdmin: u.isAdmin,
       smsOptIn: u.smsOptIn,
+      ogGroup: u.ogGroup,
+      wedGroup: u.wedGroup,
     });
     setError('');
   };
@@ -301,6 +303,18 @@ const AdminPage = () => {
                     </th>
                     <th
                       className={styles.sortable}
+                      onClick={() => handleSort('ogGroup')}
+                    >
+                      OG Group{sortIndicator('ogGroup')}
+                    </th>
+                    <th
+                      className={styles.sortable}
+                      onClick={() => handleSort('wedGroup')}
+                    >
+                      Wed Group{sortIndicator('wedGroup')}
+                    </th>
+                    <th
+                      className={styles.sortable}
                       onClick={() => handleSort('createdAt')}
                     >
                       Joined{sortIndicator('createdAt')}
@@ -394,6 +408,36 @@ const AdminPage = () => {
                               <option value='true'>Yes</option>
                             </select>
                           </td>
+                          <td>
+                            <select
+                              className={styles.select}
+                              value={editData.ogGroup ? 'true' : 'false'}
+                              onChange={(e) =>
+                                setEditData({
+                                  ...editData,
+                                  ogGroup: e.target.value === 'true',
+                                })
+                              }
+                            >
+                              <option value='false'>No</option>
+                              <option value='true'>Yes</option>
+                            </select>
+                          </td>
+                          <td>
+                            <select
+                              className={styles.select}
+                              value={editData.wedGroup ? 'true' : 'false'}
+                              onChange={(e) =>
+                                setEditData({
+                                  ...editData,
+                                  wedGroup: e.target.value === 'true',
+                                })
+                              }
+                            >
+                              <option value='false'>No</option>
+                              <option value='true'>Yes</option>
+                            </select>
+                          </td>
                           <td>{new Date(u.createdAt).toLocaleDateString()}</td>
                           <td className={styles.actions}>
                             <button
@@ -434,6 +478,24 @@ const AdminPage = () => {
                               }
                             >
                               {u.smsOptIn ? 'Yes' : 'No'}
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              className={
+                                u.ogGroup ? styles.badgeOg : styles.badgeUser
+                              }
+                            >
+                              {u.ogGroup ? 'Yes' : 'No'}
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              className={
+                                u.wedGroup ? styles.badgeOg : styles.badgeUser
+                              }
+                            >
+                              {u.wedGroup ? 'Yes' : 'No'}
                             </span>
                           </td>
                           <td>{new Date(u.createdAt).toLocaleDateString()}</td>
