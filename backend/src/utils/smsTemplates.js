@@ -19,5 +19,5 @@ export function helpMessage() {
 export function deleteSessionMessage(session) {
   const d = new Date(session.date);
   const formattedDate = `${session.dayOfWeek}, ${d.getUTCMonth() + 1}/${d.getUTCDate()}`;
-  return `YSC Lunch Soccer\n\nThe session on ${formattedDate} from ${session.startTime} to ${session.endTime} has been deleted, sorry.`;
+  return `YSC Lunch Soccer\n\nThe session on ${formattedDate} from ${session.startTime} to ${session.endTime} has been canceled, sorry.`;
 }
