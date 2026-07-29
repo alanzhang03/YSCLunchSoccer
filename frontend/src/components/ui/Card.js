@@ -72,10 +72,7 @@ export default function Card({
   const capacity = sessionData.capacity || 50;
   const spotsFilled = sessionData.spotsFilled ?? 0;
   const spotsLeft = Math.max(0, capacity - spotsFilled);
-  const fillFraction = capacity > 0 ? Math.min(1, spotsFilled / capacity) : 0;
   const isAlmostFull = spotsLeft > 0 && spotsLeft <= 5;
-  const CIRC = 2 * Math.PI * 25;
-  const dialOffset = CIRC * (1 - fillFraction);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -159,37 +156,11 @@ export default function Card({
           <div className={styles.date}>{date}</div>
         </div>
 
-        <div
-          className={styles.dial}
-          title={`${spotsFilled} of ${capacity} spots filled`}
-          aria-label={`${spotsFilled} of ${capacity} spots filled`}
-        >
-          <svg width='58' height='58' viewBox='0 0 58 58'>
-            <circle
-              className={styles.dialTrack}
-              cx='29'
-              cy='29'
-              r='25'
-              fill='none'
-              strokeWidth='5'
-            />
-            <circle
-              className={styles.dialFill}
-              cx='29'
-              cy='29'
-              r='25'
-              fill='none'
-              strokeWidth='5'
-              strokeLinecap='round'
-              strokeDasharray={CIRC}
-              strokeDashoffset={dialOffset}
-            />
-          </svg>
-          <div className={styles.dialNum}>
-            <b>{spotsFilled}</b>
-            <span>of {capacity}</span>
-          </div>
-        </div>
+        {isAlmostFull && (
+          <span className={styles.almostFull}>
+            {spotsLeft} {spotsLeft === 1 ? 'spot' : 'spots'} left
+          </span>
+        )}
       </div>
 
       <div className={styles.cMeta}>
@@ -300,21 +271,6 @@ export default function Card({
             )}
           </span>
         )}
-      </div>
-
-      <div className={styles.capBar}>
-        <div className={styles.capTrack}>
-          <div
-            className={styles.capFill}
-            style={{ width: `${fillFraction * 100}%` }}
-          />
-        </div>
-        <div className={styles.capMeta}>
-          <span className={styles.capGoing}>{spotsFilled} going</span>
-          <span className={styles.capLeft}>
-            {spotsLeft} {spotsLeft === 1 ? 'spot' : 'spots'} left
-          </span>
-        </div>
       </div>
 
       {children && <div className={styles.actions}>{children}</div>}
