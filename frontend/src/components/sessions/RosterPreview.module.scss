@@ -1,0 +1,90 @@
+.roster {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin: 0.75rem 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s ease, border-color 0.18s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.2);
+  }
+}
+
+.avatars {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  margin-left: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+.more {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  font-size: 0.8125rem;
+  color: #475569;
+
+  strong {
+    color: #1e293b;
+    font-weight: 700;
+  }
+}
+
+.chevron {
+  display: flex;
+  flex-shrink: 0;
+  color: #94a3b8;
+
+  svg {
+    transition: transform 0.2s ease;
+  }
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 480px) {
+  .avatar {
+    width: 26px;
+    height: 26px;
+    font-size: 0.625rem;
+  }
+}
