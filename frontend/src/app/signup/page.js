@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState('');
-  const [smsOptIn, setSmsOptIn] = useState(false);
+  const [smsOptIn, setSmsOptIn] = useState(true);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
