@@ -5,6 +5,7 @@ import styles from './SessionCard.module.scss';
 import Card from '../ui/Card';
 import AttendanceButton from './AttendanceButton';
 import AttendanceSection from './AttendanceSection';
+import RosterPreview from './RosterPreview';
 import PaymentSection from './PaymentSection';
 import {
   attendSession,
@@ -88,6 +89,8 @@ const transformSessionData = (session, yesCount) => {
     weekday,
     time,
     available: `${yesCount}/${MAX_ATTENDANCE}`,
+    spotsFilled: yesCount,
+    capacity: MAX_ATTENDANCE,
     fieldLocation,
     today: isToday,
     tomorrow: isTomorrow,
@@ -290,6 +293,13 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   const transformedData = transformSessionData(sessionData, yesCount);
   const statusMessage = getStatusMessage(user, currentStatus);
 
+  const spotsLeft = MAX_ATTENDANCE - yesCount;
+  const promptLabel = currentStatus
+    ? null
+    : spotsLeft > 0 && spotsLeft <= 5
+      ? `Almost full — ${spotsLeft} ${spotsLeft === 1 ? 'spot' : 'spots'} left`
+      : 'Are you playing?';
+
   if (!transformedData) {
     return <div>Loading session...</div>;
   }
@@ -300,9 +310,64 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
       sessionId={sessionData.id}
       rawSessionData={sessionData}
       onTimeUpdate={onAttendanceUpdate}
+      footerAction={
+        isAdmin ? (
+          <button
+            className={styles.footerDelete}
+            onClick={handleDelete}
+            disabled={isDeleting}
+            type='button'
+            title='Delete session'
+            aria-label='Delete session'
+          >
+            {isDeleting ? (
+              <span className={styles.deletingText}>Deleting…</span>
+            ) : (
+              <svg
+                width='15'
+                height='15'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                aria-hidden='true'
+              >
+                <path d='M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6' />
+                <path d='M10 11v6M14 11v6' />
+              </svg>
+            )}
+          </button>
+        ) : null
+      }
     >
       {statusMessage && (
-        <div className={styles.statusIndicator}>
+        <div
+          className={`${styles.statusIndicator} ${
+            currentStatus === 'yes'
+              ? styles.statusYes
+              : currentStatus === 'maybe'
+                ? styles.statusMaybe
+                : styles.statusNo
+          }`}
+        >
+          {currentStatus === 'yes' && (
+            <svg
+              className={styles.statusIcon}
+              width='16'
+              height='16'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2.5'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              aria-hidden='true'
+            >
+              <path d='M20 6L9 17l-5-5' />
+            </svg>
+          )}
           <span className={styles.statusText}>{statusMessage}</span>
         </div>
       )}
@@ -316,27 +381,11 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         </Link>
       )}
 
-      <button
-        className={styles.attendanceToggle}
-        onClick={() => setShowAttendees((v) => !v)}
-        type='button'
-        aria-expanded={showAttendees}
-      >
-        <span className={styles.attendanceToggleLabel}>
-          {(() => {
-            const yesCount =
-              sessionData?.attendances?.filter((a) => a.status === 'yes')
-                .length || 0;
-            const maybeCount =
-              sessionData?.attendances?.filter((a) => a.status === 'maybe')
-                .length || 0;
-            return `${yesCount} going${maybeCount > 0 ? ` · ${maybeCount} maybe` : ''}`;
-          })()}
-        </span>
-        <span className={styles.attendanceToggleChevron}>
-          {showAttendees ? '▲' : '▼'}
-        </span>
-      </button>
+      <RosterPreview
+        attendances={sessionData?.attendances || []}
+        expanded={showAttendees}
+        onToggle={() => setShowAttendees((v) => !v)}
+      />
 
       {showAttendees && (
         <AttendanceSection
@@ -354,6 +403,7 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           currentStatus={currentStatus}
           disabled={isSubmitting}
           yesDisabled={yesCount >= MAX_ATTENDANCE && currentStatus !== 'yes'}
+          promptLabel={promptLabel}
         />
       ) : (
         <div className={styles.loginPrompt}>
@@ -371,18 +421,6 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
           onPayment={handlePayment}
         />
       )} */}
-
-      {isAdmin && (
-        <button
-          className={styles.deleteButton}
-          onClick={handleDelete}
-          disabled={isDeleting}
-          type='button'
-          title='Delete session'
-        >
-          {isDeleting ? 'Deleting...' : '🗑️'}
-        </button>
-      )}
     </Card>
   );
 };

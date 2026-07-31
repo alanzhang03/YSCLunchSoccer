@@ -28,29 +28,26 @@
   }
 }
 
-.deleteButton {
-  margin-top: 0.75rem;
-  background: #f96f6f;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  width: 10%;
-  padding: 0.5rem;
-  display: flex;
+.footerDelete {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  color: #94a3b8;
   cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
+  padding: 0.35rem;
+  border-radius: 6px;
+  transition: color 0.2s ease, background 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: #dc2626;
+    color: #dc2626;
+    background: #fee2e2;
   }
 
   &:active:not(:disabled) {
-    transform: scale(0.98);
+    transform: scale(0.96);
   }
 
   &:disabled {
@@ -58,24 +55,47 @@
     cursor: not-allowed;
   }
 
-  &:focus {
+  &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+  }
+
+  .deletingText {
+    font-size: 0.75rem;
+    font-weight: 600;
   }
 }
 
 .statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-bottom: 0.875rem;
-  padding: 0.625rem 0.875rem;
-  background: #dbeafe;
+  padding: 0.55rem 0.75rem;
   border-radius: 8px;
-  border: 1px solid #93c5fd;
-  text-align: center;
+
+  .statusIcon {
+    flex-shrink: 0;
+  }
 
   .statusText {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #1e40af;
+  }
+
+  &.statusYes {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  &.statusMaybe {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  &.statusNo {
+    background: #f1f5f9;
+    color: #64748b;
   }
 }
 
@@ -83,36 +103,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding: 0.75rem 1.25rem;
-  background: linear-gradient(135deg, #1f73b7 0%, #3282b8 100%);
-  color: white;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(31, 115, 183, 0.08);
+  border: 1px solid rgba(31, 115, 183, 0.25);
+  color: #1f73b7;
   text-decoration: none;
   border-radius: 8px;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(31, 115, 183, 0.2);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 
   .arrow {
-    font-size: 1.25rem;
-    transition: transform 0.3s ease;
+    font-size: 1rem;
+    transition: transform 0.2s ease;
   }
 
   &:hover {
-    background: linear-gradient(135deg, #3282b8 0%, #1f73b7 100%);
-    box-shadow: 0 4px 12px rgba(31, 115, 183, 0.3);
-    transform: translateY(-2px);
+    background: rgba(31, 115, 183, 0.14);
+    border-color: rgba(31, 115, 183, 0.4);
 
     .arrow {
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
   }
 
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(31, 115, 183, 0.2);
+  &:focus-visible {
+    outline: 2px solid #1f73b7;
+    outline-offset: 2px;
   }
 }
 
@@ -449,12 +470,12 @@
   }
 
   .viewTeamsLink {
-    padding: 0.65rem 1rem;
-    font-size: 0.875rem;
-    margin-bottom: 0.875rem;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    margin-bottom: 0.75rem;
 
     .arrow {
-      font-size: 1.125rem;
+      font-size: 0.9375rem;
     }
   }
 

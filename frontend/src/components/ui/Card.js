@@ -57,14 +57,22 @@ export default function Card({
   sessionId,
   rawSessionData,
   onTimeUpdate,
+  footerAction,
 }) {
   const date = sessionData.date;
   const weekday = sessionData.weekday;
+  const weekdayDisplay = weekday
+    ? weekday.charAt(0).toUpperCase() + weekday.slice(1).toLowerCase()
+    : weekday;
   const time = sessionData.time;
-  const available = sessionData.available;
   const today = sessionData.today;
   const tomorrow = sessionData.tomorrow;
   const relativeDate = sessionData.relativeDate;
+
+  const capacity = sessionData.capacity || 50;
+  const spotsFilled = sessionData.spotsFilled ?? 0;
+  const spotsLeft = Math.max(0, capacity - spotsFilled);
+  const isAlmostFull = spotsLeft > 0 && spotsLeft <= 5;
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -122,7 +130,13 @@ export default function Card({
   };
 
   return (
-    <div className={styles.card}>
+    <div
+      className={`${styles.card} ${isAlmostFull ? styles.almost : ''} ${
+        sessionData.teamsLocked ? styles.locked : ''
+      }`}
+    >
+      <div className={styles.accent} />
+
       <div className={styles.cardHeader}>
         <div className={styles.dateHeader}>
           {(today || tomorrow || relativeDate) && (
@@ -138,120 +152,168 @@ export default function Card({
               {today ? 'Today' : tomorrow ? 'Tomorrow' : relativeDate}
             </span>
           )}
-          <div className={styles.weekday}>{weekday}</div>
+          <div className={styles.weekday}>{weekdayDisplay}</div>
           <div className={styles.date}>{date}</div>
-          {isEditingFieldLocation ? (
-            <div className={styles.editLocationForm}>
-              <select
-                value={fieldLocation}
-                className={styles.editLocationInput}
-                onChange={(e) => setFieldLocation(e.target.value)}
-                disabled={isSavingFieldLocation}
-              >
-                <option value='Indoor Fields'>Indoor Fields</option>
-                <option value='Outdoor Fields'>Outdoor Fields</option>
-              </select>
-              <div className={styles.editLocationActions}>
-                <button
-                  onClick={handleFieldLocationChange}
-                  disabled={isSavingFieldLocation}
-                >
-                  {isSavingFieldLocation ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  onClick={() => setIsEditingFieldLocation(false)}
-                  disabled={isSavingFieldLocation}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className={styles.fieldLocationContainer}>
-              <div>{fieldLocation}</div>
-              {isAdmin && (
-                <button
-                  className={styles.editFieldLocation}
-                  onClick={() => setIsEditingFieldLocation(true)}
-                >
-                  Edit Location
-                </button>
-              )}
-            </div>
-          )}
-          {isEditing ? (
-            <div className={styles.editTimeForm}>
-              <div className={styles.timeInputs}>
-                <input
-                  type='time'
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  disabled={isSaving}
-                />
-                <span>-</span>
-                <input
-                  type='time'
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  disabled={isSaving}
-                />
-              </div>
-              <div className={styles.editTimeActions}>
-                <button onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? 'Saving...' : 'Save'}
-                </button>
-                <button onClick={handleCancel} disabled={isSaving}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className={styles.timeContainer}>
-              <div className={styles.time}>{time}</div>
-              {isAdmin && (
-                <button
-                  className={styles.editTimeButton}
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit Time
-                </button>
-              )}
-            </div>
-          )}
         </div>
-        <div className={styles.availBubble}>{available}</div>
+
+        {isAlmostFull && (
+          <span className={styles.almostFull}>
+            {spotsLeft} {spotsLeft === 1 ? 'spot' : 'spots'} left
+          </span>
+        )}
       </div>
 
-      {calendarData && (
-        <div className={styles.calendarButtonWrapper}>
-          <AddToCalendarButton
-            name={calendarData.name}
-            description={calendarData.description}
-            startDate={calendarData.startDate}
-            startTime={calendarData.startTime}
-            endTime={calendarData.endTime}
-            timeZone={calendarData.timeZone}
-            location={calendarData.location}
-            options={['Apple', 'Google', 'Outlook.com', 'Yahoo']}
-            buttonStyle='round'
-            lightMode='bodyScheme'
-            size='1'
-            hideBackground
-            forceOverlay
-          />
-        </div>
-      )}
+      <div className={styles.cMeta}>
+        {isEditing ? (
+          <div className={styles.editTimeForm}>
+            <div className={styles.timeInputs}>
+              <input
+                type='time'
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                disabled={isSaving}
+              />
+              <span>-</span>
+              <input
+                type='time'
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                disabled={isSaving}
+              />
+            </div>
+            <div className={styles.editTimeActions}>
+              <button onClick={handleSave} disabled={isSaving}>
+                {isSaving ? 'Saving...' : 'Save'}
+              </button>
+              <button onClick={handleCancel} disabled={isSaving}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <span className={styles.metaItem}>
+            <svg
+              width='15'
+              height='15'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              aria-hidden='true'
+            >
+              <circle cx='12' cy='12' r='9' />
+              <path d='M12 7v5l3 2' />
+            </svg>
+            <span>{time}</span>
+            {isAdmin && (
+              <button
+                className={styles.metaEdit}
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </button>
+            )}
+          </span>
+        )}
 
-      <div className={styles.titleRow}>
-        <span className={styles.title}>Lunch Soccer</span>
-        {sessionId && (
-          <Link href={`/sessions/${sessionId}`} className={styles.moreInfo}>
-            More info
-          </Link>
+        {isEditingFieldLocation ? (
+          <div className={styles.editLocationForm}>
+            <select
+              value={fieldLocation}
+              className={styles.editLocationInput}
+              onChange={(e) => setFieldLocation(e.target.value)}
+              disabled={isSavingFieldLocation}
+            >
+              <option value='Indoor Fields'>Indoor Fields</option>
+              <option value='Outdoor Fields'>Outdoor Fields</option>
+            </select>
+            <div className={styles.editLocationActions}>
+              <button
+                onClick={handleFieldLocationChange}
+                disabled={isSavingFieldLocation}
+              >
+                {isSavingFieldLocation ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                onClick={() => setIsEditingFieldLocation(false)}
+                disabled={isSavingFieldLocation}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <span className={styles.metaItem}>
+            <svg
+              width='15'
+              height='15'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              aria-hidden='true'
+            >
+              <path d='M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z' />
+              <circle cx='12' cy='10' r='2.5' />
+            </svg>
+            <span>{fieldLocation}</span>
+            {isAdmin && (
+              <button
+                className={styles.metaEdit}
+                onClick={() => setIsEditingFieldLocation(true)}
+              >
+                Edit
+              </button>
+            )}
+          </span>
         )}
       </div>
 
       {children && <div className={styles.actions}>{children}</div>}
+
+      {(calendarData || sessionId || footerAction) && (
+        <div className={styles.cFoot}>
+          {calendarData ? (
+            <div className={styles.calendarButtonWrapper}>
+              <AddToCalendarButton
+                name={calendarData.name}
+                description={calendarData.description}
+                startDate={calendarData.startDate}
+                startTime={calendarData.startTime}
+                endTime={calendarData.endTime}
+                timeZone={calendarData.timeZone}
+                location={calendarData.location}
+                options={['Apple', 'Google', 'Outlook.com', 'Yahoo']}
+                buttonStyle='text'
+                label='Add to calendar'
+                lightMode='bodyScheme'
+                size='1'
+                hideBackground
+                hideCheckmark
+                forceOverlay
+              />
+            </div>
+          ) : (
+            <span />
+          )}
+          {footerAction ? (
+            <div className={styles.footAction}>{footerAction}</div>
+          ) : (
+            <span />
+          )}
+          {sessionId ? (
+            <Link href={`/sessions/${sessionId}`} className={styles.moreInfo}>
+              More info →
+            </Link>
+          ) : (
+            <span />
+          )}
+        </div>
+      )}
     </div>
   );
 }

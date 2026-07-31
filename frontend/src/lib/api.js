@@ -242,7 +242,11 @@ export async function lockTeams(sessionId, teams, numOfTeams, matchups) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ teams, numOfTeams, ...(matchups ? { matchups } : {}) }),
+      body: JSON.stringify({
+        teams,
+        numOfTeams,
+        ...(matchups ? { matchups } : {}),
+      }),
     },
   );
 
