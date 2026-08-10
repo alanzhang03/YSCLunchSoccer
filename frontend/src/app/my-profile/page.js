@@ -176,10 +176,8 @@ const MyProfilePage = () => {
                       setFormData({ ...formData, smsOptIn: e.target.checked })
                     }
                   />
-                  I agree to receive SMS notifications (session reminders,
-                  confirmations, waitlist updates) from YSC Lunch Soccer.
-                  Message frequency varies. Reply STOP to unsubscribe or HELP
-                  for help.
+                  I agree to receive text messages (your team and team color,
+                  deleted sessions, location, etc.).
                 </label>
               ) : (
                 <span className={styles.value}>

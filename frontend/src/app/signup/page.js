@@ -181,8 +181,8 @@ const Page = () => {
                   checked={smsOptIn}
                   onChange={(e) => setSmsOptIn(e.target.checked)}
                 />
-                I agree to receive text messages (teams and team color, deleted
-                sessions, etc.).
+                I agree to receive text messages (your team and team color,
+                deleted sessions, location, etc.).
               </label>
             </div>
 
