@@ -7,7 +7,6 @@ import { DEFAULT_POSITION, PLAYER_POSITIONS, POSITION_LABELS } from '@/lib/posit
 
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState('');
-  const [smsOptIn, setSmsOptIn] = useState(true);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -63,7 +62,7 @@ const Page = () => {
         return;
       }
 
-      await signup(phoneNum, email, name, password, skill, smsOptIn, position);
+      await signup(phoneNum, email, name, password, skill, true, position);
       router.push('/');
     } catch (err) {
       setError(err.message || 'Signup failed');
@@ -190,15 +189,6 @@ const Page = () => {
                 required
                 placeholder='123-456-7890'
               />
-              <label className={styles.smsOptIn}>
-                <input
-                  type='checkbox'
-                  checked={smsOptIn}
-                  onChange={(e) => setSmsOptIn(e.target.checked)}
-                />
-                I agree to receive text messages (your team and team color,
-                deleted sessions, location, etc.).
-              </label>
             </div>
 
             {error && <p className={styles.error}>{error}</p>}

@@ -12,7 +12,7 @@ const fetchWithCredentials = (url, options = {}) => {
   });
 };
 
-export async function signup(phoneNum, email, name, password, skill, smsOptIn = false, position = 'MID') {
+export async function signup(phoneNum, email, name, password, skill, smsOptIn = true, position = 'MID') {
   try {
     const response = await fetchWithCredentials(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',

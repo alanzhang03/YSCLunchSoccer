@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
     name,
     password,
     skill,
-    smsOptIn = false,
+    smsOptIn = true,
     position = 'MID',
   ) => {
     const data = await signup(

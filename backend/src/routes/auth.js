@@ -173,7 +173,7 @@ router.post('/contact', async (req, res) => {
 
 router.post('/signup', strictLimiter, async (req, res) => {
   try {
-    const { phoneNum, email: rawEmail, name, password, skill, smsOptIn, position } = req.body;
+    const { phoneNum, email: rawEmail, name, password, skill, position } = req.body;
     const email = rawEmail?.toLowerCase();
 
     if (!phoneNum || !email || !name || !password) {
@@ -245,7 +245,7 @@ router.post('/signup', strictLimiter, async (req, res) => {
         name,
         skill: skillNumber,
         position: parsedPosition.position,
-        smsOptIn: Boolean(smsOptIn),
+        smsOptIn: true,
       },
       select: {
         id: true,
