@@ -1,5 +1,14 @@
-const generateDummyAttendee = (index, name, skill, ogGroup = false) => {
+export const PAYMENTS_ENABLED = false;
+
+const generateDummyAttendee = (
+  index,
+  name,
+  skill,
+  ogGroup = false,
+  position,
+) => {
   const now = new Date().toISOString();
+  const cycle = ['FWD', 'DEF', 'MID'];
   return {
     id: `dummy-${index}`,
     sessionId: 'dummy-session',
@@ -12,6 +21,7 @@ const generateDummyAttendee = (index, name, skill, ogGroup = false) => {
       email: `${name.toLowerCase().replace(/\s+/g, '')}@example.com`,
       phone: `555-${String(1000 + index).padStart(4, '0')}`,
       skill: skill,
+      position: position ?? cycle[(index - 1) % 3],
       ogGroup: ogGroup,
       supabaseUserId: `dummy-supabase-${index}`,
       password: null,
@@ -22,12 +32,12 @@ const generateDummyAttendee = (index, name, skill, ogGroup = false) => {
 };
 
 export const DUMMY_ATTENDEES = [
-  generateDummyAttendee(1, "Alan Zhang", 8, true),
-  generateDummyAttendee(2, "Andrew Zhang", 6, true),
-  generateDummyAttendee(3, "Basel", 7, true),
-  generateDummyAttendee(4, "Ben", 5),
-  generateDummyAttendee(5, "BIN", 9, true),
-  generateDummyAttendee(6, "Bing", 4),
+  generateDummyAttendee(1, "Alan Zhang", 8, true, 'ALL'),
+  generateDummyAttendee(2, "Andrew Zhang", 6, true, 'MID'),
+  generateDummyAttendee(3, "Basel", 7, true, 'FWD'),
+  generateDummyAttendee(4, "Ben", 5, false, 'DEF'),
+  generateDummyAttendee(5, "BIN", 9, true, 'ALL'),
+  generateDummyAttendee(6, "Bing", 4, false, 'MID'),
   generateDummyAttendee(7, "Peng", 7, true),
   generateDummyAttendee(8, "Dan", 6, true),
   generateDummyAttendee(9, "David", 8),

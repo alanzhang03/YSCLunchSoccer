@@ -13,6 +13,13 @@ import { signup as signupFn } from '@/lib/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { router } from 'expo-router';
 
+const PLAYER_POSITIONS = ['DEF', 'MID', 'FWD'] as const;
+const POSITION_LABELS: Record<(typeof PLAYER_POSITIONS)[number], string> = {
+  DEF: 'Defender',
+  MID: 'Midfielder',
+  FWD: 'Forward',
+};
+
 const signup = () => {
   const [phoneNum, setPhoneNum] = useState('');
   const [password, setPassword] = useState('');
@@ -20,6 +27,7 @@ const signup = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [skill, setSkill] = useState(5);
+  const [position, setPosition] = useState<(typeof PLAYER_POSITIONS)[number]>('MID');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +36,7 @@ const signup = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await signupFn(name, email, phoneNum, password, skill);
+      await signupFn(name, email, phoneNum, password, skill, position);
       await checkAuth();
       router.replace('/(tabs)');
     } catch (e: any) {
@@ -96,6 +104,28 @@ const signup = () => {
             thumbTintColor='#4a90d9'
           />
           <Text style={styles.skillValue}>{skill}</Text>
+          <Text style={styles.label}>Preferred position</Text>
+          <View style={styles.positionRow}>
+            {PLAYER_POSITIONS.map((pos) => (
+              <TouchableOpacity
+                key={pos}
+                style={[
+                  styles.positionChip,
+                  position === pos && styles.positionChipActive,
+                ]}
+                onPress={() => setPosition(pos)}
+              >
+                <Text
+                  style={[
+                    styles.positionChipText,
+                    position === pos && styles.positionChipTextActive,
+                  ]}
+                >
+                  {POSITION_LABELS[pos]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
           {error ? <Text style={styles.error}>{error}</Text> : null}
           <TouchableOpacity
             style={styles.button}
@@ -162,6 +192,32 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#374151',
     marginBottom: 16,
+  },
+  positionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 16,
+  },
+  positionChip: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  positionChipActive: {
+    borderColor: '#4a90d9',
+    backgroundColor: '#eff6ff',
+  },
+  positionChipText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  positionChipTextActive: {
+    color: '#1d4ed8',
   },
   error: {
     color: '#ef4444',

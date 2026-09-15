@@ -14,20 +14,34 @@ import { useState, useEffect } from 'react';
 import { adjustPersonalInfo } from '@/lib/api';
 import { router } from 'expo-router';
 
+const PLAYER_POSITIONS = ['DEF', 'MID', 'FWD'] as const;
+const POSITION_LABELS: Record<string, string> = {
+  DEF: 'Defender',
+  MID: 'Midfielder',
+  FWD: 'Forward',
+  ALL: 'All',
+};
+
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
+    position: '',
   });
   const { user, checkAuth, logout } = useAuth();
+  const positionOptions =
+    user?.position === 'ALL'
+      ? [...PLAYER_POSITIONS, 'ALL']
+      : [...PLAYER_POSITIONS];
   useEffect(() => {
     if (user) {
       setFormData({
         name: user.name,
         phone: user.phone,
         email: user.email,
+        position: user.position || '',
       });
     }
   }, [user]);
@@ -53,6 +67,7 @@ export default function Profile() {
         formData.email,
         formData.phone,
         user?.skill ?? 5,
+        formData.position,
       );
       await checkAuth();
       setIsEditing(false);
@@ -124,6 +139,40 @@ export default function Profile() {
                 }
                 keyboardType='phone-pad'
               />
+            )}
+          </View>
+
+          <View style={styles.infoCard}>
+            <Text style={styles.infoLabel}>Position</Text>
+            {!isEditing ? (
+              <Text style={styles.infoValue}>
+                {user?.position
+                  ? POSITION_LABELS[user.position] || user.position
+                  : 'Not set'}
+              </Text>
+            ) : (
+              <View style={styles.positionRow}>
+                {positionOptions.map((pos) => (
+                  <TouchableOpacity
+                    key={pos}
+                    style={[
+                      styles.positionChip,
+                      formData.position === pos && styles.positionChipActive,
+                    ]}
+                    onPress={() => setFormData({ ...formData, position: pos })}
+                  >
+                    <Text
+                      style={[
+                        styles.positionChipText,
+                        formData.position === pos &&
+                          styles.positionChipTextActive,
+                      ]}
+                    >
+                      {POSITION_LABELS[pos]}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             )}
           </View>
 
@@ -253,6 +302,32 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#3a7abf',
     paddingVertical: 2,
+  },
+  positionRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+  },
+  positionChip: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
+  },
+  positionChipActive: {
+    borderColor: '#3a7abf',
+    backgroundColor: '#eff6ff',
+  },
+  positionChipText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  positionChipTextActive: {
+    color: '#1d4ed8',
   },
   resetButton: {
     alignSelf: 'flex-start',

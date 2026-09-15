@@ -6,6 +6,7 @@ import {
   loadDbUser,
   requireAdmin,
 } from '../middleware/auth.js';
+import { normalizeAdminPosition } from '../lib/positions.js';
 
 const router = Router();
 
@@ -16,6 +17,7 @@ const userSelect = {
   name: true,
   smsOptIn: true,
   skill: true,
+  position: true,
   isAdmin: true,
   ogGroup: true,
   wedGroup: true,
@@ -85,6 +87,7 @@ router.patch(
         email,
         phone,
         skill,
+        position,
         isAdmin,
         smsOptIn,
         ogGroup,
@@ -122,6 +125,18 @@ router.patch(
             .json({ error: 'Skill level must be between 1 and 10' });
         }
         updateData.skill = skillNumber;
+      }
+
+      if (position !== undefined) {
+        const parsedPosition = normalizeAdminPosition(position);
+        if (!parsedPosition.ok) {
+          return res
+            .status(400)
+            .json({ error: 'Position must be DEF, MID, FWD, or ALL' });
+        }
+        if (!parsedPosition.omitted) {
+          updateData.position = parsedPosition.position;
+        }
       }
 
       if (isAdmin !== undefined) {

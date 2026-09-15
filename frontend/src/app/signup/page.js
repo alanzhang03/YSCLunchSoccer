@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styles from './signup.module.scss';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { DEFAULT_POSITION, PLAYER_POSITIONS, POSITION_LABELS } from '@/lib/positions';
 
 const Page = () => {
   const [phoneNum, setPhoneNum] = useState('');
@@ -13,6 +14,7 @@ const Page = () => {
   const [confirmEmail, setConfirmEmail] = useState('');
   const [name, setName] = useState('');
   const [skill, setSkill] = useState('5');
+  const [position, setPosition] = useState(DEFAULT_POSITION);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -61,7 +63,7 @@ const Page = () => {
         return;
       }
 
-      await signup(phoneNum, email, name, password, skill, smsOptIn);
+      await signup(phoneNum, email, name, password, skill, smsOptIn, position);
       router.push('/');
     } catch (err) {
       setError(err.message || 'Signup failed');
@@ -168,6 +170,19 @@ const Page = () => {
                   everyone.
                 </p>
               </div>
+              <label>Preferred position</label>
+              <select
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                required
+                className={styles.positionSelect}
+              >
+                {PLAYER_POSITIONS.map((pos) => (
+                  <option key={pos} value={pos}>
+                    {POSITION_LABELS[pos]}
+                  </option>
+                ))}
+              </select>
               <label>Phone Number</label>
               <input
                 value={phoneNum}

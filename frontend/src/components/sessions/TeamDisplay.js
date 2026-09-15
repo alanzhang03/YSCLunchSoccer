@@ -45,6 +45,23 @@ const FIELD_OPTIONS = [
   'Lower Outdoor Field',
 ];
 
+const AdminPlayerTags = ({ player }) => {
+  const position = player.user?.position;
+  const skill = player.user?.skill;
+  if (!position && skill == null) return null;
+
+  return (
+    <>
+      {position ? (
+        <span className={styles.positionBadge}>{position}</span>
+      ) : null}
+      {skill != null ? (
+        <span className={styles.skillBadge}>{skill}</span>
+      ) : null}
+    </>
+  );
+};
+
 const DraggablePlayer = ({ player, isAdmin }) => {
   const {
     attributes,
@@ -79,9 +96,7 @@ const DraggablePlayer = ({ player, isAdmin }) => {
         <span className={styles.playerName}>
           {player.user?.name || player.name}
         </span>
-        {isAdmin && player.user?.skill != null && (
-          <span className={styles.skillBadge}>{player.user.skill}</span>
-        )}
+        {isAdmin && <AdminPlayerTags player={player} />}
       </span>
       {isAdmin && <span className={styles.dragHandle}>⋮⋮</span>}
     </li>
@@ -792,11 +807,7 @@ const TeamDisplay = ({ sessionId }) => {
                                             styles.mobilePlayerControls
                                           }
                                         >
-                                          {player.user?.skill != null && (
-                                            <span className={styles.skillBadge}>
-                                              {player.user.skill}
-                                            </span>
-                                          )}
+                                          <AdminPlayerTags player={player} />
                                           <select
                                             className={styles.mobileTeamSelect}
                                             value={teamIndex}
@@ -847,11 +858,7 @@ const TeamDisplay = ({ sessionId }) => {
                           </span>
                           {isAdmin && (
                             <span className={styles.mobilePlayerControls}>
-                              {player.user?.skill != null && (
-                                <span className={styles.skillBadge}>
-                                  {player.user.skill}
-                                </span>
-                              )}
+                              <AdminPlayerTags player={player} />
                               <select
                                 className={styles.mobileTeamSelect}
                                 value={teamIndex}

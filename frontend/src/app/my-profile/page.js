@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import styles from './my-profile.module.scss';
 import { adjustPersonalInfo } from '@/lib/api';
+import { PLAYER_POSITIONS, POSITION_LABELS } from '@/lib/positions';
 import Link from 'next/link';
 
 const containerVariants = {
@@ -41,7 +42,9 @@ const MyProfilePage = () => {
     skill: '',
     email: '',
     smsOptIn: false,
+    position: '',
   });
+  const [saveError, setSaveError] = useState('');
 
   const router = useRouter();
 
@@ -53,6 +56,7 @@ const MyProfilePage = () => {
         skill: user.skill,
         email: user.email,
         smsOptIn: user.smsOptIn ?? false,
+        position: user.position || '',
       });
     }
   }, [user]);
@@ -80,18 +84,35 @@ const MyProfilePage = () => {
   });
 
   const editingInfo = () => {
+    setSaveError('');
+    if (isEditing) {
+      setFormData({
+        name: user.name,
+        phone: user.phone,
+        skill: user.skill,
+        email: user.email,
+        smsOptIn: user.smsOptIn ?? false,
+        position: user.position || '',
+      });
+    }
     setIsEditing(!isEditing);
   };
 
   const saveInfo = async () => {
     try {
+      setSaveError('');
       await adjustPersonalInfo(formData);
       await checkAuth();
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      setSaveError(error.message || 'Failed to update profile');
     }
   };
+
+  const positionOptions =
+    user.position === 'ALL'
+      ? [...PLAYER_POSITIONS, 'ALL']
+      : PLAYER_POSITIONS;
 
   return (
     <div className={styles.page}>
@@ -166,6 +187,31 @@ const MyProfilePage = () => {
               </Link>
             </div>
             <div className={styles.infoItem}>
+              <span className={styles.label}>Position</span>
+              {isEditing ? (
+                <select
+                  value={formData.position}
+                  onChange={(e) =>
+                    setFormData({ ...formData, position: e.target.value })
+                  }
+                  className={styles.input}
+                >
+                  {!formData.position && <option value=''>Not set</option>}
+                  {positionOptions.map((pos) => (
+                    <option key={pos} value={pos}>
+                      {POSITION_LABELS[pos]}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span className={styles.value}>
+                  {user.position
+                    ? POSITION_LABELS[user.position] || user.position
+                    : 'Not set'}
+                </span>
+              )}
+            </div>
+            <div className={styles.infoItem}>
               <span className={styles.label}>SMS Notifications</span>
               {isEditing ? (
                 <label className={styles.smsOptIn}>
@@ -207,6 +253,7 @@ const MyProfilePage = () => {
               )}
             </div>
             */}
+            {saveError && <p className={styles.saveError}>{saveError}</p>}
             {isEditing && (
               <button className={styles.saveButton} onClick={saveInfo}>
                 Save Info

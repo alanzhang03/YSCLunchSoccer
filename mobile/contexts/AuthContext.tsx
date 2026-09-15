@@ -14,6 +14,7 @@ interface User {
   email: string;
   phone: string;
   skill: number;
+  position?: string | null;
   createdAt: string;
 }
 

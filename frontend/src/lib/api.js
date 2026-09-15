@@ -402,6 +402,7 @@ export async function adjustPersonalInfo({
   phone,
   skill,
   smsOptIn,
+  position,
 }) {
   const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
     method: 'PUT',
@@ -409,7 +410,7 @@ export async function adjustPersonalInfo({
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name, email, phone, skill, smsOptIn }),
+    body: JSON.stringify({ name, email, phone, skill, smsOptIn, position }),
   });
 
   if (!response.ok) {

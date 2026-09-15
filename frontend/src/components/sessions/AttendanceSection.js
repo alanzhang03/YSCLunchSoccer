@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import styles from './SessionCard.module.scss';
 import { deleteAttendances } from '@/lib/api';
-import { DUMMY_USERS } from '@/lib/constants';
+import { DUMMY_USERS, PAYMENTS_ENABLED } from '@/lib/constants';
 
 const USE_DUMMY_DATA = false;
 
@@ -152,13 +152,18 @@ const AttendanceSection = ({
 
               <span className={styles.attendeeName}>
                 {attendance.user?.name ?? `User ${attendance.userId}`}
+                {isAdmin && attendance.user?.position && (
+                  <span className={styles.positionBadge}>
+                    {attendance.user.position}
+                  </span>
+                )}
                 {isAdmin && attendance.user?.skill != null && (
                   <span className={styles.skillBadge}>
                     {attendance.user.skill}
                   </span>
                 )}
               </span>
-              {isAdmin && (
+              {PAYMENTS_ENABLED && isAdmin && (
                 <span
                   className={
                     userHasPaid ? styles.userPaidBadge : styles.userUnpaidBadge

@@ -72,11 +72,12 @@ export async function adjustPersonalInfo(
   email: string,
   phone: string,
   skill: number,
+  position?: string,
 ) {
   const response = await authedFetch(`${API_BASE_URL}/auth/update-profile`, {
     method: 'PUT',
     headers: await authHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ name, email, phone, skill }),
+    body: JSON.stringify({ name, email, phone, skill, position }),
   });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

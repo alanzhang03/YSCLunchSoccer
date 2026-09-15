@@ -204,6 +204,11 @@
               box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.1);
             }
           }
+
+          select.input {
+            min-width: 160px;
+            cursor: pointer;
+          }
         }
 
         .resetPasswordLink {
@@ -224,6 +229,13 @@
           &:active {
             transform: scale(0.97);
           }
+        }
+
+        .saveError {
+          color: #b91c1c;
+          font-size: 0.875rem;
+          text-align: center;
+          margin: 0;
         }
 
         .saveButton {

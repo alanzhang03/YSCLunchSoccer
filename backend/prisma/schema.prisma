@@ -23,6 +23,7 @@ model User {
   password       String?
   smsOptIn       Boolean  @default(false)
   skill          Int      @default(5)
+  position       String?
   isAdmin        Boolean  @default(false)
   wedGroup       Boolean  @default(false)
   ogGroup        Boolean  @default(false)

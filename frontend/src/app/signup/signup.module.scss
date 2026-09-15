@@ -230,7 +230,8 @@
           }
         }
 
-        input {
+        input,
+        select {
           width: 100%;
           padding: 0.75rem 1rem;
           border: 1px solid #d1d5db;
@@ -255,6 +256,10 @@
           &::placeholder {
             color: #9ca3af;
           }
+        }
+
+        .positionSelect {
+          margin-bottom: 0.5rem;
         }
       }
 

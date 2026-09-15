@@ -12,6 +12,7 @@ import {
   setDisclaimerInfo,
 } from '@/lib/api';
 import styles from './admin.module.scss';
+import { ADMIN_POSITIONS, POSITION_LABELS } from '@/lib/positions';
 
 const AdminPage = () => {
   const { user, loading } = useAuth();
@@ -91,6 +92,7 @@ const AdminPage = () => {
       email: u.email,
       phone: u.phone,
       skill: u.skill,
+      position: u.position || '',
       isAdmin: u.isAdmin,
       smsOptIn: u.smsOptIn,
       ogGroup: u.ogGroup,
@@ -176,6 +178,7 @@ const AdminPage = () => {
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Phone' },
     { key: 'skill', label: 'Skill' },
+    { key: 'position', label: 'Position' },
     { key: 'isAdmin', label: 'Admin' },
     { key: 'smsOptIn', label: 'SMS Opt-in' },
     { key: 'ogGroup', label: 'OG Group' },
@@ -325,6 +328,12 @@ const AdminPage = () => {
                     </th>
                     <th
                       className={styles.sortable}
+                      onClick={() => handleSort('position')}
+                    >
+                      Position{sortIndicator('position')}
+                    </th>
+                    <th
+                      className={styles.sortable}
                       onClick={() => handleSort('isAdmin')}
                     >
                       Admin{sortIndicator('isAdmin')}
@@ -411,6 +420,25 @@ const AdminPage = () => {
                                 })
                               }
                             />
+                          </td>
+                          <td data-label='Position'>
+                            <select
+                              className={styles.select}
+                              value={editData.position || ''}
+                              onChange={(e) =>
+                                setEditData({
+                                  ...editData,
+                                  position: e.target.value,
+                                })
+                              }
+                            >
+                              <option value=''>Unset</option>
+                              {ADMIN_POSITIONS.map((pos) => (
+                                <option key={pos} value={pos}>
+                                  {POSITION_LABELS[pos]}
+                                </option>
+                              ))}
+                            </select>
                           </td>
                           <td data-label='Admin'>
                             <select
@@ -500,6 +528,11 @@ const AdminPage = () => {
                           <td data-label='Email'>{u.email}</td>
                           <td data-label='Phone'>{u.phone}</td>
                           <td data-label='Skill'>{u.skill}/10</td>
+                          <td data-label='Position'>
+                            {u.position
+                              ? POSITION_LABELS[u.position] || u.position
+                              : '—'}
+                          </td>
                           <td data-label='Admin'>
                             <span
                               className={

@@ -37,12 +37,13 @@ export async function signup(
   phoneNum: string,
   password: string,
   skill: number,
+  position: string = 'MID',
 ) {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, phoneNum, password, skill }),
+      body: JSON.stringify({ name, email, phoneNum, password, skill, position }),
     });
 
     const data = await response.json();

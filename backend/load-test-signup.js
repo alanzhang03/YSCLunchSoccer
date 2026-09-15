@@ -81,6 +81,7 @@ function generateUserData(index) {
     )}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
     password: `TestPassword${index}!`,
     skill: Math.floor(Math.random() * 10) + 1,
+    position: ['DEF', 'MID', 'FWD'][index % 3],
   };
 }
 

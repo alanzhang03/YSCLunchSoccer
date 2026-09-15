@@ -40,6 +40,7 @@ router.get('/', async (req, res) => {
                 name: true,
                 email: true,
                 skill: true,
+                position: true,
               },
             },
           },
@@ -126,6 +127,7 @@ router.post(
                   name: true,
                   email: true,
                   skill: true,
+                  position: true,
                 },
               },
             },
@@ -179,7 +181,13 @@ router.post(
               data: { status, userId: dbUser.id },
               include: {
                 user: {
-                  select: { id: true, name: true, email: true, skill: true },
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    skill: true,
+                    position: true,
+                  },
                 },
               },
             });
@@ -188,7 +196,13 @@ router.post(
               data: { sessionId, userId: dbUser.id, status },
               include: {
                 user: {
-                  select: { id: true, name: true, email: true, skill: true },
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    skill: true,
+                    position: true,
+                  },
                 },
               },
             });
@@ -242,6 +256,7 @@ router.get(
                   name: true,
                   email: true,
                   skill: true,
+                  position: true,
                 },
               },
             },
@@ -383,6 +398,7 @@ router.get('/:id', async (req, res) => {
                 name: true,
                 email: true,
                 skill: true,
+                position: true,
               },
             },
           },

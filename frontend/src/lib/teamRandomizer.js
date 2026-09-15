@@ -1,3 +1,8 @@
+import {
+  DRAFT_POSITION_ORDER,
+  getPlayerPosition,
+} from './positions.js';
+
 export function shuffleArray(array) {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -7,14 +12,10 @@ export function shuffleArray(array) {
   return shuffled;
 }
 
-export function randomizeTeams(players, numOfTeams) {
-  if (numOfTeams < 2) {
-    throw new Error('Number of teams must be at least 2');
+function snakePlayersBySkill(players, teams, numOfTeams, startIndex = 0) {
+  if (!players.length) {
+    return startIndex;
   }
-
-  const teams = Array(numOfTeams)
-    .fill(null)
-    .map(() => []);
 
   const tiers = {
     tier5: [],
@@ -52,7 +53,7 @@ export function randomizeTeams(players, numOfTeams) {
     shuffleArray(tiers.tier0),
   ];
 
-  let playerIndex = 0;
+  let playerIndex = startIndex;
   for (let tier of allTiers) {
     for (let player of tier) {
       const round = Math.floor(playerIndex / numOfTeams);
@@ -68,6 +69,32 @@ export function randomizeTeams(players, numOfTeams) {
       playerIndex++;
     }
   }
+
+  return playerIndex;
+}
+
+export function randomizeTeams(players, numOfTeams) {
+  if (numOfTeams < 2) {
+    throw new Error('Number of teams must be at least 2');
+  }
+
+  const teams = Array(numOfTeams)
+    .fill(null)
+    .map(() => []);
+
+  let playerIndex = 0;
+  for (const position of DRAFT_POSITION_ORDER) {
+    const pool = players.filter(
+      (player) => getPlayerPosition(player) === position,
+    );
+    playerIndex = snakePlayersBySkill(pool, teams, numOfTeams, playerIndex);
+  }
+
+  const unknownPlayers = players.filter((player) => {
+    const position = getPlayerPosition(player);
+    return !DRAFT_POSITION_ORDER.includes(position);
+  });
+  snakePlayersBySkill(unknownPlayers, teams, numOfTeams, playerIndex);
 
   return teams;
 }
@@ -104,6 +131,38 @@ export function randomizeOgTeams(players, numOfTeams) {
   return ogTeams;
 }
 
+function countPositionOnTeam(team, position) {
+  return team.filter((player) => getPlayerPosition(player) === position).length;
+}
+
+function pickTeamForLateAdd(teams, player) {
+  const position = getPlayerPosition(player);
+  const useSmallestTeam = !position || position === 'ALL';
+
+  let bestIndex = 0;
+  for (let i = 1; i < teams.length; i++) {
+    if (useSmallestTeam) {
+      if (teams[i].length < teams[bestIndex].length) {
+        bestIndex = i;
+      }
+      continue;
+    }
+
+    const iCount = countPositionOnTeam(teams[i], position);
+    const bestCount = countPositionOnTeam(teams[bestIndex], position);
+    if (iCount < bestCount) {
+      bestIndex = i;
+    } else if (
+      iCount === bestCount &&
+      teams[i].length < teams[bestIndex].length
+    ) {
+      bestIndex = i;
+    }
+  }
+
+  return bestIndex;
+}
+
 export function fillTeamsRoundRobin(lockedTeams, newPlayers, numOfTeams) {
   if (numOfTeams < 2) {
     throw new Error('Number of teams must be at least 2');
@@ -127,15 +186,8 @@ export function fillTeamsRoundRobin(lockedTeams, newPlayers, numOfTeams) {
   });
 
   playersToAdd.forEach((player) => {
-    let smallestIndex = 0;
-    for (let i = 1; i < teams.length; i++) {
-      if (teams[i].length < teams[smallestIndex].length) {
-        smallestIndex = i;
-      }
-    }
-    teams[smallestIndex].push(player);
+    const teamIndex = pickTeamForLateAdd(teams, player);
+    teams[teamIndex].push(player);
   });
   return teams;
 }
-
-

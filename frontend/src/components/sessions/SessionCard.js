@@ -17,6 +17,7 @@ import {
   sendSmsAfterDeleteSession,
 } from '@/lib/api';
 import Link from 'next/link';
+import { PAYMENTS_ENABLED } from '@/lib/constants';
 
 const MAX_ATTENDANCE = 50;
 const STRIPE_PRICE_ID = 'price_1SpsHRRf4ipOc26aE5FaWSMg';
@@ -160,6 +161,8 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
   }, [sessionData, user, optimisticStatus]);
 
   useEffect(() => {
+    if (!PAYMENTS_ENABLED) return;
+
     const checkPaymentStatus = async () => {
       if (!user || !sessionData?.id) return;
 
@@ -413,14 +416,14 @@ const SessionCard = ({ sessionData, onAttendanceUpdate, onDelete }) => {
         </div>
       )}
 
-      {/* {user && (
+      {PAYMENTS_ENABLED && user && (
         <PaymentSection
           hasPaid={hasPaid}
           isLoadingPayment={isLoadingPayment}
           isPaymentProcessing={isPaymentProcessing}
           onPayment={handlePayment}
         />
-      )} */}
+      )}
     </Card>
   );
 };

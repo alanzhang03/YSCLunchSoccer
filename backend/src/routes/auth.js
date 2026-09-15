@@ -6,6 +6,7 @@ import { supabaseAdmin } from '../lib/supabase.js';
 import { sendPasswordResetEmail, sendContactFormEmail } from '../lib/email.js';
 import { strictLimiter } from '../middleware/rateLimiter.js';
 import { notificationQueue } from '../lib/queues.js';
+import { normalizePlayerPosition } from '../lib/positions.js';
 
 const router = Router();
 
@@ -172,7 +173,7 @@ router.post('/contact', async (req, res) => {
 
 router.post('/signup', strictLimiter, async (req, res) => {
   try {
-    const { phoneNum, email: rawEmail, name, password, skill, smsOptIn } = req.body;
+    const { phoneNum, email: rawEmail, name, password, skill, smsOptIn, position } = req.body;
     const email = rawEmail?.toLowerCase();
 
     if (!phoneNum || !email || !name || !password) {
@@ -188,6 +189,13 @@ router.post('/signup', strictLimiter, async (req, res) => {
       return res
         .status(400)
         .json({ error: 'Skill level must be a number between 1 and 10' });
+    }
+
+    const parsedPosition = normalizePlayerPosition(position);
+    if (!parsedPosition.ok) {
+      return res
+        .status(400)
+        .json({ error: 'Position must be DEF, MID, or FWD' });
     }
 
     const existingUser = await prisma.user.findFirst({
@@ -236,6 +244,7 @@ router.post('/signup', strictLimiter, async (req, res) => {
         phone: phoneNum,
         name,
         skill: skillNumber,
+        position: parsedPosition.position,
         smsOptIn: Boolean(smsOptIn),
       },
       select: {
@@ -244,6 +253,7 @@ router.post('/signup', strictLimiter, async (req, res) => {
         phone: true,
         name: true,
         skill: true,
+        position: true,
         isAdmin: true,
         createdAt: true,
       },
@@ -344,6 +354,7 @@ router.post('/login', strictLimiter, async (req, res) => {
         phone: user.phone,
         name: user.name,
         skill: user.skill,
+        position: user.position,
         isAdmin: user.isAdmin,
         createdAt: user.createdAt,
       };
@@ -372,6 +383,7 @@ router.post('/login', strictLimiter, async (req, res) => {
       phone: user.phone,
       name: user.name,
       skill: user.skill,
+      position: user.position,
       isAdmin: user.isAdmin,
       createdAt: user.createdAt,
     };
@@ -455,6 +467,7 @@ router.get('/me', async (req, res) => {
         phone: true,
         name: true,
         skill: true,
+        position: true,
         isAdmin: true,
         wedGroup: true,
         ogGroup: true,
@@ -679,7 +692,7 @@ router.put('/update-profile', async (req, res) => {
       return res.status(401).json({ error: 'Invalid or expired token' });
     }
 
-    const { name, email, phone, skill, smsOptIn } = req.body;
+    const { name, email, phone, skill, smsOptIn, position } = req.body;
 
     if (!name || !email || !phone) {
       return res
@@ -739,6 +752,26 @@ router.put('/update-profile', async (req, res) => {
     if (skillNumber !== undefined) {
       updateData.skill = skillNumber;
     }
+    if (position !== undefined && position !== null && position !== '') {
+      const incoming = String(position).trim().toUpperCase();
+      if (incoming === 'ALL') {
+        if (currentUser.position !== 'ALL') {
+          return res
+            .status(400)
+            .json({ error: 'Position must be DEF, MID, or FWD' });
+        }
+      } else {
+        const parsedPosition = normalizePlayerPosition(incoming, {
+          required: true,
+        });
+        if (!parsedPosition.ok) {
+          return res
+            .status(400)
+            .json({ error: 'Position must be DEF, MID, or FWD' });
+        }
+        updateData.position = parsedPosition.position;
+      }
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id: currentUser.id },
@@ -749,6 +782,7 @@ router.put('/update-profile', async (req, res) => {
         phone: true,
         name: true,
         skill: true,
+        position: true,
         isAdmin: true,
         smsOptIn: true,
         createdAt: true,
