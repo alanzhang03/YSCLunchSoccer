@@ -438,6 +438,24 @@ export async function fetchAllUsers() {
   return response.json();
 }
 
+export async function bulkUpdateUsers(updates) {
+  const response = await fetch(`${API_BASE_URL}/admin/users/bulk`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ updates }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to update users');
+  }
+
+  return response.json();
+}
+
 export async function updateUser(userId, data) {
   const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
     method: 'PATCH',

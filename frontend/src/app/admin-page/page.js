@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import {
   fetchAllUsers,
   updateUser,
+  bulkUpdateUsers,
   deleteUser,
   getDisclaimerInfo,
   setDisclaimerInfo,
@@ -20,10 +21,13 @@ const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [editingId, setEditingId] = useState(null);
-  const [editData, setEditData] = useState({});
+  const [editAll, setEditAll] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(null);
   const [error, setError] = useState('');
+  const [bulkSuccess, setBulkSuccess] = useState('');
+  const [drafts, setDrafts] = useState({});
+  const [savingChanges, setSavingChanges] = useState(false);
   const [sortKey, setSortKey] = useState('createdAt');
   const [sortDir, setSortDir] = useState('desc');
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,19 +89,59 @@ const AdminPage = () => {
     }
   };
 
+  const originalFieldValue = (u, field) => {
+    if (field === 'position') return u.position || '';
+    return u[field];
+  };
+
+  const valuesEqual = (field, left, right) => {
+    if (['isAdmin', 'smsOptIn', 'ogGroup', 'wedGroup'].includes(field)) {
+      return Boolean(left) === Boolean(right);
+    }
+    if (field === 'skill') return Number(left) === Number(right);
+    return String(left ?? '') === String(right ?? '');
+  };
+
+  const getValue = (u, field) => {
+    if (drafts[u.id] && drafts[u.id][field] !== undefined) {
+      return drafts[u.id][field];
+    }
+    return originalFieldValue(u, field);
+  };
+
+  const setValue = (u, field, value) => {
+    setBulkSuccess('');
+    const original = originalFieldValue(u, field);
+    setDrafts((prev) => {
+      const userDraft = { ...(prev[u.id] || {}) };
+      if (valuesEqual(field, value, original)) {
+        delete userDraft[field];
+      } else {
+        userDraft[field] = value;
+      }
+      const next = { ...prev };
+      if (Object.keys(userDraft).length === 0) {
+        delete next[u.id];
+      } else {
+        next[u.id] = userDraft;
+      }
+      return next;
+    });
+  };
+
+  const isDirty = (u, field) => drafts[u.id]?.[field] !== undefined;
+  const dirtyUserCount = Object.keys(drafts).length;
+
+  const isRowEditing = (u) => {
+    if (editAll) return true;
+    if (editingId === u.id) return true;
+    const draft = drafts[u.id];
+    if (!draft) return false;
+    return Object.keys(draft).some((key) => key !== 'position');
+  };
+
   const startEdit = (u) => {
     setEditingId(u.id);
-    setEditData({
-      name: u.name,
-      email: u.email,
-      phone: u.phone,
-      skill: u.skill,
-      position: u.position || '',
-      isAdmin: u.isAdmin,
-      smsOptIn: u.smsOptIn,
-      ogGroup: u.ogGroup,
-      wedGroup: u.wedGroup,
-    });
     setError('');
   };
 
@@ -108,6 +152,11 @@ const AdminPage = () => {
       setError('');
       await deleteUser(u.id);
       setUsers((prev) => prev.filter((x) => x.id !== u.id));
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[u.id];
+        return next;
+      });
     } catch (err) {
       setError(err.message || 'Failed to delete user');
     } finally {
@@ -115,28 +164,121 @@ const AdminPage = () => {
     }
   };
 
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditData({});
+  const cancelEdit = (userId) => {
+    setDrafts((prev) => {
+      const next = { ...prev };
+      delete next[userId];
+      return next;
+    });
+    if (editingId === userId) {
+      setEditingId(null);
+    }
     setError('');
   };
 
   const saveEdit = async (userId) => {
+    const draft = drafts[userId];
+    if (!draft || Object.keys(draft).length === 0) {
+      setEditingId(null);
+      return;
+    }
     try {
       setSaving(true);
       setError('');
-      const response = await updateUser(userId, editData);
+      const response = await updateUser(userId, draft);
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? response.user : u)),
       );
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[userId];
+        return next;
+      });
       setEditingId(null);
-      setEditData({});
     } catch (err) {
       setError(err.message || 'Failed to update user');
     } finally {
       setSaving(false);
     }
   };
+
+  const discardAllChanges = () => {
+    setDrafts({});
+    setEditingId(null);
+    setEditAll(false);
+    setBulkSuccess('');
+    setError('');
+  };
+
+  const saveAllChanges = async () => {
+    const updates = Object.entries(drafts).map(([id, fields]) => ({
+      id,
+      ...fields,
+    }));
+    if (!updates.length) return;
+
+    const adminChanges = updates.filter((item) => item.isAdmin !== undefined);
+    if (adminChanges.length) {
+      const confirmed = window.confirm(
+        `This will change admin status for ${adminChanges.length} user${
+          adminChanges.length === 1 ? '' : 's'
+        }. Continue?`,
+      );
+      if (!confirmed) return;
+    }
+
+    try {
+      setSavingChanges(true);
+      setError('');
+      setBulkSuccess('');
+      const response = await bulkUpdateUsers(updates);
+      const updatedById = Object.fromEntries(
+        (response.users || []).map((u) => [u.id, u]),
+      );
+      setUsers((prev) => prev.map((u) => updatedById[u.id] || u));
+      setDrafts({});
+      setEditingId(null);
+      setBulkSuccess(
+        `Saved changes for ${updates.length} user${
+          updates.length === 1 ? '' : 's'
+        }`,
+      );
+    } catch (err) {
+      setError(err.message || 'Failed to save changes');
+    } finally {
+      setSavingChanges(false);
+    }
+  };
+
+  const renderPositionCell = (u) => (
+    <td data-label='Position'>
+      <select
+        className={`${styles.select} ${
+          isDirty(u, 'position') ? styles.dirtySelect : ''
+        }`}
+        value={getValue(u, 'position')}
+        onChange={(e) => setValue(u, 'position', e.target.value)}
+      >
+        <option value=''>Unset</option>
+        {ADMIN_POSITIONS.map((pos) => (
+          <option key={pos} value={pos}>
+            {POSITION_LABELS[pos]}
+          </option>
+        ))}
+      </select>
+    </td>
+  );
+
+  const renderYesNoSelect = (u, field) => (
+    <select
+      className={`${styles.select} ${isDirty(u, field) ? styles.dirtySelect : ''}`}
+      value={getValue(u, field) ? 'true' : 'false'}
+      onChange={(e) => setValue(u, field, e.target.value === 'true')}
+    >
+      <option value='false'>No</option>
+      <option value='true'>Yes</option>
+    </select>
+  );
 
   const handleSort = (key) => {
     if (sortKey === key) {
@@ -252,6 +394,7 @@ const AdminPage = () => {
           </div>
 
           {error && <div className={styles.error}>{error}</div>}
+          {bulkSuccess && <div className={styles.success}>{bulkSuccess}</div>}
 
           {!fetching && (
             <div className={styles.searchRow}>
@@ -267,6 +410,49 @@ const AdminPage = () => {
                   {sortedUsers.length} of {users.length} users
                 </span>
               )}
+              <div className={styles.bulkActions}>
+                <button
+                  type='button'
+                  className={`${styles.editAllBtn} ${
+                    editAll ? styles.editAllBtnActive : ''
+                  }`}
+                  onClick={() => {
+                    setEditingId(null);
+                    setEditAll((prev) => !prev);
+                  }}
+                >
+                  {editAll ? 'Done editing all' : 'Edit all'}
+                </button>
+                <span className={styles.bulkHint}>
+                  {dirtyUserCount > 0
+                    ? `${dirtyUserCount} unsaved user${
+                        dirtyUserCount === 1 ? '' : 's'
+                      }`
+                    : editAll
+                      ? 'Edit any fields, then save all'
+                      : 'Change positions, or turn on Edit all'}
+                </span>
+                <button
+                  type='button'
+                  className={styles.saveBtn}
+                  onClick={saveAllChanges}
+                  disabled={savingChanges || dirtyUserCount === 0}
+                >
+                  {savingChanges
+                    ? 'Saving...'
+                    : `Save all${
+                        dirtyUserCount > 0 ? ` (${dirtyUserCount})` : ''
+                      }`}
+                </button>
+                <button
+                  type='button'
+                  className={styles.cancelBtn}
+                  onClick={discardAllChanges}
+                  disabled={savingChanges || dirtyUserCount === 0}
+                >
+                  Discard
+                </button>
+              </div>
             </div>
           )}
 
@@ -366,207 +552,162 @@ const AdminPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedUsers.map((u) => (
-                    <tr key={u.id}>
-                      {editingId === u.id ? (
+                  {sortedUsers.map((u) => {
+                    const rowEditing = isRowEditing(u);
+                    return (
+                    <tr
+                      key={u.id}
+                      className={drafts[u.id] ? styles.dirtyRow : ''}
+                    >
+                      {rowEditing ? (
                         <>
                           <td data-label='Name' className={styles.nameCell}>
                             <input
-                              className={styles.input}
-                              value={editData.name}
+                              className={`${styles.input} ${
+                                isDirty(u, 'name') ? styles.dirtySelect : ''
+                              }`}
+                              value={getValue(u, 'name') || ''}
                               onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  name: e.target.value,
-                                })
+                                setValue(u, 'name', e.target.value)
                               }
                             />
                           </td>
                           <td data-label='Email'>
                             <input
-                              className={styles.input}
-                              value={editData.email}
+                              className={`${styles.input} ${
+                                isDirty(u, 'email') ? styles.dirtySelect : ''
+                              }`}
+                              value={getValue(u, 'email') || ''}
                               onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  email: e.target.value,
-                                })
+                                setValue(u, 'email', e.target.value)
                               }
                             />
                           </td>
                           <td data-label='Phone'>
                             <input
-                              className={styles.input}
-                              value={editData.phone}
+                              className={`${styles.input} ${
+                                isDirty(u, 'phone') ? styles.dirtySelect : ''
+                              }`}
+                              value={getValue(u, 'phone') || ''}
                               onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  phone: e.target.value,
-                                })
+                                setValue(u, 'phone', e.target.value)
                               }
                             />
                           </td>
                           <td data-label='Skill'>
                             <input
-                              className={styles.input}
+                              className={`${styles.input} ${
+                                isDirty(u, 'skill') ? styles.dirtySelect : ''
+                              }`}
                               type='number'
                               min='1'
                               max='10'
-                              value={editData.skill}
+                              value={getValue(u, 'skill')}
                               onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  skill: parseInt(e.target.value, 10) || '',
-                                })
+                                setValue(
+                                  u,
+                                  'skill',
+                                  parseInt(e.target.value, 10) || '',
+                                )
                               }
                             />
                           </td>
-                          <td data-label='Position'>
-                            <select
-                              className={styles.select}
-                              value={editData.position || ''}
-                              onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  position: e.target.value,
-                                })
-                              }
-                            >
-                              <option value=''>Unset</option>
-                              {ADMIN_POSITIONS.map((pos) => (
-                                <option key={pos} value={pos}>
-                                  {POSITION_LABELS[pos]}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td data-label='Admin'>
-                            <select
-                              className={styles.select}
-                              value={editData.isAdmin ? 'true' : 'false'}
-                              onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  isAdmin: e.target.value === 'true',
-                                })
-                              }
-                            >
-                              <option value='false'>No</option>
-                              <option value='true'>Yes</option>
-                            </select>
-                          </td>
+                          {renderPositionCell(u)}
+                          <td data-label='Admin'>{renderYesNoSelect(u, 'isAdmin')}</td>
                           <td data-label='SMS Opt-in'>
-                            <select
-                              className={styles.select}
-                              value={editData.smsOptIn ? 'true' : 'false'}
-                              onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  smsOptIn: e.target.value === 'true',
-                                })
-                              }
-                            >
-                              <option value='false'>No</option>
-                              <option value='true'>Yes</option>
-                            </select>
+                            {renderYesNoSelect(u, 'smsOptIn')}
                           </td>
                           <td data-label='OG Group'>
-                            <select
-                              className={styles.select}
-                              value={editData.ogGroup ? 'true' : 'false'}
-                              onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  ogGroup: e.target.value === 'true',
-                                })
-                              }
-                            >
-                              <option value='false'>No</option>
-                              <option value='true'>Yes</option>
-                            </select>
+                            {renderYesNoSelect(u, 'ogGroup')}
                           </td>
                           <td data-label='Wed Group'>
-                            <select
-                              className={styles.select}
-                              value={editData.wedGroup ? 'true' : 'false'}
-                              onChange={(e) =>
-                                setEditData({
-                                  ...editData,
-                                  wedGroup: e.target.value === 'true',
-                                })
-                              }
-                            >
-                              <option value='false'>No</option>
-                              <option value='true'>Yes</option>
-                            </select>
+                            {renderYesNoSelect(u, 'wedGroup')}
                           </td>
                           <td data-label='Joined'>
                             {new Date(u.createdAt).toLocaleDateString()}
                           </td>
                           <td className={styles.actions}>
-                            <button
-                              className={styles.saveBtn}
-                              onClick={() => saveEdit(u.id)}
-                              disabled={saving}
-                            >
-                              {saving ? 'Saving...' : 'Save'}
-                            </button>
-                            <button
-                              className={styles.cancelBtn}
-                              onClick={cancelEdit}
-                              disabled={saving}
-                            >
-                              Cancel
-                            </button>
+                            {editAll ? (
+                              !u.isAdmin && (
+                                <button
+                                  className={styles.deleteBtn}
+                                  onClick={() => handleDelete(u)}
+                                  disabled={deleting === u.id}
+                                >
+                                  {deleting === u.id ? 'Deleting...' : 'Delete'}
+                                </button>
+                              )
+                            ) : (
+                              <>
+                                <button
+                                  className={styles.saveBtn}
+                                  onClick={() => saveEdit(u.id)}
+                                  disabled={saving || !drafts[u.id]}
+                                >
+                                  {saving ? 'Saving...' : 'Save'}
+                                </button>
+                                <button
+                                  className={styles.cancelBtn}
+                                  onClick={() => cancelEdit(u.id)}
+                                  disabled={saving}
+                                >
+                                  Cancel
+                                </button>
+                              </>
+                            )}
                           </td>
                         </>
                       ) : (
                         <>
                           <td data-label='Name' className={styles.nameCell}>
-                            {u.name}
+                            {getValue(u, 'name')}
                           </td>
-                          <td data-label='Email'>{u.email}</td>
-                          <td data-label='Phone'>{u.phone}</td>
-                          <td data-label='Skill'>{u.skill}/10</td>
-                          <td data-label='Position'>
-                            {u.position
-                              ? POSITION_LABELS[u.position] || u.position
-                              : '—'}
-                          </td>
+                          <td data-label='Email'>{getValue(u, 'email')}</td>
+                          <td data-label='Phone'>{getValue(u, 'phone')}</td>
+                          <td data-label='Skill'>{getValue(u, 'skill')}/10</td>
+                          {renderPositionCell(u)}
                           <td data-label='Admin'>
                             <span
                               className={
-                                u.isAdmin ? styles.badgeAdmin : styles.badgeUser
+                                getValue(u, 'isAdmin')
+                                  ? styles.badgeAdmin
+                                  : styles.badgeUser
                               }
                             >
-                              {u.isAdmin ? 'Yes' : 'No'}
+                              {getValue(u, 'isAdmin') ? 'Yes' : 'No'}
                             </span>
                           </td>
                           <td data-label='SMS Opt-in'>
                             <span
                               className={
-                                u.smsOptIn ? styles.badgeSms : styles.badgeUser
+                                getValue(u, 'smsOptIn')
+                                  ? styles.badgeSms
+                                  : styles.badgeUser
                               }
                             >
-                              {u.smsOptIn ? 'Yes' : 'No'}
+                              {getValue(u, 'smsOptIn') ? 'Yes' : 'No'}
                             </span>
                           </td>
                           <td data-label='OG Group'>
                             <span
                               className={
-                                u.ogGroup ? styles.badgeOg : styles.badgeUser
+                                getValue(u, 'ogGroup')
+                                  ? styles.badgeOg
+                                  : styles.badgeUser
                               }
                             >
-                              {u.ogGroup ? 'Yes' : 'No'}
+                              {getValue(u, 'ogGroup') ? 'Yes' : 'No'}
                             </span>
                           </td>
                           <td data-label='Wed Group'>
                             <span
                               className={
-                                u.wedGroup ? styles.badgeOg : styles.badgeUser
+                                getValue(u, 'wedGroup')
+                                  ? styles.badgeOg
+                                  : styles.badgeUser
                               }
                             >
-                              {u.wedGroup ? 'Yes' : 'No'}
+                              {getValue(u, 'wedGroup') ? 'Yes' : 'No'}
                             </span>
                           </td>
                           <td data-label='Joined'>
@@ -592,7 +733,8 @@ const AdminPage = () => {
                         </>
                       )}
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
