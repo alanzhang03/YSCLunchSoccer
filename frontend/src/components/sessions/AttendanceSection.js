@@ -157,11 +157,6 @@ const AttendanceSection = ({
                     {attendance.user.position}
                   </span>
                 )}
-                {isAdmin && attendance.user?.skill != null && (
-                  <span className={styles.skillBadge}>
-                    {attendance.user.skill}
-                  </span>
-                )}
               </span>
               {PAYMENTS_ENABLED && isAdmin && (
                 <span

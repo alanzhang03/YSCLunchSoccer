@@ -47,19 +47,9 @@ const FIELD_OPTIONS = [
 
 const AdminPlayerTags = ({ player }) => {
   const position = player.user?.position;
-  const skill = player.user?.skill;
-  if (!position && skill == null) return null;
+  if (!position) return null;
 
-  return (
-    <>
-      {position ? (
-        <span className={styles.positionBadge}>{position}</span>
-      ) : null}
-      {skill != null ? (
-        <span className={styles.skillBadge}>{skill}</span>
-      ) : null}
-    </>
-  );
+  return <span className={styles.positionBadge}>{position}</span>;
 };
 
 const DraggablePlayer = ({ player, isAdmin }) => {
