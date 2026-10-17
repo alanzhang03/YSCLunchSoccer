@@ -7,6 +7,12 @@ import styles from './page.module.scss';
 import UpcomingSessions from '@/components/ui/UpcomingSessions';
 import TestimonialsSlider from '@/components/ui/TestimonialsSlider';
 import DisclaimerModal from '@/components/ui/DisclaimerModal';
+import BackgroundSlideshow from '@/components/ui/BackgroundSlideshow';
+
+const MAPS_URL =
+  'https://www.google.com/maps/place/YSC+Sports/@40.0773687,-75.4039779,1694m/data=!3m2!1e3!4b1!4m6!3m5!1s0x89c6945bbbf66627:0xc51da4623125fd8e!8m2!3d40.0773687!4d-75.4039779!16s%2Fg%2F1txnqdnh?entry=ttu&g_ep=EgoyMDI2MDExMy4wIKXMDSoASAFQAw%3D%3D';
+const MAPS_EMBED_URL =
+  'https://www.google.com/maps?q=YSC+Sports,+224+County+Line+Rd,+Wayne,+PA+19087&z=15&output=embed';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,6 +42,7 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
+      <BackgroundSlideshow />
       <DisclaimerModal />
       <main className={styles.main}>
         <motion.div
@@ -57,7 +64,7 @@ export default function Home() {
           </motion.p>
 
           <motion.a
-            href='https://www.google.com/maps/place/YSC+Sports/@40.0773687,-75.4039779,1694m/data=!3m2!1e3!4b1!4m6!3m5!1s0x89c6945bbbf66627:0xc51da4623125fd8e!8m2!3d40.0773687!4d-75.4039779!16s%2Fg%2F1txnqdnh?entry=ttu&g_ep=EgoyMDI2MDExMy4wIKXMDSoASAFQAw%3D%3D'
+            href={MAPS_URL}
             target='_blank'
             rel='noopener noreferrer'
             className={styles.location}
@@ -165,25 +172,58 @@ export default function Home() {
           </div>
         </motion.div>
 
-        {!loading && !user && (
-          <motion.div
-            className={styles.ctaSection}
-            variants={itemVariants}
-            initial='hidden'
-            whileInView='visible'
-            viewport={{ once: true, margin: '-80px' }}
-          >
-            <h3>Ready to play?</h3>
-            <div className={styles.ctaButtons}>
-              <Link href='/signup' className={styles.primaryButton}>
-                Get started
-              </Link>
-              <Link href='/about-us' className={styles.secondaryLink}>
-                Learn more
-              </Link>
+        <motion.section
+          className={styles.findUs}
+          variants={containerVariants}
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: true, margin: '-80px' }}
+        >
+          <motion.h2 className={styles.sectionTitle} variants={itemVariants}>
+            Find us
+          </motion.h2>
+
+          <motion.div className={styles.findUsCard} variants={itemVariants}>
+            <div className={styles.findUsInfo}>
+              <div className={styles.infoBlock}>
+                <span className={styles.infoLabel}>Where</span>
+                <p>
+                  <strong>YSC Sports</strong>
+                  <br />
+                  224 County Line Rd
+                  <br />
+                  Wayne, PA 19087
+                </p>
+              </div>
+              <div className={styles.infoBlock}>
+                <span className={styles.infoLabel}>When</span>
+                <p>
+                  Mondays &amp; Fridays
+                  <br />
+                  11:30 AM – 1:05 PM
+                </p>
+              </div>
+              <a
+                href={MAPS_URL}
+                target='_blank'
+                rel='noopener noreferrer'
+                className={styles.directionsButton}
+              >
+                Get directions
+              </a>
+            </div>
+            <div className={styles.mapWrapper}>
+              <iframe
+                src={MAPS_EMBED_URL}
+                title='Map of YSC Sports in Wayne, PA'
+                loading='lazy'
+                referrerPolicy='no-referrer-when-downgrade'
+                allowFullScreen
+              />
             </div>
           </motion.div>
-        )}
+        </motion.section>
+
         <TestimonialsSlider />
       </main>
     </div>

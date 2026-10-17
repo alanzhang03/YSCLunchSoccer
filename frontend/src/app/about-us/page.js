@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import styles from './aboutus.module.scss';
 import ContactForm from '@/components/ui/ContactForm';
 
@@ -41,7 +42,41 @@ const cardVariants = {
   },
 };
 
+const faqs = [
+  {
+    question: 'Do I need to be an experienced player?',
+    answer: 'Not at all! We welcome players of all skill levels.',
+  },
+  {
+    question: 'What should I bring?',
+    answer:
+      'Just bring water, cleats, and a dark and white shirt! (Preferably not Gray)',
+  },
+  {
+    question: 'How are teams formed?',
+    answer:
+      'Teams are balanced based on individuals skill levels to ensure fair and competitive games.',
+  },
+  {
+    question: 'How many people usually show up?',
+    answer:
+      'Typically 30–40 players come out each session. We usually form 2–4 teams, although on some days there can be up to 6.',
+  },
+  {
+    question: 'Can I bring friends?',
+    answer:
+      'Absolutely! Just make sure they sign up and reply yes for the session.',
+  },
+  {
+    question: 'How much does it cost?',
+    answer:
+      'Each session is $5. You can pay with cash, Venmo, or on this site using credit card or Apple Pay.',
+  },
+];
+
 const AboutUsPage = () => {
+  const [openFaq, setOpenFaq] = useState(null);
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -93,8 +128,8 @@ const AboutUsPage = () => {
               <div className={styles.stepNumber}>3</div>
               <h3>Check</h3>
               <p>
-                Check what team you are on and what color you'll be wearing the
-                day of the session.
+                Check what team you are on and what color you&apos;ll be wearing
+                the day of the session.
               </p>
             </motion.div>
 
@@ -116,84 +151,66 @@ const AboutUsPage = () => {
           <motion.h2 className={styles.sectionTitle} variants={itemVariants}>
             Frequently Asked Questions
           </motion.h2>
-          <div className={styles.faqGrid}>
-            <motion.div className={styles.faqItem} variants={cardVariants}>
-              <h3>Do I need to be an experienced player?</h3>
-              <p>Not at all! We welcome players of all skill levels.</p>
-            </motion.div>
+          <motion.div className={styles.faqList} variants={cardVariants}>
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={faq.question}
+                  className={`${styles.faqItem} ${isOpen ? styles.open : ''}`}
+                >
+                  <button
+                    type='button'
+                    className={styles.faqQuestion}
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${index}`}
+                    id={`faq-question-${index}`}
+                  >
+                    <span>{faq.question}</span>
+                    <ChevronDown className={styles.faqChevron} aria-hidden />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        id={`faq-answer-${index}`}
+                        role='region'
+                        aria-labelledby={`faq-question-${index}`}
+                        className={styles.faqAnswer}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                      >
+                        <p>{faq.answer}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </motion.div>
 
-            <motion.div className={styles.faqItem} variants={cardVariants}>
-              <h3>What should I bring?</h3>
-              <p>
-                Just bring water, cleats, and a dark and white shirt!
-                (Preferably not Gray)
-              </p>
-            </motion.div>
-
-            <motion.div className={styles.faqItem} variants={cardVariants}>
-              <h3>How are teams formed?</h3>
-              <p>
-                Teams are balanced based on individuals skill levels to ensure
-                fair and competitive games.
-              </p>
-            </motion.div>
-
-            <motion.div className={styles.faqItem} variants={cardVariants}>
-              <h3>Can I bring friends?</h3>
-              <p>
-                Absolutely! Just make sure they sign up and reply yes for the
-                session.
-              </p>
-            </motion.div>
-
-            <motion.div className={styles.faqItem} variants={cardVariants}>
-              <h3>How much does it cost?</h3>
-              <p>
-                Each session is $5. You can pay with cash, Venmo, or on this
-                site using credit card or Apple Pay.
-              </p>
-            </motion.div>
-          </div>
+          <motion.div className={styles.faqMore} variants={itemVariants}>
+            <h3>Still have questions?</h3>
+            <p>
+              Use the{' '}
+              <a
+                href='#contact'
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById('contact')
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }}
+              >
+                contact form below
+              </a>{' '}
+              or text us directly at{' '}
+              <a href='sms:+14848600997'>(484) 860-0997</a>.
+            </p>
+          </motion.div>
         </motion.section>
-
-        <motion.div
-          className={styles.statsBar}
-          variants={itemVariants}
-          initial='hidden'
-          whileInView='visible'
-          viewport={{ once: true }}
-        >
-          <div className={styles.stat}>
-            <span className={styles.statValue}>100+</span>
-            <span className={styles.statLabel}>Sessions</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>100+</span>
-            <span className={styles.statLabel}>Players</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>Weekly</span>
-            <span className={styles.statLabel}>Games</span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          className={styles.ctaBlock}
-          variants={itemVariants}
-          initial='hidden'
-          whileInView='visible'
-          viewport={{ once: true }}
-        >
-          <h3>Ready to play?</h3>
-          <div className={styles.ctaButtons}>
-            <Link href='/sessions' className={styles.primaryButton}>
-              View sessions
-            </Link>
-            <Link href='/signup' className={styles.secondaryButton}>
-              Sign up
-            </Link>
-          </div>
-        </motion.div>
 
         <motion.section
           className={styles.contactSection}

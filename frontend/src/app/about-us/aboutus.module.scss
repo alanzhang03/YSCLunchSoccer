@@ -397,37 +397,104 @@
       margin: 6rem auto;
       padding: 0 2rem;
 
-      .faqGrid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 2rem;
-        margin-top: 3rem;
+      .faqList {
+        max-width: 800px;
+        margin: 3rem auto 0;
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 16px;
+        box-shadow: $shadow-lg;
+        overflow: hidden;
 
         .faqItem {
-          background: rgba(255, 255, 255, 0.98);
-          padding: 2rem;
-          border-radius: 16px;
-          box-shadow: $shadow-lg;
-          transition: all 0.3s ease;
+          border-bottom: 1px solid rgba(15, 76, 117, 0.1);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          &.open .faqChevron {
+            transform: rotate(180deg);
+          }
+        }
+
+        .faqQuestion {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: 1.5rem 2rem;
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          font: inherit;
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: $ysc-primary-blue;
+          line-height: 1.4;
+          transition: background 0.2s ease;
 
           &:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            background: $ysc-very-light-blue;
           }
 
-          h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: $ysc-primary-blue;
-            margin-bottom: 1rem;
-            line-height: 1.4;
+          &:focus-visible {
+            outline: 2px solid $ysc-primary-blue;
+            outline-offset: -2px;
           }
+        }
+
+        .faqChevron {
+          flex-shrink: 0;
+          width: 20px;
+          height: 20px;
+          color: $ysc-medium-blue;
+          transition: transform 0.3s ease;
+        }
+
+        .faqAnswer {
+          overflow: hidden;
 
           p {
+            padding: 0 2rem 1.5rem;
             font-size: 1rem;
             color: $text-medium;
             line-height: 1.7;
             margin: 0;
+          }
+        }
+      }
+
+      .faqMore {
+        max-width: 800px;
+        margin: 2.5rem auto 0;
+        text-align: center;
+
+        h3 {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: $white;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          font-size: 1rem;
+          color: rgba(255, 255, 255, 0.85);
+          line-height: 1.7;
+          margin: 0;
+        }
+
+        a {
+          color: $white;
+          font-weight: 600;
+          text-decoration: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+          transition: border-color 0.2s ease;
+          white-space: nowrap;
+
+          &:hover {
+            border-bottom-color: $white;
           }
         }
       }
@@ -700,21 +767,17 @@
           margin-bottom: 2rem;
         }
 
-        .faqGrid {
-          grid-template-columns: 1fr;
-          gap: 1.5rem;
+        .faqList {
           margin-top: 2rem;
 
-          .faqItem {
-            padding: 1.75rem 1.5rem;
+          .faqQuestion {
+            padding: 1.25rem 1.5rem;
+            font-size: 1.0625rem;
+          }
 
-            h3 {
-              font-size: 1.125rem;
-            }
-
-            p {
-              font-size: 0.9375rem;
-            }
+          .faqAnswer p {
+            padding: 0 1.5rem 1.25rem;
+            font-size: 0.9375rem;
           }
         }
       }
@@ -906,20 +969,18 @@
           margin-bottom: 1.5rem;
         }
 
-        .faqGrid {
-          gap: 1.25rem;
+        .faqList {
           margin-top: 1.5rem;
+          border-radius: 12px;
 
-          .faqItem {
-            padding: 1.5rem 1.25rem;
+          .faqQuestion {
+            padding: 1.125rem 1.25rem;
+            font-size: 1rem;
+          }
 
-            h3 {
-              font-size: 1.0625rem;
-            }
-
-            p {
-              font-size: 0.875rem;
-            }
+          .faqAnswer p {
+            padding: 0 1.25rem 1.125rem;
+            font-size: 0.875rem;
           }
         }
       }

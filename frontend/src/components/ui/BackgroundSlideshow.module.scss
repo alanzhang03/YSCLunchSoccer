@@ -1,0 +1,43 @@
+$fade-duration: 2.5s;
+// Interval plus fade, so the zoom keeps going until the slide is fully gone
+$slide-duration: 8s + $fade-duration;
+
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1);
+  // Fade out first, then quietly reset the zoom once invisible
+  transition:
+    opacity $fade-duration ease-in-out,
+    transform 0s linear $fade-duration;
+
+  &.active {
+    opacity: 0.85;
+    transform: scale(1.08);
+    transition:
+      opacity $fade-duration ease-in-out,
+      transform $slide-duration linear;
+  }
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .slide.active {
+    transform: none;
+    transition: opacity $fade-duration ease-in-out;
+  }
+}
