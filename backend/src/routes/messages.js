@@ -19,7 +19,6 @@ router.get('/:sessionId', async (req, res) => {
           select: {
             id: true,
             name: true,
-            email: true,
           },
         },
       },
@@ -59,7 +58,6 @@ router.post('/', authenticateUser, loadDbUser, async (req, res) => {
           select: {
             id: true,
             name: true,
-            email: true,
           },
         },
       },

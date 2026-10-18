@@ -3,26 +3,21 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './BackgroundSlideshow.module.scss';
+import { galleryUrl } from '@/lib/gallery';
 
 const defaultImages = [
-  '/gallery/7.png',
-  '/gallery/1.png',
-  '/gallery/21.jpg',
-  '/gallery/2.png',
-  '/gallery/18.jpg',
-  '/gallery/20.jpg',
-];
+  '7.jpg',
+  '1.jpg',
+  '21.jpg',
+  '2.jpg',
+  '18.jpg',
+  '20.jpg',
+].map(galleryUrl);
 
-// Keep in sync with $slide-duration in BackgroundSlideshow.module.scss
 const INTERVAL = 8000;
 
-// Fixed, full-viewport background that crossfades between photos while
-// each one slowly zooms in. Sits beneath the page's gradient overlay.
 export default function BackgroundSlideshow({ images = defaultImages }) {
-  // Start at -1 so the first slide fades and zooms in after mount
   const [currentIndex, setCurrentIndex] = useState(-1);
-  // Only mount images as they're needed, so we don't fetch them all up front.
-  // Stays one slide ahead of currentIndex so the next image is ready before it fades in.
   const [loadedUpTo, setLoadedUpTo] = useState(2);
 
   useEffect(() => {

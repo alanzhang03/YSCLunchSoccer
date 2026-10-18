@@ -1,12 +1,18 @@
-import fs from 'fs';
-import path from 'path';
+import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import GalleryClient from './GalleryClient';
+import { getGalleryImages } from '@/lib/gallery';
 
-export default function GalleryPage() {
-  const galleryDir = path.join(process.cwd(), 'public/gallery');
-  const images = fs.readdirSync(galleryDir).filter(img =>
-    img.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-  );
+export const revalidate = 300;
+
+export default async function GalleryPage() {
+  let images;
+  try {
+    images = await getGalleryImages();
+  } catch (error) {
+    if (process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD) throw error;
+    console.error('Failed to load gallery during build:', error);
+    images = [];
+  }
 
   return <GalleryClient images={images} />;
 }

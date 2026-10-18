@@ -11,6 +11,15 @@ import { strictLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
+const publicUserSelect = {
+  id: true,
+  name: true,
+  skill: true,
+  position: true,
+  ogGroup: true,
+  avatarUrl: true,
+};
+
 async function invalidateSessionsCache() {
   await redis.del('sessions:all');
 }
@@ -35,14 +44,7 @@ router.get('/', async (req, res) => {
           },
           include: {
             user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                skill: true,
-                position: true,
-                avatarUrl: true,
-              },
+              select: publicUserSelect,
             },
           },
         },
@@ -364,7 +366,9 @@ router.get('/:id/attendances', async (req, res) => {
     const attendances = await prisma.attendance.findMany({
       where: { sessionId: sessionId },
       include: {
-        user: true,
+        user: {
+          select: publicUserSelect,
+        },
       },
     });
 
@@ -394,14 +398,7 @@ router.get('/:id', async (req, res) => {
           },
           include: {
             user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                skill: true,
-                position: true,
-                avatarUrl: true,
-              },
+              select: publicUserSelect,
             },
           },
         },

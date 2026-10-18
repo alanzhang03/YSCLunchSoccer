@@ -43,6 +43,12 @@ export default function GalleryClient({ images }) {
           <p>Memories from our soccer sessions</p>
         </motion.div>
 
+        {images.length === 0 && (
+          <p className={styles.empty}>
+            Photos are unavailable right now. Check back in a few minutes!
+          </p>
+        )}
+
         <motion.div
           className={styles.gallery}
           variants={containerVariants}
@@ -51,17 +57,17 @@ export default function GalleryClient({ images }) {
         >
           {images.map((img, index) => (
             <motion.div
-              key={img}
+              key={img.name}
               className={styles.imageWrapper}
               variants={itemVariants}
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               onClick={() =>
-                setSelectedImage({ src: `/gallery/${img}`, index })
+                setSelectedImage({ src: img.url, index })
               }
             >
               <Image
-                src={`/gallery/${img}`}
+                src={img.url}
                 alt={`Gallery image ${index + 1}`}
                 width={400}
                 height={300}

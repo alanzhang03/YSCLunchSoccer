@@ -10,6 +10,7 @@ import checkoutRouter from './routes/checkout.js';
 import adminRouter from './routes/admin.js';
 import smsRouter from './routes/sms.js';
 import disclaimerRouter from './routes/disclaimer.js';
+import galleryRouter from './routes/gallery.js';
 import { sessionGenerator } from './utils/sessionGenerator.js';
 import rateLimiter from './middleware/rateLimiter.js';
 import './workers/notificationWorker.js';
@@ -71,6 +72,7 @@ app.use('/api/checkout', checkoutRouter);
 app.use('/api/admin/users', adminRouter);
 app.use('/api/sms', smsRouter);
 app.use('/api/disclaimer', disclaimerRouter);
+app.use('/api/gallery', galleryRouter);
 
 setTimeout(async () => {
   try {
