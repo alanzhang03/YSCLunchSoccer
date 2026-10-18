@@ -33,7 +33,12 @@ const RosterPreview = ({ attendances = [], expanded, onToggle }) => {
                 style={{ backgroundColor: avatarColor(a.userId) }}
                 title={name}
               >
-                {getInitials(name)}
+                {a.user?.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={a.user.avatarUrl} alt='' />
+                ) : (
+                  getInitials(name)
+                )}
               </span>
             );
           })}

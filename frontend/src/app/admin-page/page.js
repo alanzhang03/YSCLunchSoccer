@@ -13,6 +13,7 @@ import {
   setDisclaimerInfo,
 } from '@/lib/api';
 import styles from './admin.module.scss';
+import Avatar from '@/components/ui/Avatar';
 import { ADMIN_POSITIONS, POSITION_LABELS } from '@/lib/positions';
 
 const AdminPage = () => {
@@ -562,7 +563,9 @@ const AdminPage = () => {
                       {rowEditing ? (
                         <>
                           <td data-label='Name' className={styles.nameCell}>
-                            <input
+                            <span className={styles.nameWithAvatar}>
+                              <Avatar user={u} size={28} />
+                              <input
                               className={`${styles.input} ${
                                 isDirty(u, 'name') ? styles.dirtySelect : ''
                               }`}
@@ -571,6 +574,7 @@ const AdminPage = () => {
                                 setValue(u, 'name', e.target.value)
                               }
                             />
+                            </span>
                           </td>
                           <td data-label='Email'>
                             <input
@@ -660,7 +664,10 @@ const AdminPage = () => {
                       ) : (
                         <>
                           <td data-label='Name' className={styles.nameCell}>
-                            {getValue(u, 'name')}
+                            <span className={styles.nameWithAvatar}>
+                              <Avatar user={u} size={28} />
+                              {getValue(u, 'name')}
+                            </span>
                           </td>
                           <td data-label='Email'>{getValue(u, 'email')}</td>
                           <td data-label='Phone'>{getValue(u, 'phone')}</td>

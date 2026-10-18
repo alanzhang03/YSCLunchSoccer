@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import styles from './TeamDisplay.module.scss';
+import Avatar from '@/components/ui/Avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getSessionAttendances,
@@ -83,8 +84,11 @@ const DraggablePlayer = ({ player, isAdmin }) => {
       {...listeners}
     >
       <span className={styles.playerInfo}>
-        <span className={styles.playerName}>
-          {player.user?.name || player.name}
+        <span className={styles.playerIdentity}>
+          <Avatar user={player.user ?? player} size={20} />
+          <span className={styles.playerName}>
+            {player.user?.name || player.name}
+          </span>
         </span>
         {isAdmin && <AdminPlayerTags player={player} />}
       </span>
@@ -788,8 +792,11 @@ const TeamDisplay = ({ sessionId }) => {
                                       key={player.id}
                                       className={styles.playerItem}
                                     >
-                                      <span className={styles.playerName}>
-                                        {player.user?.name || player.name}
+                                      <span className={styles.playerIdentity}>
+                                        <Avatar user={player.user ?? player} size={20} />
+                                        <span className={styles.playerName}>
+                                          {player.user?.name || player.name}
+                                        </span>
                                       </span>
                                       {isAdmin && (
                                         <span
@@ -843,8 +850,11 @@ const TeamDisplay = ({ sessionId }) => {
                     <ul className={styles.playerList}>
                       {team.map((player) => (
                         <li key={player.id} className={styles.playerItem}>
-                          <span className={styles.playerName}>
-                            {player.user?.name || player.name}
+                          <span className={styles.playerIdentity}>
+                            <Avatar user={player.user ?? player} size={20} />
+                            <span className={styles.playerName}>
+                              {player.user?.name || player.name}
+                            </span>
                           </span>
                           {isAdmin && (
                             <span className={styles.mobilePlayerControls}>

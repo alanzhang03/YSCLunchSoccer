@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import styles from './SessionCard.module.scss';
+import Avatar from '@/components/ui/Avatar';
 import { deleteAttendances } from '@/lib/api';
 import { DUMMY_USERS, PAYMENTS_ENABLED } from '@/lib/constants';
 
@@ -151,6 +152,10 @@ const AttendanceSection = ({
               )}
 
               <span className={styles.attendeeName}>
+                <Avatar
+                  user={attendance.user ?? { id: attendance.userId }}
+                  size={20}
+                />
                 {attendance.user?.name ?? `User ${attendance.userId}`}
                 {isAdmin && attendance.user?.position && (
                   <span className={styles.positionBadge}>

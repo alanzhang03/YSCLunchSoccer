@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import prisma from '../db/client.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -7,6 +7,14 @@ import { sendPasswordResetEmail, sendContactFormEmail } from '../lib/email.js';
 import { strictLimiter } from '../middleware/rateLimiter.js';
 import { notificationQueue } from '../lib/queues.js';
 import { normalizePlayerPosition } from '../lib/positions.js';
+import { authenticateUser, loadDbUser } from '../middleware/auth.js';
+import {
+  MAX_AVATAR_BYTES,
+  detectImageType,
+  uploadAvatar,
+  deleteAvatar,
+} from '../lib/avatarStorage.js';
+import redis from '../lib/redis.js';
 
 const router = Router();
 
@@ -254,6 +262,7 @@ router.post('/signup', strictLimiter, async (req, res) => {
         name: true,
         skill: true,
         position: true,
+        avatarUrl: true,
         isAdmin: true,
         createdAt: true,
       },
@@ -468,6 +477,7 @@ router.get('/me', async (req, res) => {
         name: true,
         skill: true,
         position: true,
+        avatarUrl: true,
         isAdmin: true,
         wedGroup: true,
         ogGroup: true,
@@ -783,6 +793,7 @@ router.put('/update-profile', async (req, res) => {
         name: true,
         skill: true,
         position: true,
+        avatarUrl: true,
         isAdmin: true,
         smsOptIn: true,
         createdAt: true,
@@ -798,6 +809,64 @@ router.put('/update-profile', async (req, res) => {
         process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
+});
+
+async function invalidateSessionsCache() {
+  await redis.del('sessions:all');
+}
+
+router.put(
+  '/avatar',
+  strictLimiter,
+  authenticateUser,
+  loadDbUser,
+  express.raw({ type: 'image/*', limit: MAX_AVATAR_BYTES }),
+  async (req, res) => {
+    try {
+      const contentType = detectImageType(req.body);
+      if (!contentType) {
+        return res
+          .status(400)
+          .json({ error: 'Please upload a JPEG, PNG, or WebP image' });
+      }
+
+      const avatarUrl = await uploadAvatar(req.dbUser.id, req.body, contentType);
+      await prisma.user.update({
+        where: { id: req.dbUser.id },
+        data: { avatarUrl },
+      });
+      await invalidateSessionsCache();
+
+      return res.json({ avatarUrl });
+    } catch (error) {
+      console.error('Avatar upload error:', error);
+      return res.status(500).json({ error: 'Failed to upload profile picture' });
+    }
+  },
+);
+
+router.delete('/avatar', authenticateUser, loadDbUser, async (req, res) => {
+  try {
+    if (req.dbUser.avatarUrl) {
+      await deleteAvatar(req.dbUser.id);
+      await prisma.user.update({
+        where: { id: req.dbUser.id },
+        data: { avatarUrl: null },
+      });
+      await invalidateSessionsCache();
+    }
+    return res.json({ avatarUrl: null });
+  } catch (error) {
+    console.error('Avatar delete error:', error);
+    return res.status(500).json({ error: 'Failed to remove profile picture' });
+  }
+});
+
+router.use('/avatar', (err, req, res, next) => {
+  if (err?.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Image must be under 2MB' });
+  }
+  next(err);
 });
 
 export default router;

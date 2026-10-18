@@ -1,12 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import styles from './my-profile.module.scss';
-import { adjustPersonalInfo } from '@/lib/api';
+import { Camera } from 'lucide-react';
+import { adjustPersonalInfo, uploadAvatar, removeAvatar } from '@/lib/api';
+import { resizeImageToAvatar } from '@/lib/avatar';
 import { PLAYER_POSITIONS, POSITION_LABELS } from '@/lib/positions';
 import Link from 'next/link';
 
@@ -45,6 +47,9 @@ const MyProfilePage = () => {
     position: '',
   });
   const [saveError, setSaveError] = useState('');
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [avatarError, setAvatarError] = useState('');
+  const fileInputRef = useRef(null);
 
   const router = useRouter();
 
@@ -109,6 +114,42 @@ const MyProfilePage = () => {
     }
   };
 
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setAvatarError('Please choose an image file');
+      return;
+    }
+
+    try {
+      setAvatarError('');
+      setAvatarBusy(true);
+      const resized = await resizeImageToAvatar(file);
+      await uploadAvatar(resized);
+      await checkAuth();
+    } catch (error) {
+      setAvatarError(error.message || 'Failed to upload profile picture');
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    try {
+      setAvatarError('');
+      setAvatarBusy(true);
+      await removeAvatar();
+      await checkAuth();
+    } catch (error) {
+      setAvatarError(error.message || 'Failed to remove profile picture');
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
+
   const positionOptions =
     user.position === 'ALL'
       ? [...PLAYER_POSITIONS, 'ALL']
@@ -127,9 +168,46 @@ const MyProfilePage = () => {
             <button className={styles.editButton} onClick={() => editingInfo()}>
               {isEditing ? 'Cancel' : 'Edit Info'}
             </button>
-            <div className={styles.avatar}>
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+            <button
+              type='button'
+              className={`${styles.avatar} ${avatarBusy ? styles.busy : ''}`}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={avatarBusy}
+              aria-label={
+                user.avatarUrl ? 'Change profile picture' : 'Add profile picture'
+              }
+            >
+              {user.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.avatarUrl} alt='' />
+              ) : (
+                user.name.charAt(0).toUpperCase()
+              )}
+              <span className={styles.avatarOverlay} aria-hidden='true'>
+                {avatarBusy ? (
+                  <span className={styles.avatarSpinner} />
+                ) : (
+                  <Camera size={22} />
+                )}
+              </span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type='file'
+              accept='image/jpeg,image/png,image/webp,image/heic,image/heif'
+              onChange={handleAvatarChange}
+              hidden
+            />
+            {user.avatarUrl && !avatarBusy && (
+              <button
+                type='button'
+                className={styles.removeAvatar}
+                onClick={handleAvatarRemove}
+              >
+                Remove photo
+              </button>
+            )}
+            {avatarError && <p className={styles.avatarError}>{avatarError}</p>}
             <h1>{user.name}</h1>
             <p className={styles.memberSince}>Member since {memberSince}</p>
           </motion.div>

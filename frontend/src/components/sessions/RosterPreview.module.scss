@@ -43,6 +43,13 @@
   letter-spacing: -0.02em;
   box-sizing: border-box;
   flex-shrink: 0;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   &:first-child {
     margin-left: 0;

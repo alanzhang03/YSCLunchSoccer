@@ -18,6 +18,7 @@ const userSelect = {
   smsOptIn: true,
   skill: true,
   position: true,
+  avatarUrl: true,
   isAdmin: true,
   ogGroup: true,
   wedGroup: true,

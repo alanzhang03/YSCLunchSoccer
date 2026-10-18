@@ -279,6 +279,16 @@
         cursor: pointer;
       }
 
+      .nameWithAvatar {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+
+        .input {
+          min-width: 0;
+        }
+      }
+
       .actions {
         display: flex;
         gap: 0.375rem;

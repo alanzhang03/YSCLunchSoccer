@@ -396,6 +396,38 @@ export async function sendEmail({ name, email, message }) {
   return response.json();
 }
 
+export async function uploadAvatar(imageBlob) {
+  const response = await fetch(`${API_BASE_URL}/auth/avatar`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': imageBlob.type || 'image/jpeg',
+    },
+    body: imageBlob,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to upload profile picture');
+  }
+
+  return response.json();
+}
+
+export async function removeAvatar() {
+  const response = await fetch(`${API_BASE_URL}/auth/avatar`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to remove profile picture');
+  }
+
+  return response.json();
+}
+
 export async function adjustPersonalInfo({
   name,
   email,

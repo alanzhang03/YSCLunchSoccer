@@ -494,6 +494,13 @@
             gap: 0.4rem;
           }
 
+          .playerIdentity {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+          }
+
           .playerName {
             font-weight: 600;
             color: #1f2937;
