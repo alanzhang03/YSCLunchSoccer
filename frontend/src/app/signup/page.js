@@ -1,8 +1,11 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './signup.module.scss';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Camera } from 'lucide-react';
+import { resizeImageToAvatar } from '@/lib/avatar';
+import { uploadAvatar } from '@/lib/api';
 import { DEFAULT_POSITION, PLAYER_POSITIONS, POSITION_LABELS } from '@/lib/positions';
 
 const Page = () => {
@@ -16,8 +19,44 @@ const Page = () => {
   const [position, setPosition] = useState(DEFAULT_POSITION);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoError, setPhotoError] = useState('');
+  const photoInputRef = useRef(null);
   const router = useRouter();
-  const { signup } = useAuth();
+  const { signup, checkAuth } = useAuth();
+
+  useEffect(() => {
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Please choose an image file');
+      return;
+    }
+
+    try {
+      setPhotoError('');
+      const resized = await resizeImageToAvatar(file);
+      setPhoto(resized);
+      setPhotoPreview(URL.createObjectURL(resized));
+    } catch (err) {
+      setPhotoError(err.message || 'Could not use that image');
+    }
+  };
+
+  const handlePhotoRemove = () => {
+    setPhoto(null);
+    setPhotoPreview(null);
+    setPhotoError('');
+  };
 
   const handlePhoneNum = (e) => {
     setPhoneNum(e.target.value);
@@ -63,6 +102,18 @@ const Page = () => {
       }
 
       await signup(phoneNum, email, name, password, skill, true, position);
+
+      // The account exists at this point, so a failed photo upload shouldn't
+      // block signup; they can add one later from My Profile.
+      if (photo) {
+        try {
+          await uploadAvatar(photo);
+          await checkAuth();
+        } catch (uploadError) {
+          console.warn('Profile picture upload failed:', uploadError);
+        }
+      }
+
       router.push('/');
     } catch (err) {
       setError(err.message || 'Signup failed');
@@ -77,6 +128,58 @@ const Page = () => {
         <div className={styles.card}>
           <h1 className={styles.title}>Sign Up</h1>
           <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.photoPicker}>
+              <button
+                type='button'
+                className={`${styles.photoButton} ${
+                  photoPreview ? styles.hasPhoto : ''
+                }`}
+                onClick={() => photoInputRef.current?.click()}
+                aria-label={
+                  photoPreview ? 'Change profile picture' : 'Add profile picture'
+                }
+              >
+                {photoPreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={photoPreview} alt='' />
+                ) : (
+                  <Camera size={26} aria-hidden='true' />
+                )}
+              </button>
+              <input
+                ref={photoInputRef}
+                type='file'
+                accept='image/jpeg,image/png,image/webp,image/heic,image/heif'
+                onChange={handlePhotoChange}
+                hidden
+              />
+              <div className={styles.photoText}>
+                <span className={styles.photoLabel}>
+                  Profile picture <span>(optional)</span>
+                </span>
+                {photoPreview ? (
+                  <span className={styles.photoActions}>
+                    <button
+                      type='button'
+                      onClick={() => photoInputRef.current?.click()}
+                    >
+                      Change
+                    </button>
+                    <button type='button' onClick={handlePhotoRemove}>
+                      Remove
+                    </button>
+                  </span>
+                ) : (
+                  <span className={styles.photoHint}>
+                    Helps teammates recognize you
+                  </span>
+                )}
+                {photoError && (
+                  <span className={styles.photoError}>{photoError}</span>
+                )}
+              </div>
+            </div>
+
             <div className={styles.formGroup}>
               <label>Name</label>
               <input
