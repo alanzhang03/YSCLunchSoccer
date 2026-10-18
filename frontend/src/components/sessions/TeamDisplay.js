@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './TeamDisplay.module.scss';
 import Avatar from '@/components/ui/Avatar';
+import PlayerLink from '@/components/ui/PlayerLink';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getSessionAttendances,
@@ -84,12 +85,15 @@ const DraggablePlayer = ({ player, isAdmin }) => {
       {...listeners}
     >
       <span className={styles.playerInfo}>
-        <span className={styles.playerIdentity}>
+        <PlayerLink
+          userId={isAdmin ? null : (player.user?.id ?? player.userId)}
+          className={styles.playerIdentity}
+        >
           <Avatar user={player.user ?? player} size={20} />
           <span className={styles.playerName}>
             {player.user?.name || player.name}
           </span>
-        </span>
+        </PlayerLink>
         {isAdmin && <AdminPlayerTags player={player} />}
       </span>
       {isAdmin && <span className={styles.dragHandle}>⋮⋮</span>}
@@ -792,12 +796,15 @@ const TeamDisplay = ({ sessionId }) => {
                                       key={player.id}
                                       className={styles.playerItem}
                                     >
-                                      <span className={styles.playerIdentity}>
+                                      <PlayerLink
+                                        userId={player.user?.id ?? player.userId}
+                                        className={styles.playerIdentity}
+                                      >
                                         <Avatar user={player.user ?? player} size={20} />
                                         <span className={styles.playerName}>
                                           {player.user?.name || player.name}
                                         </span>
-                                      </span>
+                                      </PlayerLink>
                                       {isAdmin && (
                                         <span
                                           className={
@@ -850,12 +857,15 @@ const TeamDisplay = ({ sessionId }) => {
                     <ul className={styles.playerList}>
                       {team.map((player) => (
                         <li key={player.id} className={styles.playerItem}>
-                          <span className={styles.playerIdentity}>
+                          <PlayerLink
+                            userId={player.user?.id ?? player.userId}
+                            className={styles.playerIdentity}
+                          >
                             <Avatar user={player.user ?? player} size={20} />
                             <span className={styles.playerName}>
                               {player.user?.name || player.name}
                             </span>
-                          </span>
+                          </PlayerLink>
                           {isAdmin && (
                             <span className={styles.mobilePlayerControls}>
                               <AdminPlayerTags player={player} />

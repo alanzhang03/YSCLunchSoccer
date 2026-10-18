@@ -1,0 +1,256 @@
+@import '@/styles/variables.scss';
+
+.page {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  position: relative;
+  background: $ysc-dark-blue;
+  min-height: 100vh;
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('/backgrounds/1.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 51, 102, 0.88) 0%,
+      rgba(31, 115, 183, 0.85) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 60vh;
+  gap: 1.25rem;
+  position: relative;
+  z-index: 1;
+
+  p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.125rem;
+    margin: 0;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: $white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .backLink {
+    color: $white;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+
+    &:hover {
+      border-bottom-color: $white;
+    }
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 5rem 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.profileCard {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem 2rem;
+  background: $primary-gradient;
+  position: relative;
+  text-align: center;
+
+  .editLink {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $white;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .avatar {
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $white;
+    margin: 0 0 0.5rem;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .positionBadge {
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.2);
+    color: $white;
+    font-weight: 600;
+    font-size: 0.8125rem;
+  }
+}
+
+.body {
+  padding: 1.75rem 2rem 2rem;
+
+  h2 {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $text-medium;
+    margin: 0 0 1rem;
+  }
+
+  .sessionList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sessionRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    text-decoration: none;
+    color: $text-dark;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover {
+      background: $ysc-very-light-blue;
+      border-color: $ysc-light-blue;
+
+      .chevron {
+        transform: translateX(3px);
+      }
+    }
+  }
+
+  .sessionDate {
+    font-weight: 700;
+    color: $ysc-primary-blue;
+    min-width: 6.5rem;
+  }
+
+  .sessionDetails {
+    flex: 1;
+    font-size: 0.9rem;
+    color: $text-medium;
+  }
+
+  .chevron {
+    color: $ysc-medium-blue;
+    transition: transform 0.2s ease;
+  }
+
+  .empty {
+    margin: 0;
+    color: $text-medium;
+    font-size: 0.95rem;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 3rem 1rem;
+  }
+
+  .header {
+    padding: 3.25rem 1.25rem 1.75rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .body {
+    padding: 1.5rem 1.25rem;
+
+    .sessionRow {
+      flex-wrap: wrap;
+      gap: 0.25rem 0.75rem;
+    }
+
+    .sessionDetails {
+      flex-basis: 100%;
+      order: 3;
+    }
+  }
+}

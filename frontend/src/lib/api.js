@@ -101,6 +101,21 @@ export async function getSessionById(sessionId) {
   return response.json();
 }
 
+export async function getPlayerProfile(userId) {
+  const response = await fetch(`${API_BASE_URL}/users/${userId}/profile`, {
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    const error = new Error(errorData.error || 'Failed to load profile');
+    error.status = response.status;
+    throw error;
+  }
+  return response.json();
+}
+
 export async function getSessionAttendances(sessionId) {
   const response = await fetch(
     `${API_BASE_URL}/sessions/${sessionId}/attendances`,

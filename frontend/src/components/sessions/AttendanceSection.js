@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import styles from './SessionCard.module.scss';
 import Avatar from '@/components/ui/Avatar';
+import PlayerLink from '@/components/ui/PlayerLink';
 import { deleteAttendances } from '@/lib/api';
 import { DUMMY_USERS, PAYMENTS_ENABLED } from '@/lib/constants';
 
@@ -152,11 +153,16 @@ const AttendanceSection = ({
               )}
 
               <span className={styles.attendeeName}>
-                <Avatar
-                  user={attendance.user ?? { id: attendance.userId }}
-                  size={20}
-                />
-                {attendance.user?.name ?? `User ${attendance.userId}`}
+                <PlayerLink
+                  userId={isRemoveMode ? null : attendance.userId}
+                  className={styles.attendeeLink}
+                >
+                  <Avatar
+                    user={attendance.user ?? { id: attendance.userId }}
+                    size={20}
+                  />
+                  {attendance.user?.name ?? `User ${attendance.userId}`}
+                </PlayerLink>
                 {isAdmin && attendance.user?.position && (
                   <span className={styles.positionBadge}>
                     {attendance.user.position}

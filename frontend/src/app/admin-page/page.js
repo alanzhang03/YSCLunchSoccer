@@ -14,6 +14,7 @@ import {
 } from '@/lib/api';
 import styles from './admin.module.scss';
 import Avatar from '@/components/ui/Avatar';
+import PlayerLink from '@/components/ui/PlayerLink';
 import { ADMIN_POSITIONS, POSITION_LABELS } from '@/lib/positions';
 
 const AdminPage = () => {
@@ -664,10 +665,13 @@ const AdminPage = () => {
                       ) : (
                         <>
                           <td data-label='Name' className={styles.nameCell}>
-                            <span className={styles.nameWithAvatar}>
+                            <PlayerLink
+                              userId={u.id}
+                              className={styles.nameWithAvatar}
+                            >
                               <Avatar user={u} size={28} />
                               {getValue(u, 'name')}
-                            </span>
+                            </PlayerLink>
                           </td>
                           <td data-label='Email'>{getValue(u, 'email')}</td>
                           <td data-label='Phone'>{getValue(u, 'phone')}</td>

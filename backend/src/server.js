@@ -11,6 +11,7 @@ import adminRouter from './routes/admin.js';
 import smsRouter from './routes/sms.js';
 import disclaimerRouter from './routes/disclaimer.js';
 import galleryRouter from './routes/gallery.js';
+import usersRouter from './routes/users.js';
 import { sessionGenerator } from './utils/sessionGenerator.js';
 import rateLimiter from './middleware/rateLimiter.js';
 import './workers/notificationWorker.js';
@@ -73,6 +74,7 @@ app.use('/api/admin/users', adminRouter);
 app.use('/api/sms', smsRouter);
 app.use('/api/disclaimer', disclaimerRouter);
 app.use('/api/gallery', galleryRouter);
+app.use('/api/users', usersRouter);
 
 setTimeout(async () => {
   try {
