@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabase.js';
+import { supabaseStorage } from './supabase.js';
 
 const BUCKET = 'avatars';
 export const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
@@ -8,9 +8,9 @@ let bucketReady = null;
 function ensureBucket() {
   if (!bucketReady) {
     bucketReady = (async () => {
-      const { data } = await supabaseAdmin.storage.getBucket(BUCKET);
+      const { data } = await supabaseStorage.getBucket(BUCKET);
       if (data) return;
-      const { error } = await supabaseAdmin.storage.createBucket(BUCKET, {
+      const { error } = await supabaseStorage.createBucket(BUCKET, {
         public: true,
         fileSizeLimit: MAX_AVATAR_BYTES,
         allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
@@ -49,7 +49,7 @@ export function detectImageType(buffer) {
 export async function uploadAvatar(userId, buffer, contentType) {
   await ensureBucket();
 
-  const { error } = await supabaseAdmin.storage
+  const { error } = await supabaseStorage
     .from(BUCKET)
     .upload(userId, buffer, {
       contentType,
@@ -60,13 +60,13 @@ export async function uploadAvatar(userId, buffer, contentType) {
 
   const {
     data: { publicUrl },
-  } = supabaseAdmin.storage.from(BUCKET).getPublicUrl(userId);
+  } = supabaseStorage.from(BUCKET).getPublicUrl(userId);
 
   return `${publicUrl}?v=${Date.now()}`;
 }
 
 export async function deleteAvatar(userId) {
   await ensureBucket();
-  const { error } = await supabaseAdmin.storage.from(BUCKET).remove([userId]);
+  const { error } = await supabaseStorage.from(BUCKET).remove([userId]);
   if (error) throw error;
 }

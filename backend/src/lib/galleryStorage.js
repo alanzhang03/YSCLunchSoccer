@@ -1,12 +1,12 @@
-import { supabaseAdmin } from './supabase.js';
+import { supabaseStorage } from './supabase.js';
 
 const BUCKET = 'gallery';
 const IMAGE_PATTERN = /\.(jpe?g|png|webp|gif)$/i;
 
 export async function ensureGalleryBucket() {
-  const { data } = await supabaseAdmin.storage.getBucket(BUCKET);
+  const { data } = await supabaseStorage.getBucket(BUCKET);
   if (data) return;
-  const { error } = await supabaseAdmin.storage.createBucket(BUCKET, {
+  const { error } = await supabaseStorage.createBucket(BUCKET, {
     public: true,
     allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
   });
@@ -14,7 +14,7 @@ export async function ensureGalleryBucket() {
 }
 
 export async function uploadGalleryImage(name, buffer, contentType) {
-  const { error } = await supabaseAdmin.storage
+  const { error } = await supabaseStorage
     .from(BUCKET)
     .upload(name, buffer, {
       contentType,
@@ -25,7 +25,7 @@ export async function uploadGalleryImage(name, buffer, contentType) {
 }
 
 export async function listGalleryImages() {
-  const { data, error } = await supabaseAdmin.storage
+  const { data, error } = await supabaseStorage
     .from(BUCKET)
     .list('', { limit: 1000 });
   if (error) throw error;
@@ -37,7 +37,7 @@ export async function listGalleryImages() {
     )
     .map((file) => ({
       name: file.name,
-      url: supabaseAdmin.storage.from(BUCKET).getPublicUrl(file.name).data
+      url: supabaseStorage.from(BUCKET).getPublicUrl(file.name).data
         .publicUrl,
     }));
 }

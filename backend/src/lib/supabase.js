@@ -5,7 +5,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error(
-    'Missing Supabase environment variables. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in your .env file'
+    'Missing Supabase environment variables. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in your .env file',
   );
 }
 
@@ -17,3 +17,10 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 export const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+export const supabaseStorage = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+}).storage;
